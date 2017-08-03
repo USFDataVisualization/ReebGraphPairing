@@ -6,11 +6,12 @@ import java.util.StringTokenizer;
 
 import src.junyi.reebgraph.ReebGraph.Arc;
 import src.junyi.reebgraph.ReebGraph.Node;
+import src.junyi.reebgraph.loader.MeshLoader;
 
 //import src.junyi.reebgraph;
 
 
-public class ReebLoader2{
+public class ReebLoader2 implements MeshLoader{
 
     private BufferedReader reader;
 	private int noNodes=0;
@@ -119,6 +120,12 @@ private static String[] splitString(String s) {
 		}
 		return ret;
 	}
+
+
+public void reset() {
+	// TODO Auto-generated method stub
+	
+}
 	
 
 

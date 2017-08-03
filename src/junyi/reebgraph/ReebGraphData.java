@@ -3,17 +3,13 @@ package src.junyi.reebgraph;
 
 
 
-
-
-
-
 import src.junyi.reebgraph.Simplex;
 import src.junyi.reebgraph.loader.MeshLoader;
 
 public class ReebGraphData {
 
 
-ReebGraph rg=new ReebGraph();	
+private ReebGraph rg=new ReebGraph();	
 
 
 public void loadData(MeshLoader loader) {
@@ -24,18 +20,18 @@ public void loadData(MeshLoader loader) {
 			while(sim != null) {
 				if(sim instanceof ReebGraph.Node) {
 					ReebGraph.Node n = (ReebGraph.Node) sim;			
-					rg.addNode(n.v, n.fn);
+					getRg().addNode(n.v, n.fn);
 				} else if(sim instanceof ReebGraph.Arc) {
 					// TODO Chk if required vertices are added
 					ReebGraph.Arc a = (ReebGraph.Arc) sim;
-					rg.addArc(a.v1, a.v2); 
+					getRg().addArc(a.v1, a.v2); 
 				} else {
 					er("Invalid Simplex");
 				}
 				sim = loader.getNextSimplex();
 			}
 			pr("Finished reading data from file. Loading it......");
-			rg.setupReebGraph();
+			getRg().setupReebGraph();
 			pr("Successfully loaded Data");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -57,6 +53,19 @@ private void er(String s) {
 	System.out.println(s);
 	System.exit(1);
 }
+
+
+public ReebGraph getRg() {
+	return rg;
+}
+
+
+public void setRg(ReebGraph rg) {
+	this.rg = rg;
+}
+
+
+
 	
 	
 	
