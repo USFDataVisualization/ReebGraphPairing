@@ -17,9 +17,11 @@ public class ReebLoader2 implements MeshLoader{
 	private int noArcs=0;
 	private int curNode;
 	private int curArc;
+	String inputReebGraph;
 	//private ReebGraph rg=new ReebGraph();
 	
-public void setInputFile(String inputReebGraph) {
+public void setInputFile(String _inputReebGraph) {
+	inputReebGraph = _inputReebGraph;
 		try {
 			reader = new BufferedReader(new FileReader(inputReebGraph));
 			String s = reader.readLine();
@@ -44,6 +46,9 @@ public void setInputFile(String inputReebGraph) {
 
 			curNode = 0;
 			curArc = 0;
+			
+			reader = new BufferedReader(new FileReader(inputReebGraph));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
@@ -58,12 +63,16 @@ public int getRowCount() {
 
 public Simplex getNextSimplex() {
 		try {
-			//reader = new BufferedReader(new FileReader(inputReebGraph));
-			if (curNode < noNodes) {
+			
+			String s = reader.readLine();
+			String[] r = s.split("\\s");
+			
+			
+			if ( r[0].equals("v") ) {
 				int v;
 				float  fn;
-				String s = reader.readLine();				
-				String[] r = s.split("\\s");
+				//String s = reader.readLine();
+				//String[] r = s.split("\\s");
 				v = Integer.parseInt(r[1].trim());
 				
 				fn = Float.parseFloat(r[2].trim());
@@ -78,11 +87,14 @@ public Simplex getNextSimplex() {
 				curNode++;
 				return node;
 			}
-			if (curArc < noArcs) {
-				String s = reader.readLine();
-				String[] r = s.split("\\s");
+			if ( r[0].equals("e") ) {
+				//String s = reader.readLine();
+				//System.out.println(s);
+				//String[] r = s.split("\\s");
 				int v1 = -1;
 				int v2 = -1;
+				
+				System.out.println(s);
 				
 				if(r.length == 3) {
 					v1 = Integer.parseInt(r[1]);
@@ -94,8 +106,8 @@ public Simplex getNextSimplex() {
 				}
 
 				Arc arc = new Arc();
-				arc.n1.v = v1;
-				arc.n2.v = v2;
+				arc.v1 = v1;
+				arc.v2 = v2;
 				
 
 				curArc++;

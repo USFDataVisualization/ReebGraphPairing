@@ -7,6 +7,7 @@ import java.util.HashSet;
 public class Arc implements  Serializable, Simplex {
 	private static final long serialVersionUID = 1L;
 
+	int v1,v2;
 	Node n1;
 	Node n2;
 	//float fn;

@@ -24,7 +24,7 @@ public void loadData(MeshLoader loader) {
 				} else if(sim instanceof Arc) {
 					// TODO Chk if required vertices are added
 					Arc a = (Arc) sim;
-					getRg().addArc(a.n1.v, a.n2.v); 
+					getRg().addArc(a.v1, a.v2); 
 				} else {
 					er("Invalid Simplex");
 				}
