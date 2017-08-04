@@ -18,13 +18,13 @@ public void loadData(MeshLoader loader) {
 			System.out.println(rowNo);
 			Simplex sim = loader.getNextSimplex();
 			while(sim != null) {
-				if(sim instanceof ReebGraph.Node) {
-					ReebGraph.Node n = (ReebGraph.Node) sim;			
+				if(sim instanceof Node) {
+					Node n = (Node) sim;			
 					getRg().addNode(n.v, n.fn);
-				} else if(sim instanceof ReebGraph.Arc) {
+				} else if(sim instanceof Arc) {
 					// TODO Chk if required vertices are added
-					ReebGraph.Arc a = (ReebGraph.Arc) sim;
-					getRg().addArc(a.v1, a.v2); 
+					Arc a = (Arc) sim;
+					getRg().addArc(a.n1.v, a.n2.v); 
 				} else {
 					er("Invalid Simplex");
 				}

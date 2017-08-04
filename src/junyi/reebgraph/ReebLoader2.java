@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
 
-import src.junyi.reebgraph.ReebGraph.Arc;
-import src.junyi.reebgraph.ReebGraph.Node;
+
 import src.junyi.reebgraph.loader.MeshLoader;
 
 //import src.junyi.reebgraph;
@@ -18,17 +17,17 @@ public class ReebLoader2 implements MeshLoader{
 	private int noArcs=0;
 	private int curNode;
 	private int curArc;
-	private ReebGraph rg=new ReebGraph();
+	//private ReebGraph rg=new ReebGraph();
 	
 public void setInputFile(String inputReebGraph) {
 		try {
 			reader = new BufferedReader(new FileReader(inputReebGraph));
 			String s = reader.readLine();
 			
-			String[] r = splitString(s);
+			String[] r = s.split("\\s");
 			
 			while(s != null) {
-				r = splitString(s);
+				r = s.split("\\s");
 			  if (r[0].trim().equals("v") == true) {			     
 				  
 				   noNodes++;
@@ -64,13 +63,13 @@ public Simplex getNextSimplex() {
 				int v;
 				float  fn;
 				String s = reader.readLine();				
-				String[] r = splitString(s);
+				String[] r = s.split("\\s");
 				v = Integer.parseInt(r[1].trim());
 				
 				fn = Float.parseFloat(r[2].trim());
 				
 				
-				Node node = rg.new Node();
+				Node node = new Node();
 				
 				node.v = v;
 				
@@ -81,7 +80,7 @@ public Simplex getNextSimplex() {
 			}
 			if (curArc < noArcs) {
 				String s = reader.readLine();
-				String[] r = splitString(s);
+				String[] r = s.split("\\s");
 				int v1 = -1;
 				int v2 = -1;
 				
@@ -94,9 +93,9 @@ public Simplex getNextSimplex() {
 					System.exit(0);
 				}
 
-				Arc arc = rg.new Arc();
-				arc.v1 = v1;
-				arc.v2 = v2;
+				Arc arc = new Arc();
+				arc.n1.v = v1;
+				arc.n2.v = v2;
 				
 
 				curArc++;
@@ -111,15 +110,6 @@ public Simplex getNextSimplex() {
 	}
 
 
-private static String[] splitString(String s) {
-		String[] ret = null;
-		StringTokenizer tok = new StringTokenizer(s);
-		ret = new String[tok.countTokens()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = tok.nextToken();
-		}
-		return ret;
-	}
 
 
 public void reset() {

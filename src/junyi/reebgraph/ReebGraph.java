@@ -5,8 +5,13 @@ package src.junyi.reebgraph;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Queue;
+
+
 
 public class ReebGraph implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -17,46 +22,7 @@ public class ReebGraph implements Serializable {
 	public static final byte SADDLE = 3;
 
 	
-	
 
-
-	class Arc implements  Serializable, Simplex {
-		private static final long serialVersionUID = 1L;
-
-		int v1;
-		int v2;
-		//float fn;
-		
-		boolean removed;
-		//ArrayList <Integer> comps = new ArrayList<Integer>();
-		
-		
-		ArrayList<Vertex> path = new ArrayList<Vertex>();
-		HashSet<Vertex> segment = new HashSet<Vertex>();
-		
-		
-
-		//public int compareTo(Arc o) {
-		//	float ff = fn - o.fn;
-		//	if(ff < 0)
-		//		return -1;
-		//	else if(ff > 0)
-		//		return 1;
-		//	return 0;
-		//}
-	}
-	
-	 
-	class Node implements Serializable, Simplex {
-		private static final long serialVersionUID = 1L;
-
-		int v;
-		boolean removed;
-		float fn;
-		//VertexType type;
-		ArrayList<Arc> prev = new ArrayList<Arc>();
-		ArrayList<Arc> next = new ArrayList<Arc>();
-	}
 	
 	public Node [] nodes;
 	public Arc [] arcs;
@@ -97,18 +63,19 @@ public class ReebGraph implements Serializable {
 	
 	public void addArc(int v1, int v2) {
 		Arc a = new Arc();
-		a.v1 = v1;
-		a.v2 = v2;
+		a.n1.v=v1;
+		
+		a.n2.v = v2;
 		
 	
 
-		a.path = new ArrayList<Vertex>();
+		a.path = new ArrayList<Node>();
 		
 		
 		ar.add(a);
 		
-		an.get(a.v1).next.add(a);
-		an.get(a.v2).prev.add(a);
+		an.get(a.n1.v).next.add(a);
+		an.get(a.n2.v).prev.add(a);
 	}
 
 	
@@ -126,19 +93,16 @@ public class ReebGraph implements Serializable {
 		Arc e2 = nodes[i].next.get(0);
 		
 		nodes[i].removed = true;
-		e1.v2 = e2.v2;
+		e1.n2.v = e2.n2.v;
 		e2.removed = true;
 		if(e2.path.size() != 0) {
 			e2.path.remove(0);
 		}
 		e1.path.addAll(e2.path);
 		e1.segment.addAll(e2.segment);
-		//if(e1.icol > e2.icol) {
-		//	e1.icol = e2.icol;
-		//}
-		//e1.fn += e2.fn;
-		nodes[e1.v2].prev.remove(e2);
-		nodes[e1.v2].prev.add(e1);
+		
+		nodes[e1.n2.v].prev.remove(e2);
+		nodes[e1.n2.v].prev.add(e1);
 		
 	}
 
@@ -167,7 +131,7 @@ public class ReebGraph implements Serializable {
 		
 		for(int i = 0;i < arcs.length;i ++) {
 			if(!arcs[i].removed) {
-				op.print(nodes[arcs[i].v1].v + " " + nodes[arcs[i].v2].v + " ");
+				op.print(nodes[arcs[i].n1.v].v + " " + nodes[arcs[i].n2.v].v + " ");
 				//for(int j = 0;j < arcs[i].comps.size();j ++) {
 					//p.print(arcs[i].comps.get(j) + " ");
 				//}
@@ -182,7 +146,11 @@ public class ReebGraph implements Serializable {
 		//sort nodes by fn
 		//pass for lowest to highest nodes
 		//find merge nodes 
-		
+		// We first order the points for adding to the tree.
+			//	Queue< Node > tq = new PriorityQueue< Node >( size, comparator );
+			//	for(int i = 0; i < sf.getWidth(); i++ ){
+			//		tq.add( new Node( sf.get(i).value(), i ) );
+			//	}
 		
 	}
 	

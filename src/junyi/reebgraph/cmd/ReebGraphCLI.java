@@ -78,7 +78,7 @@ public class ReebGraphCLI {
 			ReebLoader2 loader=new ReebLoader2();
 			loader.setInputFile(ip);
 			//rg.computeReebGraph(loader, fn);
-			en = System.currentTimeMillis();
+			
 			
 			ReebGraphData rgData=new ReebGraphData();
 			rgData.loadData(loader);
@@ -89,6 +89,8 @@ public class ReebGraphCLI {
 			
 			
 			rgData.getRg().outputReebGraph(prStrm);
+			
+			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");
 		} catch (Exception e) {
 			e.printStackTrace();
