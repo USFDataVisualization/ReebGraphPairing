@@ -71,24 +71,21 @@ public class ReebGraphCLI {
 			}
 			
 			long st, en;
-			//ReebGraph rg = new ReebGraph();	
-			//rg.setGranularity(granularity);
+			
 			st = System.currentTimeMillis();
 			
 			ReebLoader2 loader=new ReebLoader2();
+			
 			loader.setInputFile(ip);
-			//rg.computeReebGraph(loader, fn);
+			
 			
 			
 			ReebGraphData rgData=new ReebGraphData();
 			rgData.loadData(loader);
 			
-			PrintStream prStrm = new PrintStream(new File(op));
-			
-			rgData.getRg().removeDeg2Nodes();
+			//PrintStream prStrm = new PrintStream(new File(op));
 			
 			
-			rgData.getRg().outputReebGraph(prStrm);
 			
 			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");

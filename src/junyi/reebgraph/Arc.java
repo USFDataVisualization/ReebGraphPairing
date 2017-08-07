@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Arc implements  Serializable, Simplex {
+public class Arc implements  Serializable {
 	private static final long serialVersionUID = 1L;
 
 	int v1,v2;

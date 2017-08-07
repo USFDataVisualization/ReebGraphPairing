@@ -1,8 +1,11 @@
 package src.junyi.reebgraph;
 
-//import meshloader.iisc.vgl.external.types.Simplex;
+import java.util.ArrayList;
 
-public class Vertex implements Simplex {
-	public float [] c;
-	public float f;
+
+public interface Vertex {
+	float value();
+	ArrayList<Integer> neighbors();
+	int [] positions();
+	int id();
 }

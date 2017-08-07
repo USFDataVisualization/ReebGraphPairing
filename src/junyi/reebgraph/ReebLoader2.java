@@ -1,13 +1,16 @@
 package src.junyi.reebgraph;
+//package usf.saav.topology.join;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 
-import src.junyi.reebgraph.loader.MeshLoader;
 
-//import src.junyi.reebgraph;
+
+import src.junyi.reebgraph.loader.MeshLoader;
 
 
 public class ReebLoader2 implements MeshLoader{
@@ -15,10 +18,10 @@ public class ReebLoader2 implements MeshLoader{
     private BufferedReader reader;
 	private int noNodes=0;
 	private int noArcs=0;
-	private int curNode;
-	private int curArc;
+	
 	String inputReebGraph;
-	//private ReebGraph rg=new ReebGraph();
+	private ReebGraph rg=new ReebGraph();
+	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
 	
 public void setInputFile(String _inputReebGraph) {
 	inputReebGraph = _inputReebGraph;
@@ -33,95 +36,85 @@ public void setInputFile(String _inputReebGraph) {
 			  if (r[0].trim().equals("v") == true) {			     
 				  
 				   noNodes++;
+				   System.out.println(s);
+				   int v;
+					float  fn;
+					
+					v = Integer.parseInt(r[1].trim());
+					
+					fn = Float.parseFloat(r[2].trim());
+					
+					
+					Node node = new Node();
+					
+					node.id = v;
+					
+					node.fn = fn;
+					
+					vmap.put(v, node);
+					
+					getRg().addNode(node.id, node.fn);
+
+					
 				   s = reader.readLine();
+				   
 				} 
-			  else {
+			  if (r[0].trim().equals("e") == true) {
 				    noArcs ++;
+				    
+				    int v1 = -1;
+					int v2 = -1;
+					
+					System.out.println(s);
+					
+					if(r.length == 3) {
+						v1 = Integer.parseInt(r[1]);
+						v2 = Integer.parseInt(r[2]);
+						
+					} else {
+						System.err.println("Invalid input");
+						System.exit(0);
+					}
+
+					Arc arc = new Arc();
+					arc.v1 = v1;
+					arc.v2 = v2;
+					
+					vmap.get(arc.v1).addNeighbor(v2);
+					vmap.get(arc.v2).addNeighbor(v1);
+				    
 					s = reader.readLine();
 			       }
-			}  
+			}
+			
 
 			System.out.println("No. of Nodes : " + noNodes);
 			System.out.println("No. of Arcs : " + noArcs);
-
-			curNode = 0;
-			curArc = 0;
 			
-			reader = new BufferedReader(new FileReader(inputReebGraph));
+         // for(Node nd : getRg().nodes )
+			//Node nd=new Node();
+			//nd.id=15;
+			//for(int i=0; i< noNodes;i++)
+			   //System.out.println("Neighbors of node " + vmap.get(i).neighbors);
+
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 	}
+
+
+private ReebGraph getRg() {
+	// TODO Auto-generated method stub
+	return rg;
+}
 
 
 public int getRowCount() {
 	return noNodes+noArcs;
 }
-
-
-public Simplex getNextSimplex() {
-		try {
-			
-			String s = reader.readLine();
-			String[] r = s.split("\\s");
-			
-			
-			if ( r[0].equals("v") ) {
-				int v;
-				float  fn;
-				//String s = reader.readLine();
-				//String[] r = s.split("\\s");
-				v = Integer.parseInt(r[1].trim());
-				
-				fn = Float.parseFloat(r[2].trim());
-				
-				
-				Node node = new Node();
-				
-				node.v = v;
-				
-				node.fn = fn;
-
-				curNode++;
-				return node;
-			}
-			if ( r[0].equals("e") ) {
-				//String s = reader.readLine();
-				//System.out.println(s);
-				//String[] r = s.split("\\s");
-				int v1 = -1;
-				int v2 = -1;
-				
-				System.out.println(s);
-				
-				if(r.length == 3) {
-					v1 = Integer.parseInt(r[1]);
-					v2 = Integer.parseInt(r[2]);
-					
-				} else {
-					System.err.println("Invalid input");
-					System.exit(0);
-				}
-
-				Arc arc = new Arc();
-				arc.v1 = v1;
-				arc.v2 = v2;
-				
-
-				curArc++;
-				return arc;
-			}
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-		return null;
-	}
-
-
 
 
 public void reset() {

@@ -43,7 +43,7 @@ public class ReebGraph implements Serializable {
 	public void addNode(int v, float fn) {
 		Node n = new Node();
 		n.fn = fn;
-		n.v = v;
+		n.id = v;
 		
 
 		an.add(n);
@@ -63,22 +63,21 @@ public class ReebGraph implements Serializable {
 	
 	public void addArc(int v1, int v2) {
 		Arc a = new Arc();
-		a.n1.v=v1;
+		a.v1=v1;
 		
-		a.n2.v = v2;
-		
-	
+		a.v2 = v2;
 
 		a.path = new ArrayList<Node>();
 		
 		
 		ar.add(a);
 		
-		an.get(a.n1.v).next.add(a);
-		an.get(a.n2.v).prev.add(a);
+		//an.get(a.v1).next.add(a);
+		//an.get(a.v2).prev.add(a);
 	}
 
 	
+	/*
 	public void removeDeg2Nodes() {
 		// remove degree 2 vertices
 		for(int i = 0;i < nodes.length;i ++) {
@@ -105,41 +104,9 @@ public class ReebGraph implements Serializable {
 		nodes[e1.n2.v].prev.add(e1);
 		
 	}
-
+*/
 	
-	public void outputReebGraph(PrintStream op) {
-		int nv = 0;
-		int ne = 0;
-		for(int i = 0;i < nodes.length;i ++) {
-			if(!nodes[i].removed) {
-				nv ++;
-			}
-		}
-		
-		for(int i = 0;i < arcs.length;i ++) {
-			if(!arcs[i].removed) {
-				ne ++;
-			}
-		}
-
-		op.println(nv + " " + ne);
-		for(int i = 0;i < nodes.length;i ++) {
-			if(!nodes[i].removed) {
-				op.println(nodes[i].v + " " + nodes[i].fn );
-			}
-		}
-		
-		for(int i = 0;i < arcs.length;i ++) {
-			if(!arcs[i].removed) {
-				op.print(nodes[arcs[i].n1.v].v + " " + nodes[arcs[i].n2.v].v + " ");
-				//for(int j = 0;j < arcs[i].comps.size();j ++) {
-					//p.print(arcs[i].comps.get(j) + " ");
-				//}
-				op.println();
-			}
-		}
-	}
-
+	
 	
 	
 	public void simplify2Merge() {

@@ -1,37 +1,9 @@
 /*
- *	Copyright (C) 2010 Visualization & Graphics Lab (VGL), Indian Institute of Science
+ *	Copyright (C) 2017 Visualization & Graphics Lab (VGL), USF
  *
- *	This file is part of libRG, a library to compute Reeb graphs.
- *
- *	libRG is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU Lesser General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
- *
- *	libRG is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU Lesser General Public License for more details.
- *
- *	You should have received a copy of the GNU Lesser General Public License
- *	along with libRG.  If not, see <http://www.gnu.org/licenses/>.
- *
- *	Author(s):	Harish Doraiswamy
- *	Version	 :	1.0
- *
- *	Modified by : -- 
- *	Date : --
- *	Changes  : --
  */
 package src.junyi.reebgraph.loader;
 
-import src.junyi.reebgraph.Simplex;
-
-//import meshloader.iisc.vgl.external.types.Edge;
-//import meshloader.iisc.vgl.external.types.Simplex;
-//import meshloader.iisc.vgl.external.types.Tetrahedron;
-//import meshloader.iisc.vgl.external.types.Triangle;
-//import meshloader.iisc.vgl.external.types.Vertex;
 
 /**
  * 
@@ -55,16 +27,7 @@ public interface MeshLoader {
 	 */
 	public int getRowCount(); 
 	
-	/**
-	 * This method is called until a null is returned, signifying that the mesh is loaded. 
-	 * Care should be taken to ensure that the vertices are returned before the edges, 
-	 * triangles or tetrahedra incident of that vertex.
-	 * 
-	 * @return	The next simplex of the input mesh. This can be either {@link Vertex}, {@link Edge}, {@link Triangle} or {@link Tetrahedron}.
-	 * 			<br/>
-	 * 			null after the last simplex is returned
-	 */
-	public Simplex getNextSimplex();
+	
 	
 	/**
 	 * This method is called resets the file pointer to the beginning of the input file. 
