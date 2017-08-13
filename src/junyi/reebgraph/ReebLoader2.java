@@ -31,6 +31,8 @@ public void setInputFile(String _inputReebGraph) {
 			
 			String[] r = s.split("\\s");
 			
+			getRg().setupReebGraph();
+			
 			while(s != null) {
 				r = s.split("\\s");
 			  if (r[0].trim().equals("v") == true) {			     
@@ -80,8 +82,10 @@ public void setInputFile(String _inputReebGraph) {
 					arc.v1 = v1;
 					arc.v2 = v2;
 					
-					vmap.get(arc.v1).addNeighbor(v2);
-					vmap.get(arc.v2).addNeighbor(v1);
+					getRg().vmap.get(v1).addNeighbor(vmap.get(v2));
+					getRg().vmap.get(v2).addNeighbor(vmap.get(v1));
+					
+					System.out.println(vmap.get(arc.v1).id());
 				    
 					s = reader.readLine();
 			       }
@@ -91,7 +95,13 @@ public void setInputFile(String _inputReebGraph) {
 			System.out.println("No. of Nodes : " + noNodes);
 			System.out.println("No. of Arcs : " + noArcs);
 			
+			
+			
          // for(Node nd : getRg().nodes )
+        	// getRg().printNodesLength();
+        	 
+        	 getRg().printNodes();
+        	 
 			//Node nd=new Node();
 			//nd.id=15;
 			//for(int i=0; i< noNodes;i++)

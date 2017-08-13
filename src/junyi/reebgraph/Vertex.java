@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public interface Vertex {
 	float value();
-	ArrayList<Integer> neighbors();
+	ArrayList<Node> neighbors();
 	int [] positions();
 	int id();
 }

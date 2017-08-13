@@ -2,14 +2,9 @@ package src.junyi.reebgraph;
 
 //import src.junyi.reebgraph.TriangleData.Vertex;
 
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 
 
@@ -30,6 +25,7 @@ public class ReebGraph implements Serializable {
 	ArrayList<Node> an = new ArrayList<Node>();
 	ArrayList<Arc> ar = new ArrayList<Arc>();
 	
+	ArrayList<Node> neighbors = new ArrayList<Node>();
 	
 	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
 	//int ct = 0;
@@ -76,17 +72,50 @@ public class ReebGraph implements Serializable {
 		//an.get(a.v2).prev.add(a);
 	}
 
-	
-	/*
-	public void removeDeg2Nodes() {
-		// remove degree 2 vertices
-		for(int i = 0;i < nodes.length;i ++) {
-			if(!nodes[i].removed && nodes[i].next.size() == 1 && nodes[i].prev.size() == 1) {
-				mergeNode(i);
-			}
-		}
+	public ArrayList<Node> neighbors() {
+		// TODO Auto-generated method stub
+		return neighbors;
 	}
 	
+	public void addNeighbor(Node n) {
+		// TODO Auto-generated method stub
+		neighbors.add(n);
+	}
+	
+	
+	 // let us print all the elements available in list
+	public void printNodes() {
+	   for(Node nd : an) {
+	   System.out.println("Node = " + nd.id()); 
+	   System.out.println(nd.neighbors().size());
+	     for(Node neighbor : nd.neighbors())
+	     {  
+	    	 System.out.println(neighbor.id()+ " ");	    	 
+	     }
+	  } 
+	}  
+	
+
+	
+	
+	
+	
+	   /*
+	public void printNodesLength() {
+		 			System.out.println("Neighbors of node "+ an);
+			}
+	
+	
+	
+	
+	public void printNodes() {
+		for(int i = 0;i < nodes.length;i++) {
+			System.out.println("Neighbors of node"+ nodes[i].id);
+			}		
+	}
+	
+	
+	/*
 	private void mergeNode(int i) {
 		Arc e1 = nodes[i].prev.get(0);
 		Arc e2 = nodes[i].next.get(0);

@@ -14,7 +14,7 @@ class Node implements Serializable, Vertex{
 		
 		float fn;
 		//VertexType type;
-		ArrayList<Integer> neighbors = new ArrayList<Integer>();
+		ArrayList<Node> neighbors = new ArrayList<Node>();
 		//ArrayList<Arc> next = new ArrayList<Arc>();
 		
 		public static class ComparatorValueAscending implements Comparator<Object> {
@@ -36,12 +36,12 @@ class Node implements Serializable, Vertex{
 			return fn;
 		}
 
-		public ArrayList<Integer> neighbors() {
+		public ArrayList<Node> neighbors() {
 			// TODO Auto-generated method stub
 			return neighbors;
 		}
 		
-		public void addNeighbor(int n) {
+		public void addNeighbor(Node n) {
 			// TODO Auto-generated method stub
 			neighbors.add(n);
 		}

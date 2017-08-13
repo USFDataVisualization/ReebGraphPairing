@@ -21,7 +21,7 @@ public void loadData(MeshLoader loader) {
 			
 			
 			pr("Finished reading data from file. Loading it......");
-			getRg().setupReebGraph();
+			//getRg().setupReebGraph();
 			pr("Successfully loaded Data");
 		} catch (Exception e) {
 			e.printStackTrace();
