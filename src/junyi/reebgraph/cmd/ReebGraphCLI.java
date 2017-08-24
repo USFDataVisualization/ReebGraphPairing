@@ -31,13 +31,18 @@ package src.junyi.reebgraph.cmd;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.PrintStream;
+import java.util.Comparator;
 import java.util.Properties;
 
 
+
+import src.junyi.reebgraph.Node;
 import src.junyi.reebgraph.ReebGraphData;
 import src.junyi.reebgraph.ReebLoader2;
 
+
+import usf.saav.mesh.Mesh;
+import usf.saav.topology.join.JoinTree;
 
 public class ReebGraphCLI {
 
@@ -78,6 +83,20 @@ public class ReebGraphCLI {
 			
 			loader.setInputFile(ip);
 			
+			
+			//Mesh cl=loader.getRg();
+		  //  Mesh cl;
+		    //cl.
+			//private Comparator<? super Node> comparator;
+			
+					
+				// Build a join tree.
+			//	JoinTree jt = new JoinTree( cl,  );
+			//	jt.run();
+
+				//head = processTree( jt.getRoot() );
+				
+				//calculatePersistence();
 			
 			
 			ReebGraphData rgData=new ReebGraphData();

@@ -1,9 +1,5 @@
 package src.junyi.reebgraph;
 
-
-
-
-//import src.junyi.reebgraph.Simplex;
 import src.junyi.reebgraph.loader.MeshLoader;
 
 public class ReebGraphData {
@@ -17,11 +13,9 @@ public void loadData(MeshLoader loader) {
 			int rowNo = loader.getRowCount();
 			
 			System.out.println(rowNo);
-			
-			
-			
+		
 			pr("Finished reading data from file. Loading it......");
-			//getRg().setupReebGraph();
+		
 			pr("Successfully loaded Data");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jPSimp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/alma"/>
+	<classpathentry kind="lib" path="D:/java/jPSimp/lib/saav-core-16.12.20.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

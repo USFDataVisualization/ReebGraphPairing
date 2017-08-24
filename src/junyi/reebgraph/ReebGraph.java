@@ -1,10 +1,18 @@
 package src.junyi.reebgraph;
 
-//import src.junyi.reebgraph.TriangleData.Vertex;
+//import usf.saav.topology.join;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+
+import usf.saav.topology.join.JoinTree;
+
+import usf.saav.mesh.Mesh;
+//import usf.saav.topology.join.JoinTree;
+//import usf.saav.topology.join.AugmentedJoinTree.AugmentedJoinTreeNode;
+//import usf.saav.topology.join.JoinTree.Node;
 
 
 
@@ -90,54 +98,12 @@ public class ReebGraph implements Serializable {
 	   System.out.println(nd.neighbors().size());
 	     for(Node neighbor : nd.neighbors())
 	     {  
-	    	 System.out.println(neighbor.id()+ " ");	    	 
+	    	 System.out.println(neighbor.id()+ " node ");	    	 
 	     }
 	  } 
 	}  
 	
 
-	
-	
-	
-	
-	   /*
-	public void printNodesLength() {
-		 			System.out.println("Neighbors of node "+ an);
-			}
-	
-	
-	
-	
-	public void printNodes() {
-		for(int i = 0;i < nodes.length;i++) {
-			System.out.println("Neighbors of node"+ nodes[i].id);
-			}		
-	}
-	
-	
-	/*
-	private void mergeNode(int i) {
-		Arc e1 = nodes[i].prev.get(0);
-		Arc e2 = nodes[i].next.get(0);
-		
-		nodes[i].removed = true;
-		e1.n2.v = e2.n2.v;
-		e2.removed = true;
-		if(e2.path.size() != 0) {
-			e2.path.remove(0);
-		}
-		e1.path.addAll(e2.path);
-		e1.segment.addAll(e2.segment);
-		
-		nodes[e1.n2.v].prev.remove(e2);
-		nodes[e1.n2.v].prev.add(e1);
-		
-	}
-*/
-	
-	
-	
-	
 	public void simplify2Merge() {
 		//sort nodes by fn
 		//pass for lowest to highest nodes
@@ -150,12 +116,29 @@ public class ReebGraph implements Serializable {
 		
 	}
 	
+	protected Mesh cl;
+	private Comparator<? super Node> comparator;
 	
-	
-   public void simplify2Split() {
+	//@Override
+	public void run() {
+		//print_info_message( "Building tree..." );
+
+		//JoinTree jt = new JoinTree();
+		// Build a join tree.
+		JoinTree jt = new JoinTree( cl, comparator );
+		jt.run();
+
+		//head = processTree( jt.getRoot() );
 		
+		//calculatePersistence();
 		
+		//for(int i = 0; i < size(); i++){
+		//	float per = getPersistence(i);
+		//	if( Float.isNaN(per) )
+		//		global_extreme = (AugmentedJoinTreeNode) getNode(i);
+		//}
 		
+		//print_info_message( "Building tree complete" );
 	}
 	
 }

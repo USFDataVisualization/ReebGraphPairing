@@ -116,7 +116,7 @@ public void setInputFile(String _inputReebGraph) {
 	}
 
 
-private ReebGraph getRg() {
+public ReebGraph getRg() {
 	// TODO Auto-generated method stub
 	return rg;
 }

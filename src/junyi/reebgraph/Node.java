@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 
 
-class Node implements Serializable, Vertex{
+public class Node implements Serializable, Vertex{
 		private static final long serialVersionUID = 1L;
 
 		int id;
