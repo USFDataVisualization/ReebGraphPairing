@@ -94,19 +94,11 @@ public void setInputFile(String _inputReebGraph) {
 
 			System.out.println("No. of Nodes : " + noNodes);
 			System.out.println("No. of Arcs : " + noArcs);
-			
-			
-			
-         // for(Node nd : getRg().nodes )
-        	// getRg().printNodesLength();
+				
         	 
         	 getRg().printNodes();
         	 
-			//Node nd=new Node();
-			//nd.id=15;
-			//for(int i=0; i< noNodes;i++)
-			   //System.out.println("Neighbors of node " + vmap.get(i).neighbors);
-
+			
 			
 
 		} catch (Exception e) {

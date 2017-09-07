@@ -4,15 +4,15 @@ package src.junyi.reebgraph;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 
-import usf.saav.topology.join.JoinTree;
-
+import src.junyi.reebgraph.cmd.paulReebMesh;
+import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
 import usf.saav.mesh.Mesh;
-//import usf.saav.topology.join.JoinTree;
-//import usf.saav.topology.join.AugmentedJoinTree.AugmentedJoinTreeNode;
-//import usf.saav.topology.join.JoinTree.Node;
+import usf.saav.topology.merge.MergeTree;
+import usf.saav.topology.split.SplitTree;
+
+
 
 
 
@@ -41,6 +41,10 @@ public class ReebGraph implements Serializable {
 	float min = Float.MAX_VALUE;
 	float max = -Float.MAX_VALUE;
 	float persistence;
+	
+	//paulReebMesh rb = new paulReebMesh();
+	
+	//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 	
 	
 	
@@ -102,41 +106,35 @@ public class ReebGraph implements Serializable {
 	     }
 	  } 
 	}  
-	
 
-	public void simplify2Merge() {
-		//sort nodes by fn
-		//pass for lowest to highest nodes
-		//find merge nodes 
-		// We first order the points for adding to the tree.
-			//	Queue< Node > tq = new PriorityQueue< Node >( size, comparator );
-			//	for(int i = 0; i < sf.getWidth(); i++ ){
-			//		tq.add( new Node( sf.get(i).value(), i ) );
-			//	}
-		
-	}
 	
-	protected Mesh cl;
-	private Comparator<? super Node> comparator;
-	
-	//@Override
 	public void run() {
-		//print_info_message( "Building tree..." );
-
-		//JoinTree jt = new JoinTree();
-		// Build a join tree.
-		JoinTree jt = new JoinTree( cl, comparator );
-		jt.run();
-
-		//head = processTree( jt.getRoot() );
 		
-		//calculatePersistence();
+		paulReebMesh rb = new paulReebMesh();
 		
-		//for(int i = 0; i < size(); i++){
-		//	float per = getPersistence(i);
-		//	if( Float.isNaN(per) )
-		//		global_extreme = (AugmentedJoinTreeNode) getNode(i);
-		//}
+		ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
+		
+		for(Node nd : an) {
+			 rv.add(rb.createVertex(nd.id())); 
+		 }
+		 
+		for(ReebVertex reebv : rv) 
+			 for(Node neighbor : vmap.get(reebv.id()).neighbors())
+		     {  
+				  reebv.addNeighbor((Mesh.Vertex)vmap.get(neighbor.id()));	    	 
+		     }
+			 
+		 }
+			   
+	
+		MergeTree mt = new MergeTree(rb);
+		mt.run();
+		System.out.println(mt.toDot());
+		
+		SplitTree st = new SplitTree(rb);
+		st.run();
+		System.out.println(st.toDot());
+
 		
 		//print_info_message( "Building tree complete" );
 	}

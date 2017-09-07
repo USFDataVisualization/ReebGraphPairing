@@ -6,7 +6,6 @@ import java.util.Comparator;
 
 
 
-
 public class Node implements Serializable, Vertex{
 		private static final long serialVersionUID = 1L;
 
@@ -17,7 +16,7 @@ public class Node implements Serializable, Vertex{
 		ArrayList<Node> neighbors = new ArrayList<Node>();
 		//ArrayList<Arc> next = new ArrayList<Arc>();
 		
-		public static class ComparatorValueAscending implements Comparator<Object> {
+	/*	public static class ComparatorValueAscending implements Comparator<Object> {
 			
 			public int compare(Object o1, Object o2) {
 				if( o1 instanceof Node && o2 instanceof Node ){
@@ -29,7 +28,7 @@ public class Node implements Serializable, Vertex{
 			}	
 		}
 
-		
+		*/
 
 		public float value() {
 			// TODO Auto-generated method stub

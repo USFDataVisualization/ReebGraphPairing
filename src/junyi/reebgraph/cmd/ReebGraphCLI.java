@@ -41,8 +41,7 @@ import src.junyi.reebgraph.ReebGraphData;
 import src.junyi.reebgraph.ReebLoader2;
 
 
-import usf.saav.mesh.Mesh;
-import usf.saav.topology.join.JoinTree;
+
 
 public class ReebGraphCLI {
 
@@ -82,27 +81,10 @@ public class ReebGraphCLI {
 			ReebLoader2 loader=new ReebLoader2();
 			
 			loader.setInputFile(ip);
-			
-			
-			//Mesh cl=loader.getRg();
-		  //  Mesh cl;
-		    //cl.
-			//private Comparator<? super Node> comparator;
-			
-					
-				// Build a join tree.
-			//	JoinTree jt = new JoinTree( cl,  );
-			//	jt.run();
-
-				//head = processTree( jt.getRoot() );
-				
-				//calculatePersistence();
-			
+		
 			
 			ReebGraphData rgData=new ReebGraphData();
 			rgData.loadData(loader);
-			
-			//PrintStream prStrm = new PrintStream(new File(op));
 			
 			
 			
