@@ -55,10 +55,10 @@ public class paulReebMesh extends Mesh {
 		
 		
 		public static void main( String [] args ){
-			
+			/*
 			paulReebMesh rb = new paulReebMesh();
 			
-			/*
+			
 			ReebVertex vA = rb.createVertex(1);
 			ReebVertex vB = rb.createVertex(2);
 			ReebVertex vC = rb.createVertex(3);

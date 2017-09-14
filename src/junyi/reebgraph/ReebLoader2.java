@@ -123,7 +123,7 @@ public void setInputFile(String _inputReebGraph) {
         	 
         	 getRg().printVertices();
         	 
-        	// getRg().run();
+        	 getRg().run();
 			
 
 		} catch (Exception e) {

@@ -120,7 +120,7 @@ public class ReebGraph implements Serializable {
 		     System.out.println(vmap.get(reebv.id()).neighbors().size());
 		     for(Node neighbor : vmap.get(reebv.id()).neighbors())
 		     {  
-		    	 System.out.println(neighbor.id()+ " node ");	    	 
+		    	 System.out.println(neighbor.id()+ " Vertex");	    	 
 		     }
 		  } 
 		} 
@@ -133,7 +133,7 @@ public class ReebGraph implements Serializable {
 		//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 		
 		for(Node nd : an) {
-			 rv.add(rb.createVertex(0,nd.id())); 
+			 rv.add(rb.createVertex(nd.id(), nd.value())); 
 		 }
 		 
 		for(ReebVertex reebv : rv) {
