@@ -48,8 +48,8 @@ public class paulReebMesh extends Mesh {
 			
 		}
 		
-		public ReebVertex createVertex( float val){ 
-			add( new ReebVertex( size(), val ) );
+		public ReebVertex createVertex( int id, float val){ 
+			add( new ReebVertex( id, val ) );
 			return (ReebVertex)lastElement();
 		}
 		
@@ -58,6 +58,7 @@ public class paulReebMesh extends Mesh {
 			
 			paulReebMesh rb = new paulReebMesh();
 			
+			/*
 			ReebVertex vA = rb.createVertex(1);
 			ReebVertex vB = rb.createVertex(2);
 			ReebVertex vC = rb.createVertex(3);
@@ -83,6 +84,7 @@ public class paulReebMesh extends Mesh {
 			SplitTree st = new SplitTree(rb);
 			st.run();
 			System.out.println(st.toDot());
+			*/
 			
 		}
 }

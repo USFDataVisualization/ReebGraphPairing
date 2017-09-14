@@ -54,7 +54,7 @@ public class ReebGraph implements Serializable {
 		n.fn = fn;
 		n.id = v;
 		
-		ReebVertex reebV= rb.createVertex(fn);
+		ReebVertex reebV= rb.createVertex(v,fn);
 
 		an.add(n);
 		vmap.put(v, n);
@@ -133,7 +133,7 @@ public class ReebGraph implements Serializable {
 		//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 		
 		for(Node nd : an) {
-			 rv.add(rb.createVertex(nd.id())); 
+			 rv.add(rb.createVertex(0,nd.id())); 
 		 }
 		 
 		for(ReebVertex reebv : rv) {

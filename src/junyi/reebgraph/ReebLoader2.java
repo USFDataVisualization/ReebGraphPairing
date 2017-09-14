@@ -61,7 +61,9 @@ public void setInputFile(String _inputReebGraph) {
 					
 					Node node = new Node();
 					
-					ReebVertex reebV= rb.createVertex(fn);
+					ReebVertex reebV= rb.createVertex(v, fn);
+					
+					System.out.println(v + " <==> " + reebV.id() );
 					
 					node.id = v;
 					
