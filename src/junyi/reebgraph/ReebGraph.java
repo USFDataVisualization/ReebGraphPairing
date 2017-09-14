@@ -36,15 +36,16 @@ public class ReebGraph implements Serializable {
 	ArrayList<Node> neighbors = new ArrayList<Node>();
 	
 	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
-	//int ct = 0;
-	//short ect = 0;
+	
+	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
+	
 	float min = Float.MAX_VALUE;
 	float max = -Float.MAX_VALUE;
 	float persistence;
 	
-	//paulReebMesh rb = new paulReebMesh();
+	paulReebMesh rb = new paulReebMesh();
 	
-	//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
+	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 	
 	
 	
@@ -53,9 +54,13 @@ public class ReebGraph implements Serializable {
 		n.fn = fn;
 		n.id = v;
 		
+		ReebVertex reebV= rb.createVertex(fn);
 
 		an.add(n);
 		vmap.put(v, n);
+		
+		rv.add(reebV);
+		rvmap.put(v, reebV);
 		
 		
 		max = Math.max(max, fn);
@@ -105,23 +110,36 @@ public class ReebGraph implements Serializable {
 	    	 System.out.println(neighbor.id()+ " node ");	    	 
 	     }
 	  } 
-	}  
-
+	} 
+	
+	
+	
+		public void printVertices() {
+		   for(ReebVertex reebv : rv) {
+		     System.out.println("Vertex = " + reebv.id()); 
+		     System.out.println(vmap.get(reebv.id()).neighbors().size());
+		     for(Node neighbor : vmap.get(reebv.id()).neighbors())
+		     {  
+		    	 System.out.println(neighbor.id()+ " node ");	    	 
+		     }
+		  } 
+		} 
+	
 	
 	public void run() {
 		
-		paulReebMesh rb = new paulReebMesh();
+		//paulReebMesh rb = new paulReebMesh();
 		
-		ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
+		//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 		
 		for(Node nd : an) {
 			 rv.add(rb.createVertex(nd.id())); 
 		 }
 		 
-		for(ReebVertex reebv : rv) 
-			 for(Node neighbor : vmap.get(reebv.id()).neighbors())
+		for(ReebVertex reebv : rv) {
+		    for(Node neighbor : vmap.get(reebv.id()).neighbors())
 		     {  
-				  reebv.addNeighbor((Mesh.Vertex)vmap.get(neighbor.id()));	    	 
+				  reebv.addNeighbor(rvmap.get(neighbor.id()));	    	 
 		     }
 			 
 		 }

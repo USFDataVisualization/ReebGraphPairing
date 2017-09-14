@@ -13,6 +13,7 @@ public void loadData(MeshLoader loader) {
 			int rowNo = loader.getRowCount();
 			
 			System.out.println(rowNo);
+			
 		
 			pr("Finished reading data from file. Loading it......");
 		

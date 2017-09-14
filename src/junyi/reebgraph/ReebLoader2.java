@@ -4,12 +4,18 @@ package src.junyi.reebgraph;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
 
 
 
+
+
+
+import src.junyi.reebgraph.cmd.paulReebMesh;
+import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
 import src.junyi.reebgraph.loader.MeshLoader;
 
 
@@ -21,7 +27,13 @@ public class ReebLoader2 implements MeshLoader{
 	
 	String inputReebGraph;
 	private ReebGraph rg=new ReebGraph();
+	
+	paulReebMesh rb = new paulReebMesh();
+	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
+	
 	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
+	
+	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
 	
 public void setInputFile(String _inputReebGraph) {
 	inputReebGraph = _inputReebGraph;
@@ -49,11 +61,17 @@ public void setInputFile(String _inputReebGraph) {
 					
 					Node node = new Node();
 					
+					ReebVertex reebV= rb.createVertex(fn);
+					
 					node.id = v;
 					
 					node.fn = fn;
 					
 					vmap.put(v, node);
+					
+					rvmap.put(v, reebV);
+					
+					//rvmap.put(v, node);
 					
 					getRg().addNode(node.id, node.fn);
 
@@ -85,6 +103,9 @@ public void setInputFile(String _inputReebGraph) {
 					getRg().vmap.get(v1).addNeighbor(vmap.get(v2));
 					getRg().vmap.get(v2).addNeighbor(vmap.get(v1));
 					
+					getRg().rvmap.get(v1).addNeighbor(rvmap.get(v2));
+					getRg().rvmap.get(v2).addNeighbor(rvmap.get(v1));
+					
 					System.out.println(vmap.get(arc.v1).id());
 				    
 					s = reader.readLine();
@@ -98,7 +119,9 @@ public void setInputFile(String _inputReebGraph) {
         	 
         	 getRg().printNodes();
         	 
-			
+        	 getRg().printVertices();
+        	 
+        	// getRg().run();
 			
 
 		} catch (Exception e) {
