@@ -126,11 +126,7 @@ public class ReebGraph implements Serializable {
 		} 
 	
 	
-	public void run() {
-		
-		//paulReebMesh rb = new paulReebMesh();
-		
-		//ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
+	public void run() {				
 		
 		for(Node nd : an) {
 			 rv.add(rb.createVertex(nd.id(), nd.value())); 
