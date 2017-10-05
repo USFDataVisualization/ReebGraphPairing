@@ -4,7 +4,14 @@ package src.junyi.reebgraph;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.sun.corba.se.impl.orbutil.graph.Graph;
 
 import src.junyi.reebgraph.cmd.paulReebMesh;
 import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
@@ -27,119 +34,76 @@ public class ReebGraph implements Serializable {
 	
 
 	
-	public Node [] nodes;
-	public Arc [] arcs;
+	
+	
 
-	ArrayList<Node> an = new ArrayList<Node>();
-	ArrayList<Arc> ar = new ArrayList<Arc>();
-	
-	ArrayList<Node> neighbors = new ArrayList<Node>();
-	
-	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
-	
-	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
-	
-	float min = Float.MAX_VALUE;
-	float max = -Float.MAX_VALUE;
-	float persistence;
-	
-	paulReebMesh rb = new paulReebMesh();
-	
-	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
-	
-	
-	
-	public void addNode(int v, float fn) {
-		Node n = new Node();
-		n.fn = fn;
-		n.id = v;
-		
-		ReebVertex reebV= rb.createVertex(v,fn);
-
-		an.add(n);
-		vmap.put(v, n);
-		
-		rv.add(reebV);
-		rvmap.put(v, reebV);
-		
-		
-		max = Math.max(max, fn);
-		min = Math.min(min, fn);
-	}
-	
-	
-	public void setupReebGraph() {
-		nodes = (Node[]) an.toArray(new Node[0]);
-		arcs = (Arc[]) ar.toArray(new Arc[0]);
-		persistence = max - min;
-	}
-	
-	public void addArc(int v1, int v2) {
-		Arc a = new Arc();
-		a.v1=v1;
-		
-		a.v2 = v2;
-
-		a.path = new ArrayList<Node>();
-		
-		
-		ar.add(a);
-		
-		//an.get(a.v1).next.add(a);
-		//an.get(a.v2).prev.add(a);
-	}
-
-	public ArrayList<Node> neighbors() {
-		// TODO Auto-generated method stub
-		return neighbors;
-	}
-	
-	public void addNeighbor(Node n) {
-		// TODO Auto-generated method stub
-		neighbors.add(n);
-	}
-	
-	
-	 // let us print all the elements available in list
-	public void printNodes() {
-	   for(Node nd : an) {
-	   System.out.println("Node = " + nd.id()); 
-	   System.out.println(nd.neighbors().size());
-	     for(Node neighbor : nd.neighbors())
-	     {  
-	    	 System.out.println(neighbor.id()+ " node ");	    	 
-	     }
-	  } 
-	} 
-	
-	
-	
+	/*
 		public void printVertices() {
 		   for(ReebVertex reebv : rv) {
 		     System.out.println("Vertex = " + reebv.id()); 
-		     System.out.println(vmap.get(reebv.id()).neighbors().size());
-		     for(Node neighbor : vmap.get(reebv.id()).neighbors())
+		     System.out.println(rvmap.get(reebv.id()).neighbors().length);
+		     for(int neighbor : rvmap.get(reebv.id()).neighbors())
 		     {  
-		    	 System.out.println(neighbor.id()+ " Vertex");	    	 
+		    	 System.out.println(neighbor+ " Vertex");	    	 
 		     }
 		  } 
 		} 
 	
-	
-	public void run() {				
+		/*
+		1) Initialize all vertices as not visited.
+		2) Do following for every vertex 'v'.
+		       (a) If 'v' is not visited before, call DFSUtil(v)
+		       (b) Print new line character
+
+		DFSUtil(v)
+		1) Mark 'v' as visited.
+		2) Print 'v'
+		3) Do following for every adjacent 'u' of 'v'.
+		     If 'u' is not visited, then recursively call DFSUtil(u)
+		     
 		
-		for(Node nd : an) {
-			 rv.add(rb.createVertex(nd.id(), nd.value())); 
-		 }
+		
+		
+		// depth first search from v
+	    private void dfs( ReebVertex v) {
+	    	v.setvisit();
+	    	System.out.print( v.id()+"| ");
+	    	
+			for(int neighbor : rvmap.get(v.id()).neighbors()){
+				if(rvmap.get(neighbor).visited()==false)
+					dfs(rvmap.get(neighbor));				
+			}	    		    	
+	    }
+
+	    public void componentPartitionDFS(){
+			//for any node, dfs marked, form a tree, 			
+			 for(ReebVertex reebv : rv) {
+			     if(reebv.visited()==false)			  
+			       {  
+			          dfs(reebv);	
+			          System.out.println( "next");
+			          break;
+			       }
+			  } 		
+		}
+	    
+	public void run() {	
+		
+		componentPartitionDFS();
+		
+		//for(Node nd : an) {
+		//	 rv.add(rb.createVertex(nd.id(), nd.value())); 
+		// }
 		 
 		for(ReebVertex reebv : rv) {
-		    for(Node neighbor : vmap.get(reebv.id()).neighbors())
+		    for(int neighbor : rvmap.get(reebv.id()).neighbors())
 		     {  
-				  reebv.addNeighbor(rvmap.get(neighbor.id()));	    	 
+				  reebv.addNeighbor(rvmap.get(neighbor));	    	 
 		     }
 			 
 		 }
-			   
+		
+		
 	
 		MergeTree mt = new MergeTree(rb);
 		mt.run();
@@ -153,4 +117,5 @@ public class ReebGraph implements Serializable {
 		//print_info_message( "Building tree complete" );
 	}
 	
+	*/
 }

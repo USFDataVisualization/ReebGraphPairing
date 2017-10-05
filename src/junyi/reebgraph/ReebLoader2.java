@@ -2,21 +2,18 @@ package src.junyi.reebgraph;
 //package usf.saav.topology.join;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
-
-
-
-
 
 
 
 import src.junyi.reebgraph.cmd.paulReebMesh;
 import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
 import src.junyi.reebgraph.loader.MeshLoader;
+import usf.saav.topology.merge.MergeTree;
+import usf.saav.topology.split.SplitTree;
 
 
 public class ReebLoader2 implements MeshLoader{
@@ -26,12 +23,14 @@ public class ReebLoader2 implements MeshLoader{
 	private int noArcs=0;
 	
 	String inputReebGraph;
-	private ReebGraph rg=new ReebGraph();
 	
-	paulReebMesh rb = new paulReebMesh();
-	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();
 	
-	public HashMap<Integer, Node> vmap = new HashMap<Integer, Node>();
+	private paulReebMesh reebMesh = new paulReebMesh();
+	private paulReebMesh reebMeshone = new paulReebMesh();
+	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();  //multiple component
+	
+	//ArrayList<ReebVertex> rb = new ArrayList<ReebVertex>(); //real one reeb graph
+	
 	
 	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
 	
@@ -42,9 +41,7 @@ public void setInputFile(String _inputReebGraph) {
 			String s = reader.readLine();
 			
 			String[] r = s.split("\\s");
-			
-			getRg().setupReebGraph();
-			
+		
 			while(s != null) {
 				r = s.split("\\s");
 			  if (r[0].trim().equals("v") == true) {			     
@@ -58,26 +55,15 @@ public void setInputFile(String _inputReebGraph) {
 					
 					fn = Float.parseFloat(r[2].trim());
 					
-					
-					Node node = new Node();
-					
-					ReebVertex reebV= rb.createVertex(v, fn);
+				
+					ReebVertex reebV= reebMesh.createVertex(v, fn);
 					
 					System.out.println(v + " <==> " + reebV.id() );
-					
-					node.id = v;
-					
-					node.fn = fn;
-					
-					vmap.put(v, node);
-					
+									
 					rvmap.put(v, reebV);
 					
-					//rvmap.put(v, node);
-					
-					getRg().addNode(node.id, node.fn);
-
-					
+					rv.add(reebV);
+																
 				   s = reader.readLine();
 				   
 				} 
@@ -97,34 +83,34 @@ public void setInputFile(String _inputReebGraph) {
 						System.err.println("Invalid input");
 						System.exit(0);
 					}
-
-					Arc arc = new Arc();
-					arc.v1 = v1;
-					arc.v2 = v2;
-					
-					getRg().vmap.get(v1).addNeighbor(vmap.get(v2));
-					getRg().vmap.get(v2).addNeighbor(vmap.get(v1));
-					
-					getRg().rvmap.get(v1).addNeighbor(rvmap.get(v2));
-					getRg().rvmap.get(v2).addNeighbor(rvmap.get(v1));
-					
-					System.out.println(vmap.get(arc.v1).id());
-				    
+			
+					rvmap.get(v1).addNeighbor(rvmap.get(v2));
+					rvmap.get(v2).addNeighbor(rvmap.get(v1));
+	
+					 System.out.println("neighbor# = " + rvmap.get(v1).neighbors().length); 
+				     System.out.println("neighbor# = " + rvmap.get(v2).neighbors().length);
 					s = reader.readLine();
 			       }
 			}
 			
 
+			System.out.println("Vertex =+++++++++++++++++++ "); 
+            printVertices();
+            /*
+            for(ReebVertex reebv : rv) {
+       	     System.out.println("Vertex = " + reebv.id()); 
+       	     System.out.println(rvmap.get(reebv.id()).neighbors().length);
+       	     for(int neighbor : rvmap.get(reebv.id()).neighbors())
+       	     {  
+       	    	 System.out.println(neighbor+ " Vertex");	    	 
+       	     }
+       	  } 
+        	*/ 
+       	run();
+
 			System.out.println("No. of Nodes : " + noNodes);
 			System.out.println("No. of Arcs : " + noArcs);
 				
-        	 
-        	 getRg().printNodes();
-        	 
-        	 getRg().printVertices();
-        	 
-        	 getRg().run();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,9 +119,85 @@ public void setInputFile(String _inputReebGraph) {
 	}
 
 
-public ReebGraph getRg() {
-	// TODO Auto-generated method stub
-	return rg;
+
+
+public void printVertices() {
+	   for(ReebVertex reebv : rv) {
+	     System.out.println("Vertex = " + reebv.id()); 
+	     System.out.println(rvmap.get(reebv.id()).neighbors().length);
+	     for(int neighbor : rvmap.get(reebv.id()).neighbors())
+	     {  
+	    	 System.out.println(neighbor+ " Vertex");	    	 
+	     }
+	  } 
+	} 
+
+	/*
+	1) Initialize all vertices as not visited.
+	2) Do following for every vertex 'v'.
+	       (a) If 'v' is not visited before, call DFSUtil(v)
+	       (b) Print new line character
+
+	DFSUtil(v)
+	1) Mark 'v' as visited.
+	2) Print 'v'
+	3) Do following for every adjacent 'u' of 'v'.
+	     If 'u' is not visited, then recursively call DFSUtil(u)
+	     */
+	
+	
+	
+	// depth first search from v
+ private void dfs( ReebVertex v) {
+ 	v.setvisit();
+ 	System.out.print( v.id()+"| ");
+ 	reebMeshone.createVertex(v.id(), v.value());
+		for(int neighbor : rvmap.get(v.id()).neighbors()){
+			if(rvmap.get(neighbor).visited()==false)
+				dfs(rvmap.get(neighbor));				
+		}	    		    	
+ }
+
+ public void componentPartitionDFS(){
+		//for any node, dfs marked, form a tree, 			
+		 for(ReebVertex reebv : rv) {
+		     if(reebv.visited()==false)			  
+		       {  
+		          dfs(reebv);	
+		          System.out.println( "next");
+		          //break;
+		       }
+		  } 		
+	}
+ 
+public void run() {	
+	
+	componentPartitionDFS();
+	/*
+	for(Node nd : an) {
+		 rv.add(rb.createVertex(nd.id(), nd.value())); 
+	 }
+	 
+	for(ReebVertex reebv : rv) {
+	    for(int neighbor : rvmap.get(reebv.id()).neighbors())
+	     {  
+			  reebv.addNeighbor(rvmap.get(neighbor));	    	 
+	     }
+		 
+	 }
+	*/
+	
+
+	MergeTree mt = new MergeTree(reebMeshone);
+	mt.run();
+	System.out.println(mt.toDot());
+	
+	SplitTree st = new SplitTree(reebMeshone);
+	st.run();
+	System.out.println(st.toDot());
+
+	
+	//print_info_message( "Building tree complete" );
 }
 
 

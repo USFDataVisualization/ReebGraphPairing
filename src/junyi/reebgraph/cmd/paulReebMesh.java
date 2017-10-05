@@ -1,11 +1,10 @@
 package src.junyi.reebgraph.cmd;
 
+
 import java.util.Arrays;
 
-import usf.saav.mesh.Mesh;
 
-import usf.saav.topology.merge.MergeTree;
-import usf.saav.topology.split.SplitTree;
+import usf.saav.mesh.Mesh;
 
 public class paulReebMesh extends Mesh {
 
@@ -15,10 +14,13 @@ public class paulReebMesh extends Mesh {
 		public class ReebVertex implements Mesh.Vertex {
 			float val;
 			int id;
+			boolean  b;
+			
 			int [] n = new int[]{};
 			public ReebVertex( int _id, float _val) {
 				val = _val;
 				id = _id;
+				b=false;
 			}
 
 			
@@ -43,6 +45,10 @@ public class paulReebMesh extends Mesh {
 			//@Override
 			public int id() { return id; }
 			
+			public boolean visited() { return b; }
+			
+			public void setvisit() {b=true;}
+			
 			//public Vertex getV(int id) { return id; }
 			
 			
@@ -53,38 +59,5 @@ public class paulReebMesh extends Mesh {
 			return (ReebVertex)lastElement();
 		}
 		
+}		
 		
-		public static void main( String [] args ){
-			/*
-			paulReebMesh rb = new paulReebMesh();
-			
-			
-			ReebVertex vA = rb.createVertex(1);
-			ReebVertex vB = rb.createVertex(2);
-			ReebVertex vC = rb.createVertex(3);
-			ReebVertex vD = rb.createVertex(4);
-			ReebVertex vE = rb.createVertex(5);
-			ReebVertex vF = rb.createVertex(6);
-			ReebVertex vG = rb.createVertex(7);
-			ReebVertex vH = rb.createVertex(8);
-			
-			vA.addNeighbor(vC); vC.addNeighbor(vA);
-			vB.addNeighbor(vD); vD.addNeighbor(vB);
-			vC.addNeighbor(vD); vD.addNeighbor(vC);
-			vC.addNeighbor(vE); vE.addNeighbor(vC);
-			vD.addNeighbor(vF); vF.addNeighbor(vD);
-			vE.addNeighbor(vF); vF.addNeighbor(vE);
-			vE.addNeighbor(vG); vG.addNeighbor(vE);
-			vF.addNeighbor(vH); vH.addNeighbor(vF);
-			
-			MergeTree mt = new MergeTree(rb);
-			mt.run();
-			System.out.println(mt.toDot());
-			
-			SplitTree st = new SplitTree(rb);
-			st.run();
-			System.out.println(st.toDot());
-			*/
-			
-		}
-}
