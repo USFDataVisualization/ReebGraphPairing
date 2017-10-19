@@ -165,7 +165,7 @@ public void printVertices() {
 		       {  
 		          dfs(reebv);	
 		          System.out.println( "next");
-		          //break;
+		          break;
 		       }
 		  } 		
 	}
