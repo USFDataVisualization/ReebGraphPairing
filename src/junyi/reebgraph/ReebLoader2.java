@@ -6,8 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-
+import java.util.Vector;
 
 import src.junyi.reebgraph.cmd.paulReebMesh;
 import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
@@ -26,7 +25,12 @@ public class ReebLoader2 implements MeshLoader{
 	
 	
 	private paulReebMesh reebMesh = new paulReebMesh();
-	private paulReebMesh reebMeshone = new paulReebMesh();
+	//private paulReebMesh reebMeshoneasdf = new paulReebMesh();
+	
+	// Connected components
+	ArrayList<paulReebMesh> conn_comp = new ArrayList<paulReebMesh>();  //multiple componen
+	
+	// Vertices
 	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();  //multiple component
 	
 	//ArrayList<ReebVertex> rb = new ArrayList<ReebVertex>(); //real one reeb graph
@@ -148,13 +152,14 @@ public void printVertices() {
 	
 	
 	// depth first search from v
- private void dfs( ReebVertex v) {
+ private void dfs( ReebVertex v, paulReebMesh reebMeshone ) {
  	v.setvisit();
- 	System.out.print( v.id()+"| ");
- 	reebMeshone.createVertex(v.id(), v.value());
+ 	//System.out.print( v.id()+"| ");
+ 	ReebVertex rv = reebMeshone.createVertex(v.id(), v.value(), rvmap.get(v.id()).neighbors() );
+ 	
 		for(int neighbor : rvmap.get(v.id()).neighbors()){
 			if(rvmap.get(neighbor).visited()==false)
-				dfs(rvmap.get(neighbor));				
+				dfs(rvmap.get(neighbor), reebMeshone );				
 		}	    		    	
  }
 
@@ -163,7 +168,9 @@ public void printVertices() {
 		 for(ReebVertex reebv : rv) {
 		     if(reebv.visited()==false)			  
 		       {  
-		          dfs(reebv);	
+		    	 paulReebMesh reebMeshone = new paulReebMesh();
+		    	 conn_comp.add(reebMeshone);
+		          dfs(reebv, reebMeshone );	
 		          System.out.println( "next");
 		          break;
 		       }
@@ -188,11 +195,18 @@ public void run() {
 	*/
 	
 
-	MergeTree mt = new MergeTree(reebMeshone);
+	int curCC = 0;
+	for( int i = 0; i < conn_comp.get(curCC).size(); i++ ){
+		System.out.println( "   " + conn_comp.get(curCC).get(i).id() + " " + conn_comp.get(curCC).get(i).value() );
+	}
+	System.out.println(conn_comp.get(curCC).toDot());
+	
+	
+	MergeTree mt = new MergeTree(conn_comp.get(0));
 	mt.run();
 	System.out.println(mt.toDot());
 	
-	SplitTree st = new SplitTree(reebMeshone);
+	SplitTree st = new SplitTree(conn_comp.get(0));
 	st.run();
 	System.out.println(st.toDot());
 

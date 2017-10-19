@@ -3,8 +3,9 @@ package src.junyi.reebgraph.cmd;
 
 import java.util.Arrays;
 
-
+import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
 import usf.saav.mesh.Mesh;
+import usf.saav.topology.join.JoinTreeNode;
 
 public class paulReebMesh extends Mesh {
 
@@ -48,6 +49,13 @@ public class paulReebMesh extends Mesh {
 			public boolean visited() { return b; }
 			
 			public void setvisit() {b=true;}
+
+
+
+			public void setNeighbors(int[] neighbors) {
+				n = neighbors.clone();
+				
+			}
 			
 			//public Vertex getV(int id) { return id; }
 			
@@ -58,6 +66,35 @@ public class paulReebMesh extends Mesh {
 			add( new ReebVertex( id, val ) );
 			return (ReebVertex)lastElement();
 		}
+
+		public ReebVertex createVertex(int id, float value, int[] neighbors) {
+			add( new ReebVertex( id, value ) );
+			((ReebVertex)lastElement()).setNeighbors(neighbors);
+			return (ReebVertex)lastElement();
+		}
+
+		
+		
+		public String toDot() {
+				StringBuffer dot_node = new StringBuffer( );
+				StringBuffer dot_edge = new StringBuffer( );
+				for(int i = 0; i < size(); i++){
+					ReebVertex curr = (ReebVertex)get(i);
+					
+					dot_node.append( "\t" + curr.id() + "[label=\"" + curr.id() + " (" + curr.value() + ")\"];\n");
+					
+					for( int n : curr.neighbors() ){
+						//ReebVertex nei = (ReebVertex)get(n);
+						for( int j = 0; j < size(); j++){
+							ReebVertex nei = (ReebVertex)get(j);
+							if( nei.id() == n && nei.value() < curr.value() )
+								dot_edge.append( "\t" + curr.id() + " -> " + n + "\n");
+						}
+					}					
+				}
+				return "Digraph{\n" + dot_node + dot_edge + "}"; 
+		}
+
 		
 }		
 		
