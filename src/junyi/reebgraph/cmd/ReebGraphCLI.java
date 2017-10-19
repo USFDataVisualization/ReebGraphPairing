@@ -87,7 +87,6 @@ public class ReebGraphCLI {
 			rgData.loadData(loader);
 			
 			
-			
 			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");
 		} catch (Exception e) {
