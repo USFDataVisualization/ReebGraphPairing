@@ -27,17 +27,13 @@
  */
 package src.junyi.reebgraph.cmd;
 
-
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Comparator;
+
 import java.util.Properties;
 
 
 
-import src.junyi.reebgraph.Node;
-import src.junyi.reebgraph.ReebGraphData;
 import src.junyi.reebgraph.ReebLoader2;
 
 
@@ -81,12 +77,7 @@ public class ReebGraphCLI {
 			ReebLoader2 loader=new ReebLoader2();
 			
 			loader.setInputFile(ip);
-		
-			
-			ReebGraphData rgData=new ReebGraphData();
-			rgData.loadData(loader);
-			
-			
+	
 			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");
 		} catch (Exception e) {

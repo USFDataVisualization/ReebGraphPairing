@@ -3,9 +3,9 @@ package src.junyi.reebgraph.cmd;
 
 import java.util.Arrays;
 
-import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
+
 import usf.saav.mesh.Mesh;
-import usf.saav.topology.join.JoinTreeNode;
+
 
 public class paulReebMesh extends Mesh {
 
@@ -56,10 +56,7 @@ public class paulReebMesh extends Mesh {
 				n = neighbors.clone();
 				
 			}
-			
-			//public Vertex getV(int id) { return id; }
-			
-			
+	
 		}
 		
 		public ReebVertex createVertex( int id, float val){ 
@@ -81,7 +78,7 @@ public class paulReebMesh extends Mesh {
 				for(int i = 0; i < size(); i++){
 					ReebVertex curr = (ReebVertex)get(i);
 					
-					dot_node.append( "\t" + curr.id() + "[label=\"" + curr.id() + " (" + curr.value() + ")\"];\n");
+					dot_node.append( "\t" +"index "+i +"  "+ curr.id() + "[label=\"" + curr.id() + " (" + curr.value() + ")\"];\n");
 					
 					for( int n : curr.neighbors() ){
 						//ReebVertex nei = (ReebVertex)get(n);
