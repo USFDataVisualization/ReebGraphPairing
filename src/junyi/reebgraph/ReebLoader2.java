@@ -58,7 +58,7 @@ public void setInputFile(String _inputReebGraph) {
 					fn = Float.parseFloat(r[2].trim());
 					
 				
-					ReebVertex reebV= reebMesh.createVertex(v, fn);
+					ReebVertex reebV= reebMesh.createVertex(v, fn, v);
 					
 					//System.out.println(v + " <==> " + reebV.id() );
 									
@@ -141,7 +141,7 @@ public void printVertices(ArrayList<ReebVertex> rv) {
  private void dfs( ReebVertex v, paulReebMesh reebMeshone ) {
  	v.setvisit();
  	//System.out.print( v.id()+"| ");
- 	ReebVertex rvOne = reebMeshone.createVertex(v.id(), v.value(), rvmap.get(v.id()).neighbors() );
+ 	ReebVertex rvOne = reebMeshone.createVertex(v.id(), v.value(), rvmap.get(v.id()).neighbors(), v.id() );
  	
 		for(int neighbor : rvmap.get(v.id()).neighbors()){
 			if(rvmap.get(neighbor).visited()==false)
@@ -167,10 +167,22 @@ public void printVertices(ArrayList<ReebVertex> rv) {
  public void equalizeIndex2Id(){
 	 
 	 int curCC=0;
+	 
+	 HashMap<Integer,Integer> numMap = new HashMap<Integer,Integer>();
 	  
 	 for( int i = 0; i < conn_comp.get(curCC).size(); i++ ){
-	     reebMeshIndex2Id.createVertex(i,conn_comp.get(curCC).get(i).value(), conn_comp.get(curCC).get(i).neighbors() );
-		}
+		 numMap.put( conn_comp.get(curCC).get(i).id(), i );
+	 }
+	
+	 for( int i = 0; i < conn_comp.get(curCC).size(); i++ ){
+		 int [] newN = conn_comp.get(curCC).get(i).neighbors().clone();
+		 float newV = conn_comp.get(curCC).get(i).value();
+		 int newGID = ((ReebVertex)conn_comp.get(curCC).get(i)).globalID();
+		 for(int j = 0; j < newN.length; j++ ){
+			 newN[j] = numMap.get(newN[j]);
+		 }
+	     reebMeshIndex2Id.createVertex(i,newV,newN,newGID );
+	}
 	 
 	 System.out.println(reebMeshIndex2Id.toDot());
  } 
@@ -191,11 +203,11 @@ public void run() {
 
 	
 	equalizeIndex2Id();
-/*	
+
 	MergeTree mt = new MergeTree(reebMeshIndex2Id );
 	mt.run();
 	System.out.println(mt.toDot());
-	
+/*	
 	SplitTree st = new SplitTree(reebMeshIndex2Id );
 	st.run();
 	System.out.println(st.toDot());
