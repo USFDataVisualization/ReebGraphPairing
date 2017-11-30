@@ -206,6 +206,11 @@ public void run() {
 
 	MergeTree mt = new MergeTree(reebMeshIndex2Id );
 	mt.run();
+	
+	for(int j=0; j<mt.size(); j++)
+		System.out.println( mt.getNode(j).getPosition());
+	
+	
 	System.out.println(mt.toDot());
 /*	
 	SplitTree st = new SplitTree(reebMeshIndex2Id );
@@ -214,6 +219,53 @@ public void run() {
 */
 	
 	//print_info_message( "Building tree complete" );
+}
+
+
+void dfsDir( ReebVertex v, paulReebMesh reebMeshone ) {
+ 	
+	v.setmst();
+ 	//System.out.print( v.id()+"| ");
+ 	 reebMeshone.createVertex(v.id(), v.value(), rvmap.get(v.id()).neighbors(), v.id() );
+ 	
+		for(int neighbor : rvmap.get(v.id()).neighbors()){
+			if(rvmap.get(neighbor).visited()==false && rvmap.get(neighbor).value()<v.value() )
+				dfsDir(rvmap.get(neighbor), reebMeshone );				
+		}	    		    	
+ }
+
+public void essential(ReebVertex reebv){		 
+	     if(reebv.essented()==true && isdownfork(reebv))			  
+	       {  
+	    	 paulReebMesh reebMeshmst = new paulReebMesh();
+	    	 //initiate all vertex to be mst null
+	    	 init();	    	 
+	          dfsDir(reebv, reebMeshmst );	
+	          System.out.println( "next");		          
+	       }
+	  //  for( each edge not in reebMeshmst)
+	     
+	     
+	     
+	  	
+}	
+	
+//if two neighbors are smaller, then down fork, otherwise, up fork
+public boolean isdownfork(ReebVertex v){
+	int n=0;
+	for(int neighbor : rvmap.get(v.id()).neighbors()) {
+		if(v.value()>rvmap.get(neighbor).value()) n++;		
+	}
+	if(n==2) return true;
+	else return false;
+	
+}
+
+//initiate all vertex to be mst null
+public void init(){
+	for(ReebVertex reebv : rv) {
+		reebv.unsetmst();		
+	}
 }
 
 

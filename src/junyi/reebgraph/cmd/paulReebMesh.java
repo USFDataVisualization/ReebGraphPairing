@@ -15,15 +15,19 @@ public class paulReebMesh extends Mesh {
 		public class ReebVertex implements Mesh.Vertex {
 			float val;
 			int id;
-			boolean  b;
+			boolean  dfs;
 			int gid;
+			boolean essent;
+			boolean  mst;
 			
 			int [] n = new int[]{};
 			public ReebVertex( int _id, float _val, int _gid ) {
 				val = _val;
 				id = _id;
 				gid = _gid;
-				b=false;
+				dfs=false;
+				essent=false;
+				mst=false;
 			}
 
 			public int globalID(){
@@ -50,11 +54,19 @@ public class paulReebMesh extends Mesh {
 			//@Override
 			public int id() { return id; }
 			
-			public boolean visited() { return b; }
+			public boolean visited() { return dfs; }
 			
-			public void setvisit() {b=true;}
+			public boolean essented() { return essent; }
+			
+			public boolean msted() { return mst; }
+			
+			public void setvisit() {dfs=true;}			
 
-
+			public void setess() {essent=true;}
+			
+			public void setmst() {mst=true;}
+			
+			public void unsetmst() {mst=false;}
 
 			public void setNeighbors(int[] neighbors) {
 				n = neighbors.clone();
