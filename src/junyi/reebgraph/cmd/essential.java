@@ -1,14 +1,14 @@
-package src.junyi.reebgraph.cmd;
+package junyi.reebgraph.cmd;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
+import junyi.reebgraph.cmd.ReebMesh;
 import usf.saav.mesh.Mesh;
 import usf.saav.topology.join.JoinTree.Node;
 
-public class essential extends paulReebMesh {
+public class essential extends ReebMesh {
 
  
 	
@@ -50,7 +50,7 @@ public class essential extends paulReebMesh {
 		
 		
 		
-	}
+	//}
 	
 	
 	

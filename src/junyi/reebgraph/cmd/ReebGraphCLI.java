@@ -25,7 +25,7 @@
  *	Date : --
  *	Changes  : --
  */
-package src.junyi.reebgraph.cmd;
+package junyi.reebgraph.cmd;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +34,7 @@ import java.util.Properties;
 
 
 
-import src.junyi.reebgraph.ReebLoader2;
+import junyi.reebgraph.ReebLoader2;
 
 
 

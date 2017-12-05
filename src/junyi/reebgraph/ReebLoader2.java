@@ -1,4 +1,4 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph;
 //package usf.saav.topology.join;
 
 import java.io.BufferedReader;
@@ -6,11 +6,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
-
-import src.junyi.reebgraph.cmd.paulReebMesh;
-import src.junyi.reebgraph.cmd.paulReebMesh.ReebVertex;
-import src.junyi.reebgraph.loader.MeshLoader;
+import junyi.reebgraph.cmd.ReebMesh;
+import junyi.reebgraph.cmd.ReebMesh.ReebVertex;
+import junyi.reebgraph.cmd.ReebSpanningTree;
+import junyi.reebgraph.loader.MeshLoader;
+import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.merge.MergeTree;
 import usf.saav.topology.split.SplitTree;
 
@@ -24,20 +26,23 @@ public class ReebLoader2 implements MeshLoader{
 	String inputReebGraph;
 	
 	
-	private paulReebMesh reebMesh = new paulReebMesh();
+	private ReebMesh reebMesh = new ReebMesh();
 	//private paulReebMesh reebMeshoneasdf = new paulReebMesh();
 	
 	// Connected components
-	ArrayList<paulReebMesh> conn_comp = new ArrayList<paulReebMesh>();  
+	ArrayList<ReebMesh> conn_comp = new ArrayList<ReebMesh>();  
 	
 	// all Vertices
 	ArrayList<ReebVertex> rv = new ArrayList<ReebVertex>();  //maybe multiple components
 	
 	
-	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
+//	public HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
 	
 public void setInputFile(String _inputReebGraph) {
 	inputReebGraph = _inputReebGraph;
+	
+	HashMap<Integer, ReebVertex> rvmap = new HashMap<Integer, ReebVertex>();
+
 		try {
 			reader = new BufferedReader(new FileReader(inputReebGraph));
 			String s = reader.readLine();
@@ -58,7 +63,7 @@ public void setInputFile(String _inputReebGraph) {
 					fn = Float.parseFloat(r[2].trim());
 					
 				
-					ReebVertex reebV= reebMesh.createVertex(v, fn, v);
+					ReebVertex reebV= reebMesh.createVertex(fn, v);
 					
 					//System.out.println(v + " <==> " + reebV.id() );
 									
@@ -115,6 +120,7 @@ public void setInputFile(String _inputReebGraph) {
 
 
 public void printVertices(ArrayList<ReebVertex> rv) {
+	/*
 	   for(ReebVertex reebv : rv) {
 	     System.out.println("Vertex = " + reebv.id()); 
 	     System.out.println(rvmap.get(reebv.id()).neighbors().length);
@@ -124,6 +130,8 @@ public void printVertices(ArrayList<ReebVertex> rv) {
 	     }
 	  } 
 	} 
+	*/
+}
 
 	/*
 	1) Initialize all vertices as not visited.
@@ -138,7 +146,9 @@ public void printVertices(ArrayList<ReebVertex> rv) {
 	     If 'u' is not visited, then recursively call DFSUtil(u)
 	     */	
 	// depth first search from v
- private void dfs( ReebVertex v, paulReebMesh reebMeshone ) {
+
+/*
+ private void dfs( ReebVertex v, ReebMesh reebMeshone ) {
  	v.setvisit();
  	//System.out.print( v.id()+"| ");
  	ReebVertex rvOne = reebMeshone.createVertex(v.id(), v.value(), rvmap.get(v.id()).neighbors(), v.id() );
@@ -154,7 +164,7 @@ public void printVertices(ArrayList<ReebVertex> rv) {
 		 for(ReebVertex reebv : rv) {
 		     if(reebv.visited()==false)			  
 		       {  
-		    	 paulReebMesh reebMeshone = new paulReebMesh();
+		    	 ReebMesh reebMeshone = new ReebMesh();
 		    	 conn_comp.add(reebMeshone);
 		          dfs(reebv, reebMeshone );	
 		          System.out.println( "next");		          
@@ -162,7 +172,7 @@ public void printVertices(ArrayList<ReebVertex> rv) {
 		  } 		
 	}
  
- paulReebMesh reebMeshIndex2Id = new paulReebMesh();
+ ReebMesh reebMeshIndex2Id = new ReebMesh();
  
  public void equalizeIndex2Id(){
 	 
@@ -186,43 +196,92 @@ public void printVertices(ArrayList<ReebVertex> rv) {
 	 
 	 System.out.println(reebMeshIndex2Id.toDot());
  } 
- 
+ */
  
 public void run() {	
 	
-	componentPartitionDFS();
+	//componentPartitionDFS();
 
 
-	int curCC = 0;
 	/*
 	 for( int i = 0; i < conn_comp.get(curCC).size(); i++ ){
 		System.out.println( "   " + conn_comp.get(curCC).get(i).id() + " " + conn_comp.get(curCC).get(i).value() );
 	}
 	*/
-	System.out.println(conn_comp.get(curCC).toDot());
+	//System.out.println(reebMesh.toDot());
 
 	
-	equalizeIndex2Id();
+	//equalizeIndex2Id();
 
-	MergeTree mt = new MergeTree(reebMeshIndex2Id );
+	
+	
+	MergeTree mt = new MergeTree(reebMesh );
 	mt.run();
 	
-	for(int j=0; j<mt.size(); j++)
-		System.out.println( mt.getNode(j).getPosition());
 	
 	
-	System.out.println(mt.toDot());
-/*	
-	SplitTree st = new SplitTree(reebMeshIndex2Id );
+	//for(int j=0; j<mt.size(); j++)
+		//System.out.println( mt.getNode(j).getPosition());
+	
+	for(int i = 0; i < mt.size(); i++ ){
+		TopoTreeNode x = mt.getNode(i);
+		//System.out.println(x.getPosition());
+		for(int j = 0; j < reebMesh.size(); j++ ){
+			System.out.println( reebMesh.get(j).id() + " " + x.getPosition() );
+			if( reebMesh.get(j).id() == x.getPosition() ){
+				((ReebVertex)reebMesh.get(j)).essent = false;
+			}
+		}
+	}
+	
+	//System.out.println(mt.toDot());
+	
+
+	SplitTree st = new SplitTree(reebMesh );
 	st.run();
-	System.out.println(st.toDot());
-*/
+	//System.out.println(st.toDot());
+	for(int i = 0; i < st.size(); i++ ){
+		TopoTreeNode x = st.getNode(i);
+		//System.out.println(x.getPosition());
+		for(int j = 0; j < reebMesh.size(); j++ ){
+			System.out.println( reebMesh.get(j).id() + " " + x.getPosition() );
+			if( reebMesh.get(j).id() == x.getPosition() ){
+				((ReebVertex)reebMesh.get(j)).essent = false;
+			}
+		}
+	}
+
+	
+	System.out.println(reebMesh.toDot());
+
+	System.out.println();
+//	System.out.println(reebMeshIndex2Id.toDot());
+	System.out.println();
+
+	
+	Vector<ReebVertex> ess = new Vector<ReebVertex>();
+	//System.out.println(x.getPosition());
+	for(int j = 0; j < reebMesh.size(); j++ ){
+		if( ((ReebVertex)reebMesh.get(j)).essent ){
+			ess.add( ((ReebVertex)reebMesh.get(j)) );
+		}
+	}
+	
+	
+	for( ReebVertex r : ess ){
+		System.out.println( r.toString() + "   " + r.isdownfork( ) );
+		
+		if( r.isdownfork() ) {
+			new ReebSpanningTree(r);
+		}
+	}
 	
 	//print_info_message( "Building tree complete" );
 }
 
 
-void dfsDir( ReebVertex v, paulReebMesh reebMeshone ) {
+/*
+void dfsDir( ReebVertex v, ReebMesh reebMeshone ) {
  	
 	v.setmst();
  	//System.out.print( v.id()+"| ");
@@ -237,7 +296,7 @@ void dfsDir( ReebVertex v, paulReebMesh reebMeshone ) {
 public void essential(ReebVertex reebv){		 
 	     if(reebv.essented()==true && isdownfork(reebv))			  
 	       {  
-	    	 paulReebMesh reebMeshmst = new paulReebMesh();
+	    	 ReebMesh reebMeshmst = new ReebMesh();
 	    	 //initiate all vertex to be mst null
 	    	 init();	    	 
 	          dfsDir(reebv, reebMeshmst );	
@@ -260,6 +319,8 @@ public boolean isdownfork(ReebVertex v){
 	else return false;
 	
 }
+
+*/
 
 //initiate all vertex to be mst null
 public void init(){

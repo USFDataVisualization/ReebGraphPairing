@@ -2,7 +2,7 @@
  *	Copyright (C) 2017 Visualization & Graphics Lab (VGL), USF
  *
  */
-package src.junyi.reebgraph.loader;
+package junyi.reebgraph.loader;
 
 
 /**
