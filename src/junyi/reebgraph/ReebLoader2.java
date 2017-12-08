@@ -12,6 +12,7 @@ import junyi.reebgraph.cmd.ReebMesh;
 import junyi.reebgraph.cmd.ReebMesh.ReebVertex;
 import junyi.reebgraph.cmd.ReebSpanningTree;
 import junyi.reebgraph.loader.MeshLoader;
+import usf.saav.mesh.Mesh.Vertex;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.merge.MergeTree;
 import usf.saav.topology.split.SplitTree;
@@ -223,34 +224,38 @@ public void run() {
 	//for(int j=0; j<mt.size(); j++)
 		//System.out.println( mt.getNode(j).getPosition());
 	
+	
+	TopoTreeNode gmax =null, gmin=null;
 	for(int i = 0; i < mt.size(); i++ ){
 		TopoTreeNode x = mt.getNode(i);
-		//System.out.println(x.getPosition());
-		for(int j = 0; j < reebMesh.size(); j++ ){
-			System.out.println( reebMesh.get(j).id() + " " + x.getPosition() );
-			if( reebMesh.get(j).id() == x.getPosition() ){
-				((ReebVertex)reebMesh.get(j)).essent = false;
-			}
+		reebMesh.getByID( x.getPosition() ).essent = false;
+		if( x.getPartner() == null ){ 
+			gmin = x; 
+		}
+		else{
+			reebMesh.getByID( x.getPosition() ).topoPartner = reebMesh.getByID( x.getPartner().getPosition() );
 		}
 	}
 	
-	//System.out.println(mt.toDot());
+	System.out.println(mt.toDot());
 	
 
 	SplitTree st = new SplitTree(reebMesh );
 	st.run();
-	//System.out.println(st.toDot());
+	System.out.println(st.toDot());
 	for(int i = 0; i < st.size(); i++ ){
 		TopoTreeNode x = st.getNode(i);
-		//System.out.println(x.getPosition());
-		for(int j = 0; j < reebMesh.size(); j++ ){
-			System.out.println( reebMesh.get(j).id() + " " + x.getPosition() );
-			if( reebMesh.get(j).id() == x.getPosition() ){
-				((ReebVertex)reebMesh.get(j)).essent = false;
-			}
+		reebMesh.getByID( x.getPosition() ).essent = false;
+		if( x.getPartner() == null ){ 
+			gmax = x; 
+		}
+		else{
+			System.out.println( x.getPosition() + " " + x.getPartner().getPosition() );
 		}
 	}
 
+	reebMesh.getByID( gmin.getPosition() ).topoPartner = reebMesh.getByID( gmax.getPosition() );
+	reebMesh.getByID( gmax.getPosition() ).topoPartner = reebMesh.getByID( gmin.getPosition() );
 	
 	System.out.println(reebMesh.toDot());
 
@@ -269,11 +274,22 @@ public void run() {
 	
 	
 	for( ReebVertex r : ess ){
-		System.out.println( r.toString() + "   " + r.isdownfork( ) );
 		
 		if( r.isdownfork() ) {
-			new ReebSpanningTree(r);
+			System.out.println();
+			System.out.print("DOWNFORK -- ");
+			System.out.println( r.toString() + "   " + r.isdownfork( ) );
+			ReebSpanningTree pairing = new ReebSpanningTree(reebMesh, r);
+			
+			pairing.getUpFork().topoPartner = pairing.getDownFork();
+			pairing.getDownFork().topoPartner = pairing.getUpFork();
+			System.out.println(pairing);
 		}
+	}
+	
+	for( Vertex v : reebMesh ){
+		ReebVertex rv = (ReebVertex)v;
+		System.out.println( rv.globalID() + ": [" + rv.getBirth() + ", " + rv.getDeath() + "]");
 	}
 	
 	//print_info_message( "Building tree complete" );
@@ -321,13 +337,15 @@ public boolean isdownfork(ReebVertex v){
 }
 
 */
-
+/*
 //initiate all vertex to be mst null
 public void init(){
 	for(ReebVertex reebv : rv) {
 		reebv.unsetmst();		
 	}
 }
+
+*/
 
 
 public int getRowCount() {

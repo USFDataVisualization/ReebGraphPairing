@@ -11,8 +11,11 @@ public class ReebSpanningTree {
 	Vector<STEdge> inST  = new Vector<STEdge>();
 	Vector<STEdge> outST = new Vector<STEdge>();
 	
-	public ReebSpanningTree( ReebVertex r ){
+	Cycle pairing = null;
+	
+	public ReebSpanningTree( ReebMesh reebMesh, ReebVertex r ){
 		
+		reebMesh.resetVisited();
 		
 		Queue<ReebVertex> proc = new LinkedList<ReebVertex>();
 		
@@ -20,103 +23,129 @@ public class ReebSpanningTree {
 			if( n.value() < r.value() ){
 				inST.add( new STEdge(r,n) );
 				proc.add(n);
-				n.mstVisted = true;
+				n.visted = true;
 			}
 		}
-		
-		
 		
 		while( !proc.isEmpty() ){
 			ReebVertex top = proc.poll();
 			for( ReebVertex n : top.neighbors ){
 				if( n.value() < top.value() ){
 					
-					if( n.mstVisted ){
+					if( n.visted ){
 						outST.add( new STEdge(top, n ) );
 					}
 					else {
 						inST.add( new STEdge( top, n ) );
 						proc.add(n);
-						n.mstVisted = true;
+						n.visted = true;
 					}
 				}				
 			}
 		}
 		
-		/*
-		System.out.println();
-		System.out.println("IN");
-		for( STEdge e : inST ){
-			System.out.println(e.v0.gid + " " + e.v1.gid );
-		}
-		
-		System.out.println();
-		System.out.println("OUT");
-		for( STEdge e : outST ){
-			System.out.println(e.v0.gid + " " + e.v1.gid );
-		}
-		System.out.println();
-		 */
 		
 		for( STEdge currE : outST ){
-			System.out.println( walkCycle(r,currE) );
+			Cycle curCycle = walkCycle(r,currE);
+			//if( curCycle == null ) continue; 
+			if( pairing == null || curCycle.upFork.value() > pairing.upFork.value() ){
+				pairing = curCycle;
+			}
 		}
-		
-		
+	
 	}
 	
+	public String toString(){
+		return pairing.toString();
+	}
 	
-	private boolean walkCycle( ReebVertex r, STEdge closure ){
+	public ReebVertex getUpFork(){ return pairing.upFork; }
+	public ReebVertex getDownFork(){ return pairing.downFork; }
+	
+	
+	private Cycle walkCycle( ReebVertex r, STEdge closure ){
 		@SuppressWarnings("unchecked")
 		Vector<STEdge> edges = (Vector<STEdge>)inST.clone();
 		edges.add(closure);
 		
-		System.out.println(r.gid);
-
+		for( STEdge e : edges){ e.visited = false; }
+		
+		Cycle cycle = new Cycle();
+		cycle.downFork = r;
+		
 		for( STEdge e : edges ){
 			if( e.visited ) continue; 
 			if( e.v0 == r ){
 				e.visited = true;
-				return walkStep( r, e.v1, edges );
+				if( walkStep( cycle, e.v1, edges ) ) {
+					cycle.path.add(r);
+					return cycle;
+				}
+				return null;
 			}
 			else if( e.v1 == r ){
 				e.visited = true;
-				return walkStep( r, e.v0, edges );
+				if( walkStep( cycle, e.v0, edges ) ){
+					cycle.path.add(r);
+					return cycle;
+				}
+				return null;
 			}
 		}
 		
 		
-		return false;
+		return null;
 	
 	}
 	
-	private boolean walkStep( ReebVertex rootVert, ReebVertex currVert, Vector<STEdge> edges ){
-		if( currVert == rootVert ) return true;
+	private boolean walkStep( Cycle cycle, ReebVertex currVert, Vector<STEdge> edges ){
+		if( currVert == cycle.downFork ){
+			cycle.path.add(currVert);
+			return true;
+		}
 		
 		for( STEdge e : edges ){
 			if( e.visited ) continue;
 			if( e.v0 == currVert ){
 				e.visited = true;
-				if( walkStep( rootVert, e.v1, edges ) ){
-					System.out.println(currVert.gid + " " + ( currVert.isupfork()?"upfork":"") + " " + (currVert.essent?"essential":"") );
+				if( walkStep( cycle, e.v1, edges ) ){
+					if( currVert.isupfork() && currVert.essent) cycle.setUpFork( currVert );
+					cycle.path.add( currVert );
 					return true;
 				}
-				//e.visited = false;
 			}
 			else if( e.v1 == currVert ){
 				e.visited = true;
-				if( walkStep( rootVert, e.v0, edges ) ){
-					System.out.println(currVert.gid + " " + ( currVert.isupfork()?"upfork":"") + " " + (currVert.essent?"essential":"") );
+				if( walkStep( cycle, e.v0, edges ) ){
+					if( currVert.isupfork() && currVert.essent) cycle.setUpFork( currVert );
+					cycle.path.add( currVert );
 					return true;
 				}
-				//e.visited = false;
 			}
 		}
-
 		return false;
-		
-		
 	}
+	
+	
+	class Cycle {
+		Vector<ReebVertex> path = new Vector<ReebVertex>();
+		ReebVertex downFork;
+		ReebVertex upFork;
+		
+		public String toString(){
+			String ret = downFork + " || " + upFork + " --> ";
+			for(ReebVertex v : path ){
+				ret += v.gid + " ";
+			}
+			return ret;
+		}
+
+		public void setUpFork(ReebVertex currVert) {
+			if( upFork == null  || upFork.value() > currVert.value() )
+				upFork = currVert;
+		}
+	}
+	
 	
 	class STEdge {
 		
