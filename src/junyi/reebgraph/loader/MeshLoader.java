@@ -25,14 +25,14 @@ public interface MeshLoader {
 	 * 
 	 * @return	The number of vertices in the input. Should be a positive number
 	 */
-	public int getRowCount(); 
+	//public int getRowCount(); 
 	
 	
 	
 	/**
 	 * This method is called resets the file pointer to the beginning of the input file. 
 	 */
-	public void reset(); 
+	//public void reset(); 
 	
 	
 }

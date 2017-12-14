@@ -4,6 +4,7 @@ package junyi.reebgraph.cmd;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Vector;
 
 import junyi.reebgraph.cmd.ReebMesh.ReebVertex;
 import usf.saav.mesh.Mesh;
@@ -60,8 +61,10 @@ public class ReebMesh extends Mesh {
 		boolean  visted;
 		public ReebVertex topoPartner;
 
+		public Vector<ReebVertex> in0=null;
+		public Vector<ReebVertex> in1=null;
 
-		ArrayList<ReebVertex> neighbors = new ArrayList<ReebVertex>();
+		public ArrayList<ReebVertex> neighbors = new ArrayList<ReebVertex>();
 
 		public ReebVertex( int _id, float _val, int _gid ) {
 			val = _val;
@@ -73,11 +76,14 @@ public class ReebMesh extends Mesh {
 		}
 
 		public String toString(){
+			return globalID() + "/" + id + " (" + value() + ")";
+			/*
 			String ret = globalID() + "/" + id + " (" + value() + ")" + (essent?" e":"");
 			for( ReebVertex n : neighbors ){
 				ret += " " + n.globalID();
 			}
 			return ret;
+			*/
 		}
 
 
@@ -147,6 +153,22 @@ public class ReebMesh extends Mesh {
 		}
 
 		@Override public float getPersistence() { return getDeath()-getBirth(); }
+
+		public boolean islocalmax() {
+			int cnt=0;
+			for( ReebVertex n : neighbors ) {
+				if(value()<n.value()) cnt++;		
+			}
+			return (cnt==0);
+		}
+
+		public boolean islocalmin() {
+			int cnt=0;
+			for( ReebVertex n : neighbors ) {
+				if(value()>n.value()) cnt++;		
+			}
+			return (cnt==0);
+		}
 
 	}
 
