@@ -4,7 +4,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
 
-import junyi.reebgraph.cmd.ReebMesh.ReebVertex;
+import junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
+import usf.saav.topology.TopoTreeNode.NodeType;
 
 public class ReebSpanningTree {
 
@@ -13,13 +14,13 @@ public class ReebSpanningTree {
 	
 	Cycle pairing = null;
 	
-	public ReebSpanningTree( ReebMesh reebMesh, ReebVertex r ){
+	public ReebSpanningTree( ReebGraph reebMesh, ReebGraphVertex r ){
 		
 		reebMesh.resetVisited();
 		
-		Queue<ReebVertex> proc = new LinkedList<ReebVertex>();
+		Queue<ReebGraphVertex> proc = new LinkedList<ReebGraphVertex>();
 		
-		for( ReebVertex n : r.neighbors ){
+		for( ReebGraphVertex n : r.neighbors ){
 			if( n.value() < r.value() ){
 				inST.add( new STEdge(r,n) );
 				proc.add(n);
@@ -28,8 +29,8 @@ public class ReebSpanningTree {
 		}
 		
 		while( !proc.isEmpty() ){
-			ReebVertex top = proc.poll();
-			for( ReebVertex n : top.neighbors ){
+			ReebGraphVertex top = proc.poll();
+			for( ReebGraphVertex n : top.neighbors ){
 				if( n.value() < top.value() ){
 					
 					if( n.visted ){
@@ -59,11 +60,11 @@ public class ReebSpanningTree {
 		return pairing.toString();
 	}
 	
-	public ReebVertex getUpFork(){ return pairing.upFork; }
-	public ReebVertex getDownFork(){ return pairing.downFork; }
+	public ReebGraphVertex getUpFork(){ return pairing.upFork; }
+	public ReebGraphVertex getDownFork(){ return pairing.downFork; }
 	
 	
-	private Cycle walkCycle( ReebVertex r, STEdge closure ){
+	private Cycle walkCycle( ReebGraphVertex r, STEdge closure ){
 		@SuppressWarnings("unchecked")
 		Vector<STEdge> edges = (Vector<STEdge>)inST.clone();
 		edges.add(closure);
@@ -98,7 +99,7 @@ public class ReebSpanningTree {
 	
 	}
 	
-	private boolean walkStep( Cycle cycle, ReebVertex currVert, Vector<STEdge> edges ){
+	private boolean walkStep( Cycle cycle, ReebGraphVertex currVert, Vector<STEdge> edges ){
 		if( currVert == cycle.downFork ){
 			cycle.path.add(currVert);
 			return true;
@@ -109,7 +110,7 @@ public class ReebSpanningTree {
 			if( e.v0 == currVert ){
 				e.visited = true;
 				if( walkStep( cycle, e.v1, edges ) ){
-					if( currVert.isupfork() && currVert.essent) cycle.setUpFork( currVert );
+					if( currVert.getType() == NodeType.ESS_UP_FORK ) cycle.setUpFork( currVert );
 					cycle.path.add( currVert );
 					return true;
 				}
@@ -117,7 +118,7 @@ public class ReebSpanningTree {
 			else if( e.v1 == currVert ){
 				e.visited = true;
 				if( walkStep( cycle, e.v0, edges ) ){
-					if( currVert.isupfork() && currVert.essent) cycle.setUpFork( currVert );
+					if( currVert.getType() == NodeType.ESS_UP_FORK ) cycle.setUpFork( currVert );
 					cycle.path.add( currVert );
 					return true;
 				}
@@ -128,19 +129,19 @@ public class ReebSpanningTree {
 	
 	
 	class Cycle {
-		Vector<ReebVertex> path = new Vector<ReebVertex>();
-		ReebVertex downFork;
-		ReebVertex upFork;
+		Vector<ReebGraphVertex> path = new Vector<ReebGraphVertex>();
+		ReebGraphVertex downFork;
+		ReebGraphVertex upFork;
 		
 		public String toString(){
 			String ret = downFork + " || " + upFork + " --> ";
-			for(ReebVertex v : path ){
+			for(ReebGraphVertex v : path ){
 				ret += v.gid + " ";
 			}
 			return ret;
 		}
 
-		public void setUpFork(ReebVertex currVert) {
+		public void setUpFork(ReebGraphVertex currVert) {
 			if( upFork == null  || upFork.value() > currVert.value() )
 				upFork = currVert;
 		}
@@ -150,9 +151,9 @@ public class ReebSpanningTree {
 	class STEdge {
 		
 		boolean visited = false;
-		ReebVertex v0,v1;
+		ReebGraphVertex v0,v1;
 		
-		STEdge( ReebVertex _v0, ReebVertex _v1 ){
+		STEdge( ReebGraphVertex _v0, ReebGraphVertex _v1 ){
 			v0 = _v0;
 			v1 = _v1;
 		}

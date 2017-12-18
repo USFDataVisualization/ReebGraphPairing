@@ -32,9 +32,11 @@ import java.io.FileInputStream;
 
 import java.util.Properties;
 
-
-
-import junyi.reebgraph.ReebLoader2;
+import junyi.reebgraph.ConnectedComponents;
+import junyi.reebgraph.ReebGraphLoader;
+import junyi.reebgraph.ReebGraphPairing;
+import junyi.reebgraph.ReebGraphPairingMerging;
+import junyi.reebgraph.ReebGraphRegularization;
 
 
 
@@ -74,9 +76,24 @@ public class ReebGraphCLI {
 			
 			st = System.currentTimeMillis();
 			
-			ReebLoader2 loader=new ReebLoader2();
 			
-			loader.setInputFile(ip);
+			System.out.println("CONVENTIONAL");
+			ReebGraph rm1 = new ReebGraphLoader(ip);
+			System.out.println(rm1.toDot());
+			ReebGraphRegularization.regularize(rm1);
+			System.out.println(rm1.toDot());
+			for( ReebGraph r : ConnectedComponents.extractConnectedComponents( rm1 ) ) {
+				
+				new ReebGraphPairing( r );
+			}
+			rm1.printPD();
+
+			System.out.println();
+			System.out.println("OUR APPROACH");
+			ReebGraph rm2 = new ReebGraphLoader(ip);
+			new ReebGraphPairingMerging( rm2 );
+			rm2.printPD();
+			
 	
 			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");
