@@ -91,6 +91,7 @@ public class ReebGraphCLI {
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);
+			ReebGraphRegularization.regularize(rm2);
 			new ReebGraphPairingMerging( rm2 );
 			rm2.printPD();
 			
