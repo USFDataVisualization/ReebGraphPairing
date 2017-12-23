@@ -1,4 +1,4 @@
-package junyi.reebgraph.cmd;
+package src.junyi.reebgraph.cmd;
 
 
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
-import junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
+import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
 import usf.saav.mesh.Mesh;
 import usf.saav.mesh.Mesh.Vertex;
 import usf.saav.topology.TopoTreeNode;
@@ -129,7 +129,7 @@ public class ReebGraph extends Mesh {
 		}
 
 
-		@Override
+		
 		public NodeType getType() {
 			int cntLess=0;
 			int cntMore=0;
@@ -152,29 +152,29 @@ public class ReebGraph extends Mesh {
 			neighbors.add(v);
 		}
 
-		@Override public float value() { return val; }
+		public float value() { return val; }
 
-		@Override public int[] positions() { return null; }
+		 public int[] positions() { return null; }
 		
-		@Override public int id() { return id; }
+		 public int id() { return id; }
 		
-		@Override public TopoTreeNode getPartner() { return topoPartner; }
+		 public TopoTreeNode getPartner() { return topoPartner; }
 
-		@Override public int getPosition() { return gid; }
+		 public int getPosition() { return gid; }
 
-		@Override public float getBirth() {
+		 public float getBirth() {
 			if( topoPartner == null ) return value();
 			if( essent ) return Math.max( value(), topoPartner.value() ); 
 			return Math.min( value(), topoPartner.value() ); 
 		}
 
-		@Override public float getDeath() { 
+		 public float getDeath() { 
 			if( topoPartner == null ) return Float.POSITIVE_INFINITY;
 			if( essent ) return Math.min( value(), topoPartner.value() );
 			return Math.max( value(), topoPartner.value() ); 
 		}
 
-		@Override public float getPersistence() { return getDeath()-getBirth(); }
+		 public float getPersistence() { return getDeath()-getBirth(); }
 
 	}
 

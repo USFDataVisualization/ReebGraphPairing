@@ -25,18 +25,17 @@
  *	Date : --
  *	Changes  : --
  */
-package junyi.reebgraph.cmd;
+package src.junyi.reebgraph.cmd;
 
 import java.io.File;
 import java.io.FileInputStream;
-
 import java.util.Properties;
 
-import junyi.reebgraph.ConnectedComponents;
-import junyi.reebgraph.ReebGraphLoader;
-import junyi.reebgraph.ReebGraphPairing;
-import junyi.reebgraph.ReebGraphPairingMerging;
-import junyi.reebgraph.ReebGraphRegularization;
+import src.junyi.reebgraph.ConnectedComponents;
+import src.junyi.reebgraph.ReebGraphLoader;
+import src.junyi.reebgraph.ReebGraphPairing;
+import src.junyi.reebgraph.ReebGraphPairingMerging;
+import src.junyi.reebgraph.ReebGraphRegularization;
 
 
 
@@ -80,6 +79,7 @@ public class ReebGraphCLI {
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
 			System.out.println(rm1.toDot());
+			/*
 			ReebGraphRegularization.regularize(rm1);
 			System.out.println(rm1.toDot());
 			for( ReebGraph r : ConnectedComponents.extractConnectedComponents( rm1 ) ) {
@@ -87,7 +87,7 @@ public class ReebGraphCLI {
 				new ReebGraphPairing( r );
 			}
 			rm1.printPD();
-
+*/
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);

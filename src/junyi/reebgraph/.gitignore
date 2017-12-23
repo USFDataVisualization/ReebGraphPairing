@@ -6,3 +6,9 @@
 /ReebLoader2.class
 /Simplex.class
 /Vertex.class
+/ConnectedComponents.class
+/ReebGraphLoader.class
+/ReebGraphPairing.class
+/ReebGraphPairingMerging.class
+/ReebGraphRegularization.class
+/ReebGraphPairingMerging$1.class
