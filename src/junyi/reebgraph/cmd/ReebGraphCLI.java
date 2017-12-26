@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import junyi.reebgraph.ConnectedComponents;
+import junyi.reebgraph.ConventionalPairing;
 import junyi.reebgraph.MergePairing;
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.Regularization;
@@ -79,15 +81,15 @@ public class ReebGraphCLI {
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
 			System.out.println(rm1.toDot());
-			/*
-			ReebGraphRegularization.regularize(rm1);
+			
+			Regularization.regularize(rm1);
 			System.out.println(rm1.toDot());
 			for( ReebGraph r : ConnectedComponents.extractConnectedComponents( rm1 ) ) {
 				
-				new ReebGraphPairing( r );
+				new ConventionalPairing( r );
 			}
 			rm1.printPD();
-*/
+
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);

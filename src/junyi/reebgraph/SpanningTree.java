@@ -48,7 +48,7 @@ public class SpanningTree {
 		
 		for( STEdge currE : outST ){
 			Cycle curCycle = walkCycle(r,currE);
-			//if( curCycle == null ) continue; 
+			if( curCycle == null ) continue; 
 			if( pairing == null || curCycle.upFork.value() > pairing.upFork.value() ){
 				pairing = curCycle;
 			}
