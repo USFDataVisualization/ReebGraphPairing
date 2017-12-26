@@ -73,6 +73,8 @@ public class ReebGraphCLI {
 			
 			st = System.currentTimeMillis();
 			
+			System.out.println( ip );
+			
 			
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);

@@ -99,6 +99,15 @@ public class MergePairing {
 			}
 		}
 		
+		for( ; i < v.in0.size(); i++ ) {
+			if( v.in0.get(i).getType() == NodeType.LEAF_MIN ) maxMin = v.in0.get(i);
+		}
+
+		for( ; j < v.in1.size(); j++ ) {
+			if( v.in1.get(j).getType() == NodeType.LEAF_MIN ) maxMin = v.in1.get(j);
+		}
+		
+		
 		ReebGraphVertex partner;
 		
 		if( maxPair != null ) { 
