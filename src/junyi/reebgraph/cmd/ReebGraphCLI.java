@@ -25,17 +25,15 @@
  *	Date : --
  *	Changes  : --
  */
-package src.junyi.reebgraph.cmd;
+package junyi.reebgraph.cmd;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import src.junyi.reebgraph.ConnectedComponents;
-import src.junyi.reebgraph.ReebGraphLoader;
-import src.junyi.reebgraph.ReebGraphPairing;
-import src.junyi.reebgraph.ReebGraphPairingMerging;
-import src.junyi.reebgraph.ReebGraphRegularization;
+import junyi.reebgraph.MergePairing;
+import junyi.reebgraph.ReebGraph;
+import junyi.reebgraph.Regularization;
 
 
 
@@ -91,8 +89,8 @@ public class ReebGraphCLI {
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);
-			ReebGraphRegularization.regularize(rm2);
-			new ReebGraphPairingMerging( rm2 );
+			Regularization.regularize(rm2);
+			new MergePairing( rm2 );
 			rm2.printPD();
 			
 	

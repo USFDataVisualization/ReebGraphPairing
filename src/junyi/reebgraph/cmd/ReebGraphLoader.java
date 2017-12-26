@@ -1,4 +1,4 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph.cmd;
 //package usf.saav.topology.join;
 
 import java.io.BufferedReader;
@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-import src.junyi.reebgraph.cmd.ReebGraph;
+import junyi.reebgraph.ReebGraph;
 
 
 public class ReebGraphLoader extends ReebGraph {

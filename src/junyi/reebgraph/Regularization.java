@@ -1,12 +1,11 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph;
 
 import java.util.ArrayList;
 
-import src.junyi.reebgraph.cmd.ReebGraph;
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
-import usf.saav.mesh.Mesh.Vertex;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 
-public class ReebGraphRegularization {
+
+public class Regularization {
 
 	public static float EPSILON = 0.001f;
 	public static int   GLOBAL_ID_OFFSET = 10000;

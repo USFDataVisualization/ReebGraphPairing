@@ -1,35 +1,34 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph;
 
 import java.util.Vector;
 
-import src.junyi.reebgraph.cmd.ReebGraph;
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.mesh.Mesh.Vertex;
 
 public class ConnectedComponents {
 
 	public static Vector<ReebGraph> extractConnectedComponents( ReebGraph base ){
+		
+		base.clearVisited();
+		
 		Vector<ReebGraph> ret = new Vector<ReebGraph>();
-		
-		
 		for( Vertex v : base ) {
 			ReebGraphVertex rv = (ReebGraphVertex)v;
-			rv.visted = false;
-		}
-		
-		for( Vertex v : base ) {
-			ReebGraphVertex rv = (ReebGraphVertex)v;
-			if( rv.visted ) continue;
-			
-			ReebGraph newGraph = new ReebGraph();
-			dfs( newGraph, rv );
-			newGraph.resetInternalIDs();
-			ret.add(newGraph);
+			if( !rv.visted ){
+				ret.add( findConnectedComponent(rv) );
+			}
 		}
 				
 		return ret;
 	}
-	
+
+	private static ReebGraph findConnectedComponent( ReebGraphVertex vertex ) {
+		ReebGraph newGraph = new ReebGraph();
+		dfs( newGraph, vertex );
+		newGraph.resetInternalIDs();
+		return newGraph;
+	}
+
 	private static void dfs( ReebGraph newGraph, ReebGraphVertex curVertex ) {
 		curVertex.visted = true;
 		newGraph.add(curVertex);

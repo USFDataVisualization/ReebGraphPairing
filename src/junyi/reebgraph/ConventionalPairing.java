@@ -1,20 +1,17 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph;
 
 import java.util.Vector;
 
-import src.junyi.reebgraph.cmd.ReebGraph;
-import src.junyi.reebgraph.cmd.ReebSpanningTree;
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
-import usf.saav.mesh.Mesh.Vertex;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.merge.MergeTree;
 import usf.saav.topology.split.SplitTree;
 
-public class ReebGraphPairing {
+public class ConventionalPairing {
 
 	
-	public ReebGraphPairing( ReebGraph reebMesh ) {
+	public ConventionalPairing( ReebGraph reebMesh ) {
 		
 
 		MergeTree mt = new MergeTree( reebMesh );
@@ -76,7 +73,7 @@ public class ReebGraphPairing {
 				//System.out.println();
 				//System.out.print("DOWNFORK -- ");
 				//System.out.println( r.toString() + "   " + r.getType() );
-				ReebSpanningTree pairing = new ReebSpanningTree(reebMesh, r);
+				SpanningTree pairing = new SpanningTree(reebMesh, r);
 
 				pairing.getUpFork().topoPartner = pairing.getDownFork();
 				pairing.getDownFork().topoPartner = pairing.getUpFork();

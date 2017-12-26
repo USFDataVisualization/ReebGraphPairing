@@ -1,16 +1,15 @@
-package src.junyi.reebgraph;
+package junyi.reebgraph;
 
 import java.util.Comparator;
 import java.util.Vector;
 
-import src.junyi.reebgraph.cmd.ReebGraph;
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.mesh.Mesh.Vertex;
 import usf.saav.topology.TopoTreeNode.NodeType;
 
-public class ReebGraphPairingMerging {
+public class MergePairing {
 
-	public ReebGraphPairingMerging( ReebGraph reebMesh ) {
+	public MergePairing( ReebGraph reebMesh ) {
 
 		Vector<ReebGraphVertex> sortedNodes = new Vector<ReebGraphVertex>();
 		

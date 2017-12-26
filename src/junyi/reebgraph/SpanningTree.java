@@ -1,20 +1,20 @@
-package src.junyi.reebgraph.cmd;
+package junyi.reebgraph;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
 
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoTreeNode.NodeType;
 
-public class ReebSpanningTree {
+public class SpanningTree {
 
 	Vector<STEdge> inST  = new Vector<STEdge>();
 	Vector<STEdge> outST = new Vector<STEdge>();
 	
 	Cycle pairing = null;
 	
-	public ReebSpanningTree( ReebGraph reebMesh, ReebGraphVertex r ){
+	public SpanningTree( ReebGraph reebMesh, ReebGraphVertex r ){
 		
 		reebMesh.resetVisited();
 		

@@ -1,14 +1,10 @@
-package src.junyi.reebgraph.cmd;
+package junyi.reebgraph;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Vector;
 
-import src.junyi.reebgraph.cmd.ReebGraph.ReebGraphVertex;
 import usf.saav.mesh.Mesh;
-import usf.saav.mesh.Mesh.Vertex;
 import usf.saav.topology.TopoTreeNode;
 
 
@@ -176,6 +172,19 @@ public class ReebGraph extends Mesh {
 
 		 public float getPersistence() { return getDeath()-getBirth(); }
 
+	}
+
+
+
+
+
+
+
+	public void clearVisited() {
+		for( Vertex v : this ) {
+			ReebGraphVertex rv = (ReebGraphVertex)v;
+			rv.visted = false;
+		}
 	}
 
 
