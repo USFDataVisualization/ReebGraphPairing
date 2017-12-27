@@ -81,7 +81,7 @@ public class ReebGraphCLI {
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
 			System.out.println(rm1.toDot());
-			
+			/*
 			Regularization.regularize(rm1);
 			System.out.println(rm1.toDot());
 			for( ReebGraph r : ConnectedComponents.extractConnectedComponents( rm1 ) ) {
@@ -89,7 +89,7 @@ public class ReebGraphCLI {
 				new ConventionalPairing( r );
 			}
 			rm1.printPD();
-
+    */
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);
