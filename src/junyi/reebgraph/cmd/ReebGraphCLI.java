@@ -32,10 +32,13 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import junyi.reebgraph.ConnectedComponents;
-import junyi.reebgraph.ConventionalPairing;
-import junyi.reebgraph.MergePairing;
 import junyi.reebgraph.ReebGraph;
+import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import junyi.reebgraph.Regularization;
+import junyi.reebgraph.SystemXv2;
+import junyi.reebgraph.pairing.conventional.ConventionalPairing;
+import junyi.reebgraph.pairing.merge.MergePairing;
+import usf.saav.mesh.Mesh;
 
 
 
@@ -80,7 +83,7 @@ public class ReebGraphCLI {
 			
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
-			System.out.println(rm1.toDot());
+			//System.out.println(rm1.toDot());
 			/*
 			Regularization.regularize(rm1);
 			System.out.println(rm1.toDot());
@@ -90,13 +93,35 @@ public class ReebGraphCLI {
 			}
 			rm1.printPD();
     */
+			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
+			new ConventionalPairing( rm1 );
+			rm1.printPD();
+			
+			
 			System.out.println();
 			System.out.println("OUR APPROACH");
 			ReebGraph rm2 = new ReebGraphLoader(ip);
-			Regularization.regularize(rm2);
+			//Regularization.regularize(rm2);
 			new MergePairing( rm2 );
 			rm2.printPD();
 			
+			System.out.println("Comparing Graphs");
+			boolean gequal = true;
+			for( Mesh.Vertex _v1 : rm1 ) {
+				ReebGraphVertex v1 = (ReebGraphVertex)_v1;
+				ReebGraphVertex v2 = (ReebGraphVertex)rm2.getByID( v1.getPosition() );
+				if( v1.getBirth()==v2.getBirth() && v1.getDeath()==v2.getDeath() ) {
+					System.out.print("  ok - ");
+				}
+				else {
+					System.out.print("  ERROR - ");
+					gequal = false;
+				}
+				System.out.println( v1 + " | " + v2 );
+			}
+			if( !gequal ) {
+				System.out.println("ERROR: Difference Found in Graphs");
+			}
 	
 			en = System.currentTimeMillis();
 			System.out.println("Total Time Taken : " + (en - st) + "ms");

@@ -2,6 +2,7 @@ package junyi.reebgraph;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Vector;
 
 import usf.saav.mesh.Mesh;
@@ -25,6 +26,23 @@ public class ReebGraph extends Mesh {
 			((ReebGraphVertex)v).id = i++;
 		}
 		
+	}
+	
+	public Vector<ReebGraphVertex> getNodesSortedByValue() {
+		Vector<ReebGraphVertex> sortedNodes = new Vector<ReebGraphVertex>();
+		
+		for( Vertex v : this ) {
+			sortedNodes.add((ReebGraphVertex)v);
+		}
+		
+		sortedNodes.sort( new Comparator<ReebGraphVertex>() {
+			public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
+				if( o1.value() < o2.value() ) return -1;
+				if( o1.value() > o2.value() ) return  1;
+				return 0;
+			}
+		});
+		return sortedNodes;
 	}
 
 	public String toDot() {
@@ -85,13 +103,10 @@ public class ReebGraph extends Mesh {
 	public class ReebGraphVertex implements Mesh.Vertex, TopoTreeNode {
 		float val;
 		int id;
-		int gid;
-		public boolean essent;
+		public int gid;
+
 		public boolean  visted;
 		public ReebGraphVertex topoPartner;
-
-		public Vector<ReebGraphVertex> in0=null;
-		public Vector<ReebGraphVertex> in1=null;
 
 		public ArrayList<ReebGraphVertex> neighbors = new ArrayList<ReebGraphVertex>();
 
@@ -99,7 +114,7 @@ public class ReebGraph extends Mesh {
 			val = _val;
 			id = _id;
 			gid = _gid;
-			essent=true;
+			//essent=true;
 			visted=false;
 		}
 
@@ -135,10 +150,12 @@ public class ReebGraph extends Mesh {
 			}
 			if( cntLess==0) return NodeType.LEAF_MAX;
 			if (cntMore==0) return NodeType.LEAF_MIN;
-			if( cntLess==2 &&  essent) return NodeType.ESS_UP_FORK;
-			if( cntLess==2 && !essent) return NodeType.SPLIT;
-			if( cntMore==2 &&  essent) return NodeType.ESS_DOWN_FORK;
-			if( cntMore==2 && !essent) return NodeType.MERGE;
+			//if( cntLess==2 &&  essent) return NodeType.ESS_UP_FORK;
+			//if( cntLess==2 && !essent) return NodeType.SPLIT;
+			//if( cntMore==2 &&  essent) return NodeType.ESS_DOWN_FORK;
+			//if( cntMore==2 && !essent) return NodeType.MERGE;
+			if( cntLess==2 ) return NodeType.SPLIT;
+			if( cntMore==2 ) return NodeType.MERGE;
 			return null;
 		}
 
@@ -160,12 +177,16 @@ public class ReebGraph extends Mesh {
 
 		 public float getBirth() {
 			if( topoPartner == null ) return value();
+			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
+							|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
 			if( essent ) return Math.max( value(), topoPartner.value() ); 
 			return Math.min( value(), topoPartner.value() ); 
 		}
 
 		 public float getDeath() { 
 			if( topoPartner == null ) return Float.POSITIVE_INFINITY;
+			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
+					|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
 			if( essent ) return Math.min( value(), topoPartner.value() );
 			return Math.max( value(), topoPartner.value() ); 
 		}
