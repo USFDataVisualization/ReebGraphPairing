@@ -77,15 +77,15 @@ public class ReebGraphCLI {
 			
 			System.out.println( ip );
 			
-			float norm_epsilon = 1.0f;
+			float norm_epsilon = 0.00001f;
 			
 			
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
 			
-			//SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
+			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
 			rm1.Normalize( norm_epsilon );
-			//SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
+			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
 			//int curCC = 0;
 			for( ReebGraph rg : rm1.extractConnectedComponents() ) {
 				//SystemXv2.writeDot(rg.toDot(), ConventionalPairing.tmp_directory + "cc" + curCC + ".dot", ConventionalPairing.tmp_directory + "cc" + curCC + ".pdf");

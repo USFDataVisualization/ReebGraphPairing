@@ -36,7 +36,7 @@ public class MergePairing {
 				System.out.println( "    " + e );
 			}
 			*/
-			
+			//System.out.println(v);
 			switch( v.getType() ) {
 				case LEAF_MAX:	processMax(v);	break;
 				case MERGE:		processMerge(v);	break;
@@ -147,7 +147,7 @@ public class MergePairing {
 			if( curr.getType() == NodeType.LEAF_MIN ) { 
 				maxLeaf = curr.vrt;
 			}
-			else if( curr.getType() == NodeType.SPLIT && curr.vrt == prev.vrt ) {
+			else if( curr.getType() == NodeType.SPLIT && prev != null && curr.vrt == prev.vrt ) {
 				upfork = curr.vrt;
 			}
 			prev = curr;

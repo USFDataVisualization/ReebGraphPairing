@@ -111,6 +111,7 @@ public class ReebGraph extends Mesh {
 				rv.neighbors.add(newR);
 				newR.neighbors.add(rv);	
 				proc.add(newR);
+				proc.add(rv);
 				continue;
 			}		
 			
@@ -132,6 +133,7 @@ public class ReebGraph extends Mesh {
 				rv.neighbors.add(newR);
 				newR.neighbors.add(rv);
 				proc.add(newR);
+				proc.add(rv);
 				continue;
 			}		
 			// non-critical node
@@ -154,7 +156,7 @@ public class ReebGraph extends Mesh {
 				continue;
 			}		
 			
-			if( cntLess==0 && cntMore>=0 ) {
+			if( cntLess==0 && cntMore>=2 ) {
 				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
 				rv.neighbors.add(newR);
 				newR.neighbors.add(rv);

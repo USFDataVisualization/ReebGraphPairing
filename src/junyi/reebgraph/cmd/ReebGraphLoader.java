@@ -26,6 +26,7 @@ public class ReebGraphLoader extends ReebGraph {
 
 		while( (s = reader.readLine()) != null) {
 			String[] r = s.split("\\s");
+			if( r.length == 0 ) continue;
 			if (r[0].trim().equals("v") == true) {			     
 
 				if(r.length != 3) {
