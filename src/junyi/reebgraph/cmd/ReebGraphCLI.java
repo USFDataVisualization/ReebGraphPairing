@@ -83,9 +83,9 @@ public class ReebGraphCLI {
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
 			
-			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
+			//SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
 			rm1.Normalize( norm_epsilon );
-			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
+			//SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
 			//int curCC = 0;
 			for( ReebGraph rg : rm1.extractConnectedComponents() ) {
 				//SystemXv2.writeDot(rg.toDot(), ConventionalPairing.tmp_directory + "cc" + curCC + ".dot", ConventionalPairing.tmp_directory + "cc" + curCC + ".pdf");
@@ -101,7 +101,7 @@ public class ReebGraphCLI {
 			new MergePairing( rm2 );
 			rm2.printPD();
 			
-			
+			System.out.println();
 			System.out.println("Comparing Graphs");
 			boolean gequal = true;
 			for( int i = 0; i < rm1.size(); i++ ) {
