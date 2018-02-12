@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import junyi.reebgraph.ReebGraph;
-import junyi.reebgraph.SystemXv2;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.mesh.Mesh;
 import usf.saav.topology.TopoTreeNode;
@@ -25,17 +24,17 @@ public class ConventionalPairing {
 
 		MergeTree mt = new MergeTree( reebMesh );
 		mt.run();
-		SystemXv2.writeDot(mt.toDot(), tmp_directory + "mt.dot", tmp_directory + "mt.pdf" );
+		//SystemXv2.writeDot(mt.toDot(), tmp_directory + "mt.dot", tmp_directory + "mt.pdf" );
 
 		SplitTree st = new SplitTree( reebMesh );
 		st.run();
-		SystemXv2.writeDot(st.toDot(), tmp_directory + "st.dot", tmp_directory + "st.pdf" );
+		//SystemXv2.writeDot(st.toDot(), tmp_directory + "st.dot", tmp_directory + "st.pdf" );
 		
 		ReebGraphVertex gmin = JoinTreePairing( mt, reebMesh, essential );
 		ReebGraphVertex gmax = JoinTreePairing( st, reebMesh, essential );
 		
-		reebMesh.getByID( gmin.getPosition() ).topoPartner = reebMesh.getByID( gmax.getPosition() );
-		reebMesh.getByID( gmax.getPosition() ).topoPartner = reebMesh.getByID( gmin.getPosition() );
+		gmin.topoPartner = gmax;
+		gmax.topoPartner = gmin;
 
 		for( Mesh.Vertex s : essential ) {
 			ReebGraphVertex r = (ReebGraphVertex)s;

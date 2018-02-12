@@ -31,14 +31,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import junyi.reebgraph.ConnectedComponents;
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
-import junyi.reebgraph.Regularization;
 import junyi.reebgraph.SystemXv2;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import junyi.reebgraph.pairing.merge.MergePairing;
-import usf.saav.mesh.Mesh;
 
 
 
@@ -80,36 +77,36 @@ public class ReebGraphCLI {
 			
 			System.out.println( ip );
 			
+			float norm_epsilon = 1.0f;
+			
 			
 			System.out.println("CONVENTIONAL");
 			ReebGraph rm1 = new ReebGraphLoader(ip);
-			//System.out.println(rm1.toDot());
-			/*
-			Regularization.regularize(rm1);
-			System.out.println(rm1.toDot());
-			for( ReebGraph r : ConnectedComponents.extractConnectedComponents( rm1 ) ) {
-				
-				new ConventionalPairing( r );
-			}
-			rm1.printPD();
-    */
+			
 			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
-			new ConventionalPairing( rm1 );
+			rm1.Normalize( norm_epsilon );
+			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
+			//int curCC = 0;
+			for( ReebGraph rg : rm1.extractConnectedComponents() ) {
+				//SystemXv2.writeDot(rg.toDot(), ConventionalPairing.tmp_directory + "cc" + curCC + ".dot", ConventionalPairing.tmp_directory + "cc" + curCC + ".pdf");
+				new ConventionalPairing( rg );
+				//curCC++;
+			}
 			rm1.printPD();
 			
 			
 			System.out.println();
 			System.out.println("OUR APPROACH");
-			ReebGraph rm2 = new ReebGraphLoader(ip);
-			//Regularization.regularize(rm2);
+			ReebGraph rm2 = (new ReebGraphLoader(ip)).Normalize( norm_epsilon );
 			new MergePairing( rm2 );
 			rm2.printPD();
 			
+			
 			System.out.println("Comparing Graphs");
 			boolean gequal = true;
-			for( Mesh.Vertex _v1 : rm1 ) {
-				ReebGraphVertex v1 = (ReebGraphVertex)_v1;
-				ReebGraphVertex v2 = (ReebGraphVertex)rm2.getByID( v1.getPosition() );
+			for( int i = 0; i < rm1.size(); i++ ) {
+				ReebGraphVertex v1 = (ReebGraphVertex)rm1.get(i);
+				ReebGraphVertex v2 = (ReebGraphVertex)rm2.get(i);
 				if( v1.getBirth()==v2.getBirth() && v1.getDeath()==v2.getDeath() ) {
 					System.out.print("  ok - ");
 				}

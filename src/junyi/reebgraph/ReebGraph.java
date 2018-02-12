@@ -3,6 +3,9 @@ package junyi.reebgraph;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Vector;
 
 import usf.saav.mesh.Mesh;
@@ -44,6 +47,128 @@ public class ReebGraph extends Mesh {
 		});
 		return sortedNodes;
 	}
+	
+	public int getMaxGlobalID() {
+		int curMax = ((ReebGraphVertex)get(0)).gid;
+		for( Vertex v : this ) {
+			curMax = Math.max(curMax, ((ReebGraphVertex)v).gid );
+		}
+		return curMax;
+	}
+
+
+	
+	
+	public ReebGraph Normalize( float epsilon ) {
+		
+		ReebGraph rg = this;
+		Queue<Mesh.Vertex> proc = new LinkedList<Mesh.Vertex>();
+		proc.addAll(rg);
+		
+		while( !proc.isEmpty() ) {
+			ReebGraphVertex rv = (ReebGraphVertex)proc.poll();
+			
+			int cntLess=0;
+			int cntMore=0;
+			for( ReebGraphVertex n : rv.neighbors ) {
+				if(rv.value()<n.value()) cntLess++;		
+				if(rv.value()>n.value()) cntMore++;		
+			}
+			
+			// mixed upfork and downfork
+			if( cntLess>=2 && cntMore>=2 ) {
+				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				for( ReebGraphVertex n : rv.neighbors ) {
+					if(rv.value()<n.value()) {
+						newR.addNeighbor(n);
+						n.neighbors.remove(rv);
+						n.neighbors.add(newR);
+					}
+				}
+				rv.neighbors.removeAll(newR.neighbors);
+				rv.neighbors.add(newR);
+				newR.neighbors.add(rv);
+				proc.add(rv);
+				proc.add(newR);
+				continue;
+			}
+			
+			// downfork with more than 2 connections
+			if( cntLess==1 && cntMore>2 ) {
+				ReebGraphVertex newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
+				int rcnt = 0;
+				for( ReebGraphVertex n : rv.neighbors ) {
+					if(rv.value()>n.value()) {
+						if( rcnt>0 ) {
+							newR.addNeighbor(n);
+							n.neighbors.remove(rv);
+							n.neighbors.add(newR);
+						}
+						rcnt++;
+					}
+				}
+				rv.neighbors.removeAll(newR.neighbors);
+				rv.neighbors.add(newR);
+				newR.neighbors.add(rv);	
+				proc.add(newR);
+				continue;
+			}		
+			
+			// upfork with more than 2 connections
+			if( cntLess>2 && cntMore==1 ) {
+				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				int rcnt = 0;
+				for( ReebGraphVertex n : rv.neighbors ) {
+					if(rv.value()<n.value()) {
+						if( rcnt>0 ) {
+							newR.addNeighbor(n);
+							n.neighbors.remove(rv);
+							n.neighbors.add(newR);
+						}
+						rcnt++;
+					}
+				}
+				rv.neighbors.removeAll(newR.neighbors);
+				rv.neighbors.add(newR);
+				newR.neighbors.add(rv);
+				proc.add(newR);
+				continue;
+			}		
+			// non-critical node
+			if( cntLess==1 && cntMore==1 ) {
+				ReebGraphVertex n0 = rv.neighbors.get(0);
+				ReebGraphVertex n1 = rv.neighbors.get(1);
+				n0.neighbors.remove(rv);
+				n1.neighbors.remove(rv);
+				n0.neighbors.add(n1);
+				n1.neighbors.add(n0);
+				rg.remove(rv);
+				continue;
+			}			
+			
+			if( cntLess>=2 && cntMore==0 ) {
+				ReebGraphVertex newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
+				rv.neighbors.add(newR);
+				newR.neighbors.add(rv);
+				proc.add(rv);
+				continue;
+			}		
+			
+			if( cntLess==0 && cntMore>=0 ) {
+				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				rv.neighbors.add(newR);
+				newR.neighbors.add(rv);
+				proc.add(rv);
+				continue;
+			}				
+			
+		}
+		
+		rg.resetInternalIDs();
+		
+		return rg;
+		
+	}	
 
 	public String toDot() {
 		StringBuffer dot_node = new StringBuffer( );
@@ -64,12 +189,6 @@ public class ReebGraph extends Mesh {
 			}					
 		}
 		return "Digraph{\n" + dot_node + dot_edge + "}"; 
-	}
-
-	public void resetVisited() {
-		for( Vertex v : this ){
-			((ReebGraphVertex)v).visted = false;
-		}
 	}
 
 
@@ -95,7 +214,37 @@ public class ReebGraph extends Mesh {
 	}
 
 
-	
+
+	public Vector<ReebGraph> extractConnectedComponents( ){
+		
+		HashSet<ReebGraphVertex> visited = new HashSet<ReebGraphVertex>();
+		
+		Vector<ReebGraph> ret = new Vector<ReebGraph>();
+		for( Vertex v : this ) {
+			ReebGraphVertex rv = (ReebGraphVertex)v;
+			if( !visited.contains(rv) ){
+				ret.add( findConnectedComponent(rv, visited) );
+			}
+		}
+				
+		return ret;
+	}
+
+	private static ReebGraph findConnectedComponent( ReebGraphVertex vertex, HashSet<ReebGraphVertex> visited ) {
+		ReebGraph newGraph = new ReebGraph();
+		dfs( newGraph, vertex, visited );
+		newGraph.resetInternalIDs();
+		return newGraph;
+	}
+
+	private static void dfs( ReebGraph newGraph, ReebGraphVertex curVertex, HashSet<ReebGraphVertex> visited ) {
+		visited.add(curVertex);
+		newGraph.add(curVertex);
+		for( ReebGraphVertex n : curVertex.neighbors) {
+			if( visited.contains(n) ) continue;
+			dfs(newGraph, n, visited);
+		}
+	}	
 	
 	
 
@@ -105,7 +254,6 @@ public class ReebGraph extends Mesh {
 		int id;
 		public int gid;
 
-		public boolean  visted;
 		public ReebGraphVertex topoPartner;
 
 		public ArrayList<ReebGraphVertex> neighbors = new ArrayList<ReebGraphVertex>();
@@ -114,21 +262,11 @@ public class ReebGraph extends Mesh {
 			val = _val;
 			id = _id;
 			gid = _gid;
-			//essent=true;
-			visted=false;
 		}
 
 		public String toString(){
 			return globalID() + "/" + id + " (" + value() + ")";
-			/*
-			String ret = globalID() + "/" + id + " (" + value() + ")" + (essent?" e":"");
-			for( ReebVertex n : neighbors ){
-				ret += " " + n.globalID();
-			}
-			return ret;
-			*/
 		}
-
 
 		//@Override
 		public int[] neighbors() {
@@ -148,12 +286,8 @@ public class ReebGraph extends Mesh {
 				if(value()<n.value()) cntLess++;		
 				if(value()>n.value()) cntMore++;		
 			}
-			if( cntLess==0) return NodeType.LEAF_MAX;
-			if (cntMore==0) return NodeType.LEAF_MIN;
-			//if( cntLess==2 &&  essent) return NodeType.ESS_UP_FORK;
-			//if( cntLess==2 && !essent) return NodeType.SPLIT;
-			//if( cntMore==2 &&  essent) return NodeType.ESS_DOWN_FORK;
-			//if( cntMore==2 && !essent) return NodeType.MERGE;
+			if( cntLess==0 ) return NodeType.LEAF_MAX;
+			if( cntMore==0 ) return NodeType.LEAF_MIN;
 			if( cntLess==2 ) return NodeType.SPLIT;
 			if( cntMore==2 ) return NodeType.MERGE;
 			return null;
@@ -194,22 +328,6 @@ public class ReebGraph extends Mesh {
 		 public float getPersistence() { return getDeath()-getBirth(); }
 
 	}
-
-
-
-
-
-
-
-	public void clearVisited() {
-		for( Vertex v : this ) {
-			ReebGraphVertex rv = (ReebGraphVertex)v;
-			rv.visted = false;
-		}
-	}
-
-
-
 
 }		
 

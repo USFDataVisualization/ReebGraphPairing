@@ -24,7 +24,7 @@ public class MergePairing {
 
 		for( ReebGraphVertex v : reebMesh.getNodesSortedByValue() ) {
 		
-
+			/*
 			System.out.print( v.gid + " " + v.getType().toString() + " : " );
 			for( Label y : inLabels.get(v) ) {
 				if( y.vrt.topoPartner!=null) System.out.print("*");
@@ -35,6 +35,7 @@ public class MergePairing {
 			for( VEdge e : virtEdges ) {
 				System.out.println( "    " + e );
 			}
+			*/
 			
 			switch( v.getType() ) {
 				case LEAF_MAX:	processMax(v);	break;
@@ -44,7 +45,7 @@ public class MergePairing {
 				default: throw new Exception();
 			}
 			
-			System.out.println();
+			//System.out.println();
 
 		}
 		

@@ -18,8 +18,6 @@ public class EssentialPairing {
 	
 	EssentialPairing( ReebGraph reebMesh, ReebGraphVertex r ){
 		
-		reebMesh.resetVisited();
-		
 		Queue<ReebGraphVertex> proc = new LinkedList<ReebGraphVertex>();
 		HashSet<ReebGraphVertex> visited = new HashSet<ReebGraphVertex>();
 
