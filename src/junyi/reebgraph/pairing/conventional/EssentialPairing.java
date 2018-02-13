@@ -9,6 +9,7 @@ import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoTreeNode.NodeType;
 
+
 public class EssentialPairing {
 
 	Vector<STEdge> inST  = new Vector<STEdge>();
@@ -128,18 +129,21 @@ public class EssentialPairing {
 		ReebGraphVertex downFork;
 		ReebGraphVertex upFork;
 		
-		public String toString(){
-			String ret = downFork + " || " + upFork + " --> ";
-			for(STEdge v : path ){
-				ret += "[" + v.v0.gid + "," + v.v1.gid + "] ";
-			}
-			return ret;
-		}
-
 		public void setUpFork(ReebGraphVertex currVert) {
 			if( upFork == null  || upFork.value() > currVert.value() )
 				upFork = currVert;
 		}
+		
+		@Override
+		public String toString(){
+			String ret = downFork + " || " + upFork + " --> ";
+			for(STEdge v : path ){
+				ret += "[" + v.v0.getGlobalID() + "," + v.v1.getGlobalID() + "] ";
+			}
+			return ret;
+		}
+
+		
 	}
 	
 	
@@ -148,14 +152,8 @@ public class EssentialPairing {
 		ReebGraphVertex v0,v1;
 		
 		STEdge( ReebGraphVertex _v0, ReebGraphVertex _v1 ){
-			if( _v0.gid < _v1.gid ) {
-				v0 = _v0;
-				v1 = _v1;
-			}
-			else {
-				v0 = _v1;
-				v1 = _v0;
-			}
+			v0 = (_v0.id() < _v1.id()) ? _v0 : _v1;
+			v1 = (_v0.id() < _v1.id()) ? _v1 : _v0;
 		}
 		
 		public int hashCode() {

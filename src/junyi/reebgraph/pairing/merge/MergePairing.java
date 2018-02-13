@@ -6,8 +6,11 @@ import java.util.TreeSet;
 
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
-import usf.saav.mesh.Mesh.Vertex;
+import usf.saav.topology.TopoGraph.Vertex;
 import usf.saav.topology.TopoTreeNode.NodeType;
+
+
+
 
 public class MergePairing {
 
@@ -62,12 +65,12 @@ public class MergePairing {
 		}
 		
 		if( maxSaddle!= null) {
-			v.topoPartner = maxSaddle;
-			maxSaddle.topoPartner = v;		
+			v.setPartner(maxSaddle);
+			maxSaddle.setPartner(v);		
 		}
 		else {
-			v.topoPartner = minMin;
-			minMin.topoPartner = v;		
+			v.setPartner(minMin);
+			minMin.setPartner(v);		
 		}
 	}
 
@@ -140,12 +143,12 @@ public class MergePairing {
 		// If an upfork is found, a cycle is closed. 
 		// Otherwise we have nonessential fork.
 		if( upfork != null ) {
-			v.topoPartner = upfork;
-			upfork.topoPartner = v;
+			v.setPartner(upfork);
+			upfork.setPartner(v);
 		}
 		else {
-			v.topoPartner = maxLeaf;
-			maxLeaf.topoPartner = v;
+			v.setPartner(maxLeaf);
+			maxLeaf.setPartner(v);
 		}		
 		
 		// Forward virtual edges
@@ -204,7 +207,7 @@ public class MergePairing {
 		}
 		
 		public boolean isPaired() {
-			return vrt.topoPartner!=null;
+			return vrt.getPartner()!=null;
 		}
 
 		public int hashCode() {
@@ -222,7 +225,7 @@ public class MergePairing {
 			return false;
 		}
 		public String toString() {
-			return vrt.gid + "[" + leg + "]";
+			return vrt.getGlobalID() + "[" + leg + "]";
 		}
 
 		@Override
@@ -237,13 +240,15 @@ public class MergePairing {
 	}
 	
 	private class VEdge implements Comparable<VEdge> {
+		ReebGraphVertex n0, n1;
+		ReebGraphVertex gen;
+
 		public VEdge(ReebGraphVertex _v, ReebGraphVertex _n0, ReebGraphVertex _n1) {
 			gen = _v;
 			n0 = (_n0.value()<_n1.value())?_n0:_n1;
 			n1 = (_n0.value()<_n1.value())?_n1:_n0;
 		}
-		ReebGraphVertex n0, n1;
-		ReebGraphVertex gen;
+
 		@Override
 		public int compareTo(VEdge o) {
 			if( n0.value() < o.n0.value() ) return -1;
@@ -254,8 +259,11 @@ public class MergePairing {
 			if( gen.value() > o.gen.value() ) return  1;
 			return 0;
 		}
+
+		@Override
 		public String toString() {
-			return n0.gid + "(" + n0.value() +")" + " ==> " + gen.gid + " " + n1.gid + "(" + n1.value() +")" + " ==> " + gen.gid;
+			return n0.getGlobalID() + "(" + n0.value() +")" + " ==> " + gen.getGlobalID() 
+					+ " " + n1.getGlobalID() + "(" + n1.value() +")" + " ==> " + gen.getGlobalID();
 		}
 	}
 

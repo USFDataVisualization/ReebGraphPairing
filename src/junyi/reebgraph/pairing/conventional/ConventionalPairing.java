@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
-import usf.saav.mesh.Mesh;
+import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.join.AugmentedJoinTree;
@@ -19,7 +19,7 @@ public class ConventionalPairing {
 	
 	public ConventionalPairing( ReebGraph reebMesh ) throws IOException {
 		
-		HashSet<Mesh.Vertex> essential = new HashSet<Mesh.Vertex>();
+		HashSet<TopoGraph.Vertex> essential = new HashSet<TopoGraph.Vertex>();
 		essential.addAll( reebMesh );
 
 		MergeTree mt = new MergeTree( reebMesh );
@@ -33,18 +33,18 @@ public class ConventionalPairing {
 		ReebGraphVertex gmin = JoinTreePairing( mt, reebMesh, essential );
 		ReebGraphVertex gmax = JoinTreePairing( st, reebMesh, essential );
 		
-		gmin.topoPartner = gmax;
-		gmax.topoPartner = gmin;
+		gmin.setPartner(gmax);
+		gmax.setPartner(gmin);
 
-		for( Mesh.Vertex s : essential ) {
+		for( TopoGraph.Vertex s : essential ) {
 			ReebGraphVertex r = (ReebGraphVertex)s;
 
 			if( r.getType() == NodeType.MERGE ) {
 				EssentialPairing pairing = new EssentialPairing(reebMesh, r);
 
 				if( pairing.getUpFork() != null && pairing.getDownFork() != null ) {
-					pairing.getUpFork().topoPartner = pairing.getDownFork();
-					pairing.getDownFork().topoPartner = pairing.getUpFork();
+					pairing.getUpFork().setPartner(pairing.getDownFork());
+					pairing.getDownFork().setPartner(pairing.getUpFork());
 				}
 			}
 		}
@@ -52,7 +52,7 @@ public class ConventionalPairing {
 	}
 	
 
-	private ReebGraphVertex JoinTreePairing( AugmentedJoinTree jt, ReebGraph reebMesh, HashSet<Mesh.Vertex> essential ) {
+	private ReebGraphVertex JoinTreePairing( AugmentedJoinTree jt, ReebGraph reebMesh, HashSet<TopoGraph.Vertex> essential ) {
 		ReebGraphVertex gmin=null;
 		for(int i = 0; i < jt.size(); i++ ){
 			TopoTreeNode    mtv = jt.getNode(i);
@@ -63,7 +63,7 @@ public class ConventionalPairing {
 			if( mtp == null ) 
 				gmin = rbv; 
 			else
-				rbv.topoPartner = reebMesh.getByID( mtp.getPosition() );
+				rbv.setPartner(reebMesh.getByID( mtp.getPosition() ));
 		}
 		return gmin;
 		

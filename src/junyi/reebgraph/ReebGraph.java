@@ -1,6 +1,5 @@
 package junyi.reebgraph;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -9,11 +8,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
 
-import usf.saav.mesh.Mesh;
+import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 
 
-public class ReebGraph extends Mesh {
+public class ReebGraph extends TopoGraph {
 
 	private static final long serialVersionUID = 2799501955753168490L;
 
@@ -24,12 +23,10 @@ public class ReebGraph extends Mesh {
 
 	
 	public void resetInternalIDs() {
-		
 		int i = 0;
 		for( Vertex v : this ) {
 			((ReebGraphVertex)v).id = i++;
-		}
-		
+		}		
 	}
 	
 	public Vector<ReebGraphVertex> getNodesSortedByValue() {
@@ -62,7 +59,7 @@ public class ReebGraph extends Mesh {
 		
 		ReebGraph rg = this;
 		
-		Queue<Mesh.Vertex> proc = new LinkedList<Mesh.Vertex>();
+		Queue<TopoGraph.Vertex> proc = new LinkedList<TopoGraph.Vertex>();
 		proc.addAll(rg);
 		
 		while( !proc.isEmpty() ) {
@@ -192,15 +189,13 @@ public class ReebGraph extends Mesh {
 		for(int i = 0; i < size(); i++){
 			ReebGraphVertex curr = (ReebGraphVertex)get(i);
 
-			dot_node.append( "\t" + curr.globalID() + "[label=\"" + curr.toString() + "\"];\n");
+			dot_node.append( "\t" + curr.getGlobalID() + "[label=\"" + curr.toString() + "\"];\n");
 
 			for( int n : curr.neighbors() ){
-				//ReebVertex nei = (ReebVertex)get(n);
 				for( int j = 0; j < size(); j++){
 					ReebGraphVertex nei = (ReebGraphVertex)get(j);
 					if( nei.id() == n && nei.value() < curr.value() )
-						//if( nei.id() == n )
-						dot_edge.append( "\t" + curr.globalID() + " -> " + nei.globalID() + "\n");
+						dot_edge.append( "\t" + curr.getGlobalID() + " -> " + nei.getGlobalID() + "\n");
 				}
 			}					
 		}
@@ -225,7 +220,7 @@ public class ReebGraph extends Mesh {
 	public void printPD() {
 		for( Vertex v : this ){
 			ReebGraphVertex rv = (ReebGraphVertex)v;
-			System.out.println( rv.globalID() + ": [" + rv.getBirth() + ", " + rv.getDeath() + "]");
+			System.out.println( rv.getGlobalID() + ": [" + rv.getBirth() + ", " + rv.getDeath() + "]");
 		}
 	}
 
@@ -265,12 +260,12 @@ public class ReebGraph extends Mesh {
 	
 
 
-	public class ReebGraphVertex implements Mesh.Vertex, TopoTreeNode {
-		float val;
-		int id;
-		public int gid;
+	public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
+		private float val;
+		private int id;
+		private int gid;
 
-		public ReebGraphVertex topoPartner;
+		private ReebGraphVertex topoPartner;
 
 		public ArrayList<ReebGraphVertex> neighbors = new ArrayList<ReebGraphVertex>();
 
@@ -281,10 +276,10 @@ public class ReebGraph extends Mesh {
 		}
 
 		public String toString(){
-			return globalID() + "/" + id + " (" + value() + ")";
+			return getGlobalID() + "/" + id + " (" + value() + ")";
 		}
 
-		//@Override
+		@Override
 		public int[] neighbors() {
 			int [] ret = new int[neighbors.size()];
 			for(int i = 0; i < neighbors.size(); i++){
@@ -292,9 +287,11 @@ public class ReebGraph extends Mesh {
 			}
 			return ret;
 		}
+		@Override public float value() { return val; }
+		@Override public int id() { return id; }
 
 
-		
+		@Override 
 		public NodeType getType() {
 			int cntLess=0;
 			int cntMore=0;
@@ -310,22 +307,18 @@ public class ReebGraph extends Mesh {
 		}
 
 
-		public int globalID(){ return gid; }
+		public int getGlobalID() { return gid; }
+		//public int globalID(){ return gid; }
 		public void addNeighbor(ReebGraphVertex v){
 			neighbors.add(v);
 		}
 
-		public float value() { return val; }
+		@Override public TopoTreeNode getPartner() { return topoPartner; }
+		public void setPartner( ReebGraphVertex p ) { topoPartner = p; }
 
-		 public int[] positions() { return null; }
-		
-		 public int id() { return id; }
-		
-		 public TopoTreeNode getPartner() { return topoPartner; }
+		@Override public int getPosition() { return gid; }
 
-		 public int getPosition() { return gid; }
-
-		 public float getBirth() {
+		@Override public float getBirth() {
 			if( topoPartner == null ) return value();
 			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
 							|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
@@ -333,6 +326,7 @@ public class ReebGraph extends Mesh {
 			return Math.min( value(), topoPartner.value() ); 
 		}
 
+		@Override 
 		 public float getDeath() { 
 			if( topoPartner == null ) return Float.POSITIVE_INFINITY;
 			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
@@ -341,7 +335,8 @@ public class ReebGraph extends Mesh {
 			return Math.max( value(), topoPartner.value() ); 
 		}
 
-		 public float getPersistence() { return getDeath()-getBirth(); }
+		@Override public float getPersistence() { return getDeath()-getBirth(); }
+
 
 	}
 

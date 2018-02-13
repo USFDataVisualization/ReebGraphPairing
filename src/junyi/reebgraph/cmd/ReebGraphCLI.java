@@ -33,9 +33,9 @@ import java.util.Properties;
 
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraph.ReebGraphVertex;
-import junyi.reebgraph.SystemXv2;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import junyi.reebgraph.pairing.merge.MergePairing;
+import usf.saav.common.SystemX;
 
 
 
@@ -88,7 +88,7 @@ public class ReebGraphCLI {
 			System.out.println("Load time: " + t.end() + "ms");
 			
 			t.start();
-			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
+			SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot" );
 			System.out.println("Save time: " + t.end() + "ms");
 			
 			t.start();
@@ -96,7 +96,7 @@ public class ReebGraphCLI {
 			System.out.println("Normalize time: " + t.end() + "ms");
 			
 			t.start();
-			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
+			SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot" );
 			System.out.println("Save time: " + t.end() + "ms");
 			
 			
