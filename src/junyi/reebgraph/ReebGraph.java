@@ -2,6 +2,7 @@ package junyi.reebgraph;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -57,120 +58,133 @@ public class ReebGraph extends Mesh {
 	}
 
 
-	
-	
 	public ReebGraph Normalize( float epsilon ) {
 		
 		ReebGraph rg = this;
+		
 		Queue<Mesh.Vertex> proc = new LinkedList<Mesh.Vertex>();
 		proc.addAll(rg);
 		
 		while( !proc.isEmpty() ) {
 			ReebGraphVertex rv = (ReebGraphVertex)proc.poll();
-			
+					
 			int cntLess=0;
 			int cntMore=0;
 			for( ReebGraphVertex n : rv.neighbors ) {
 				if(rv.value()<n.value()) cntLess++;		
 				if(rv.value()>n.value()) cntMore++;		
 			}
-			
+
+			ArrayList<ReebGraphVertex> n0 = new ArrayList<ReebGraphVertex>();
+			ArrayList<ReebGraphVertex> n1 = new ArrayList<ReebGraphVertex>();
+			ReebGraphVertex newR = null;
+					
 			// mixed upfork and downfork
 			if( cntLess>=2 && cntMore>=2 ) {
-				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				n0.add(newR);
 				for( ReebGraphVertex n : rv.neighbors ) {
 					if(rv.value()<n.value()) {
-						newR.addNeighbor(n);
-						n.neighbors.remove(rv);
-						n.neighbors.add(newR);
+						n1.add(n);
 					}
+					else {
+						n0.add(n);
+					}
+					n.neighbors.remove(rv);
 				}
-				rv.neighbors.removeAll(newR.neighbors);
-				rv.neighbors.add(newR);
-				newR.neighbors.add(rv);
-				proc.add(rv);
-				proc.add(newR);
-				continue;
 			}
 			
 			// downfork with more than 2 connections
 			if( cntLess==1 && cntMore>2 ) {
-				ReebGraphVertex newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
+				newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
 				int rcnt = 0;
+				n0.add(newR);
 				for( ReebGraphVertex n : rv.neighbors ) {
 					if(rv.value()>n.value()) {
-						if( rcnt>0 ) {
-							newR.addNeighbor(n);
-							n.neighbors.remove(rv);
-							n.neighbors.add(newR);
-						}
+						if( rcnt == 0 )
+							n0.add(n);
+						else
+							n1.add(n);
 						rcnt++;
 					}
+					else {
+						n0.add(n);
+					}
+					n.neighbors.remove(rv);
 				}
-				rv.neighbors.removeAll(newR.neighbors);
-				rv.neighbors.add(newR);
-				newR.neighbors.add(rv);	
-				proc.add(newR);
-				proc.add(rv);
-				continue;
 			}		
 			
 			// upfork with more than 2 connections
 			if( cntLess>2 && cntMore==1 ) {
-				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
+				newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
 				int rcnt = 0;
+				n0.add(newR);
 				for( ReebGraphVertex n : rv.neighbors ) {
 					if(rv.value()<n.value()) {
-						if( rcnt>0 ) {
-							newR.addNeighbor(n);
-							n.neighbors.remove(rv);
-							n.neighbors.add(newR);
-						}
+						if( rcnt == 0 )
+							n0.add(n);
+						else
+							n1.add(n);
 						rcnt++;
 					}
+					else {
+						n0.add(n);
+					}
+					n.neighbors.remove(rv);
 				}
-				rv.neighbors.removeAll(newR.neighbors);
+			}	
+
+			
+			if( newR != null ) {
+				rv.neighbors.clear();
+				makeNeighbors(rv,n0);
+				makeNeighbors(newR,n1);
+				proc.add(rv);
+				proc.add(newR);
+			}
+			
+			if( cntLess>=2 && cntMore==0 || cntLess==0 && cntMore>=2 ) {
+				if( cntLess>=2 && cntMore==0 ) newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
+				if( cntLess==0 && cntMore>=2 ) newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
 				rv.neighbors.add(newR);
 				newR.neighbors.add(rv);
-				proc.add(newR);
 				proc.add(rv);
 				continue;
 			}		
+			
 			// non-critical node
 			if( cntLess==1 && cntMore==1 ) {
-				ReebGraphVertex n0 = rv.neighbors.get(0);
-				ReebGraphVertex n1 = rv.neighbors.get(1);
-				n0.neighbors.remove(rv);
-				n1.neighbors.remove(rv);
-				n0.neighbors.add(n1);
-				n1.neighbors.add(n0);
+				ReebGraphVertex v0 = rv.neighbors.get(0);
+				ReebGraphVertex v1 = rv.neighbors.get(1);
+				v0.neighbors.remove(rv);
+				v1.neighbors.remove(rv);
+				v0.neighbors.add(v1);
+				v1.neighbors.add(v0);
 				rg.remove(rv);
 				continue;
 			}			
 			
-			if( cntLess>=2 && cntMore==0 ) {
-				ReebGraphVertex newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
-				rv.neighbors.add(newR);
-				newR.neighbors.add(rv);
-				proc.add(rv);
-				continue;
-			}		
-			
-			if( cntLess==0 && cntMore>=2 ) {
-				ReebGraphVertex newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
-				rv.neighbors.add(newR);
-				newR.neighbors.add(rv);
-				proc.add(rv);
-				continue;
-			}				
 			
 		}
-		
+
 		rg.resetInternalIDs();
 		
 		return rg;
 		
 	}	
+
+	private void makeNeighbors(ReebGraphVertex v, Collection<ReebGraphVertex> neighbors) {
+		for( ReebGraphVertex n : neighbors ) {
+			makeNeighbors(v,n);
+		}
+	}
+
+
+	private void makeNeighbors(ReebGraphVertex v0, ReebGraphVertex v1) {
+		v0.addNeighbor(v1);
+		v1.addNeighbor(v0);
+	}
+
 
 	public String toDot() {
 		StringBuffer dot_node = new StringBuffer( );

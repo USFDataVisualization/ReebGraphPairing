@@ -50,8 +50,13 @@ public class ReebGraphLoader extends ReebGraph {
 				ReebGraphVertex v1 = rvmap.get(Integer.parseInt(r[1]));
 				ReebGraphVertex v2 = rvmap.get(Integer.parseInt(r[2]));
 				
-				v1.addNeighbor(v2);
-				v2.addNeighbor(v1);
+				if( v1 == null || v2 == null ) {
+					System.out.println("WARNING: Edge not found " + r[1] + " " + r[2]);
+				}
+				else {
+					v1.addNeighbor(v2);
+					v2.addNeighbor(v1);
+				}
 
 			}
 		}

@@ -2,8 +2,6 @@ package junyi.reebgraph.pairing.merge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.TreeSet;
 
 import junyi.reebgraph.ReebGraph;
@@ -14,29 +12,16 @@ import usf.saav.topology.TopoTreeNode.NodeType;
 public class MergePairing {
 
 	HashMap<ReebGraphVertex,TreeSet<Label>> inLabels = new HashMap<ReebGraphVertex,TreeSet<Label>>();
-	Queue<VEdge> virtEdges = new PriorityQueue<VEdge>();
+	TreeSet<VEdge> virtEdges = new TreeSet<VEdge>();
 	
 	public MergePairing( ReebGraph reebMesh ) throws Exception {
-
+		
 		for( Vertex v : reebMesh ) {
 			inLabels.put( (ReebGraphVertex)v, new TreeSet<Label>() );
 		}
 
 		for( ReebGraphVertex v : reebMesh.getNodesSortedByValue() ) {
 		
-			/*
-			System.out.print( v.gid + " " + v.getType().toString() + " : " );
-			for( Label y : inLabels.get(v) ) {
-				if( y.vrt.topoPartner!=null) System.out.print("*");
-				System.out.print( y + ", " );
-			}
-			System.out.println();
-			
-			for( VEdge e : virtEdges ) {
-				System.out.println( "    " + e );
-			}
-			*/
-			//System.out.println(v);
 			switch( v.getType() ) {
 				case LEAF_MAX:	processMax(v);	break;
 				case MERGE:		processMerge(v);	break;
@@ -45,8 +30,6 @@ public class MergePairing {
 				default: throw new Exception();
 			}
 			
-			//System.out.println();
-
 		}
 		
 		
@@ -73,8 +56,9 @@ public class MergePairing {
 		}
 
 		// remove virtual edges that have terminated
-		while( !virtEdges.isEmpty() && virtEdges.peek().n0 == v ) {
-			virtEdges.poll();
+		while( !virtEdges.isEmpty() && virtEdges.first().n0 == v ) {
+			virtEdges.pollFirst();
+			//virtEdges.poll();
 		}
 		
 		if( maxSaddle!= null) {
@@ -111,8 +95,8 @@ public class MergePairing {
 		virtEdges.add( new VEdge(v,n0,n1) );
 
 		// Forward old virtual edges
-		while( !virtEdges.isEmpty() && virtEdges.peek().n0 == v ) {
-			VEdge e = virtEdges.poll();
+		while( !virtEdges.isEmpty() && virtEdges.first().n0 == v ) {
+			VEdge e = virtEdges.pollFirst();
 			virtEdges.add( new VEdge(e.gen,n0,e.n1) );
 			virtEdges.add( new VEdge(e.gen,n1,e.n1) );
 		}
@@ -166,12 +150,16 @@ public class MergePairing {
 		
 		// Forward virtual edges
 		ArrayList<VEdge> activeEdges = new ArrayList<VEdge>();
-		while( !virtEdges.isEmpty() && virtEdges.peek().n0 == v ) {
-			VEdge e = virtEdges.poll();
+		while( !virtEdges.isEmpty() && virtEdges.first().n0 == v ) {
+			VEdge e = virtEdges.pollFirst();
+			
+			// both ends of the virtual edge are the current node, skip
+			if( e.n1 == v ) continue;
+			
 			// Skip edges with the duplicate end points (only retain the one with the highest saddle)
-			while( !virtEdges.isEmpty() && virtEdges.peek().n0 == v && virtEdges.peek().n1 == e.n1 ) {
-				e = virtEdges.poll();
-			}
+			if( !virtEdges.isEmpty() && virtEdges.first().n0 == v && virtEdges.first().n1 == e.n1 )
+				continue;
+
 			virtEdges.add( new VEdge(e.gen,n0,e.n1) );
 			activeEdges.add(e);
 		}
@@ -267,7 +255,7 @@ public class MergePairing {
 			return 0;
 		}
 		public String toString() {
-			return n0.gid + " ==> " + gen.gid + " " + n1.gid + " ==> " + gen.gid;
+			return n0.gid + "(" + n0.value() +")" + " ==> " + gen.gid + " " + n1.gid + "(" + n1.value() +")" + " ==> " + gen.gid;
 		}
 	}
 

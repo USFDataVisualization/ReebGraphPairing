@@ -77,28 +77,48 @@ public class ReebGraphCLI {
 			
 			System.out.println( ip );
 			
-			float norm_epsilon = 0.00001f;
+			float norm_epsilon = 0.0000001f;
 			
 			
 			System.out.println("CONVENTIONAL");
-			ReebGraph rm1 = new ReebGraphLoader(ip);
+			Timer t = new Timer();
 			
+			t.start();
+			ReebGraph rm1 = new ReebGraphLoader(ip);
+			System.out.println("Load time: " + t.end() + "ms");
+			
+			t.start();
 			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot", ConventionalPairing.tmp_directory + "graph.pdf");
+			System.out.println("Save time: " + t.end() + "ms");
+			
+			t.start();
 			rm1.Normalize( norm_epsilon );
+			System.out.println("Normalize time: " + t.end() + "ms");
+			
+			t.start();
 			SystemXv2.writeDot(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot", ConventionalPairing.tmp_directory + "graph_norm.pdf");
+			System.out.println("Save time: " + t.end() + "ms");
+			
+			
+			t.start();
 			//int curCC = 0;
 			for( ReebGraph rg : rm1.extractConnectedComponents() ) {
 				//SystemXv2.writeDot(rg.toDot(), ConventionalPairing.tmp_directory + "cc" + curCC + ".dot", ConventionalPairing.tmp_directory + "cc" + curCC + ".pdf");
 				new ConventionalPairing( rg );
 				//curCC++;
 			}
+			System.out.println("Conventional computation time: " + t.end() + "ms");
 			rm1.printPD();
 			
 			
 			System.out.println();
 			System.out.println("OUR APPROACH");
+			
 			ReebGraph rm2 = (new ReebGraphLoader(ip)).Normalize( norm_epsilon );
+
+			t.start();
 			new MergePairing( rm2 );
+			System.out.println("Our computation time: " + t.end() + "ms");
 			rm2.printPD();
 			
 			System.out.println();
