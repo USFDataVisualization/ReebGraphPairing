@@ -19,10 +19,7 @@
  */
 package usf.saav.topology.split;
 
-import java.text.DecimalFormat;
-
 import usf.saav.topology.TopoGraph;
-import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.join.AugmentedJoinTree;
 import usf.saav.topology.join.JoinTreeNode;
 

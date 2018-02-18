@@ -1,11 +1,8 @@
 package junyi.reebgraph;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Vector;
 
 import usf.saav.topology.TopoGraph;
@@ -55,132 +52,7 @@ public class ReebGraph extends TopoGraph {
 	}
 
 
-	public ReebGraph Normalize( float epsilon ) {
-		
-		ReebGraph rg = this;
-		
-		Queue<TopoGraph.Vertex> proc = new LinkedList<TopoGraph.Vertex>();
-		proc.addAll(rg);
-		
-		while( !proc.isEmpty() ) {
-			ReebGraphVertex rv = (ReebGraphVertex)proc.poll();
-					
-			int cntLess=0;
-			int cntMore=0;
-			for( ReebGraphVertex n : rv.neighbors ) {
-				if(rv.value()<n.value()) cntLess++;		
-				if(rv.value()>n.value()) cntMore++;		
-			}
 
-			ArrayList<ReebGraphVertex> n0 = new ArrayList<ReebGraphVertex>();
-			ArrayList<ReebGraphVertex> n1 = new ArrayList<ReebGraphVertex>();
-			ReebGraphVertex newR = null;
-					
-			// mixed upfork and downfork
-			if( cntLess>=2 && cntMore>=2 ) {
-				newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
-				n0.add(newR);
-				for( ReebGraphVertex n : rv.neighbors ) {
-					if(rv.value()<n.value()) {
-						n1.add(n);
-					}
-					else {
-						n0.add(n);
-					}
-					n.neighbors.remove(rv);
-				}
-			}
-			
-			// downfork with more than 2 connections
-			if( cntLess==1 && cntMore>2 ) {
-				newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
-				int rcnt = 0;
-				n0.add(newR);
-				for( ReebGraphVertex n : rv.neighbors ) {
-					if(rv.value()>n.value()) {
-						if( rcnt == 0 )
-							n0.add(n);
-						else
-							n1.add(n);
-						rcnt++;
-					}
-					else {
-						n0.add(n);
-					}
-					n.neighbors.remove(rv);
-				}
-			}		
-			
-			// upfork with more than 2 connections
-			if( cntLess>2 && cntMore==1 ) {
-				newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
-				int rcnt = 0;
-				n0.add(newR);
-				for( ReebGraphVertex n : rv.neighbors ) {
-					if(rv.value()<n.value()) {
-						if( rcnt == 0 )
-							n0.add(n);
-						else
-							n1.add(n);
-						rcnt++;
-					}
-					else {
-						n0.add(n);
-					}
-					n.neighbors.remove(rv);
-				}
-			}	
-
-			
-			if( newR != null ) {
-				rv.neighbors.clear();
-				makeNeighbors(rv,n0);
-				makeNeighbors(newR,n1);
-				proc.add(rv);
-				proc.add(newR);
-			}
-			
-			if( cntLess>=2 && cntMore==0 || cntLess==0 && cntMore>=2 ) {
-				if( cntLess>=2 && cntMore==0 ) newR = rg.createVertex( rv.value()-epsilon, rg.getMaxGlobalID()+1 );
-				if( cntLess==0 && cntMore>=2 ) newR = rg.createVertex( rv.value()+epsilon, rg.getMaxGlobalID()+1 );
-				rv.neighbors.add(newR);
-				newR.neighbors.add(rv);
-				proc.add(rv);
-				continue;
-			}		
-			
-			// non-critical node
-			if( cntLess==1 && cntMore==1 ) {
-				ReebGraphVertex v0 = rv.neighbors.get(0);
-				ReebGraphVertex v1 = rv.neighbors.get(1);
-				v0.neighbors.remove(rv);
-				v1.neighbors.remove(rv);
-				v0.neighbors.add(v1);
-				v1.neighbors.add(v0);
-				rg.remove(rv);
-				continue;
-			}			
-			
-			
-		}
-
-		rg.resetInternalIDs();
-		
-		return rg;
-		
-	}	
-
-	private void makeNeighbors(ReebGraphVertex v, Collection<ReebGraphVertex> neighbors) {
-		for( ReebGraphVertex n : neighbors ) {
-			makeNeighbors(v,n);
-		}
-	}
-
-
-	private void makeNeighbors(ReebGraphVertex v0, ReebGraphVertex v1) {
-		v0.addNeighbor(v1);
-		v1.addNeighbor(v0);
-	}
 
 
 	public String toDot() {
@@ -194,7 +66,7 @@ public class ReebGraph extends TopoGraph {
 			for( int n : curr.neighbors() ){
 				for( int j = 0; j < size(); j++){
 					ReebGraphVertex nei = (ReebGraphVertex)get(j);
-					if( nei.id() == n && nei.value() < curr.value() )
+					if( nei.getID() == n && nei.value() < curr.value() )
 						dot_edge.append( "\t" + curr.getGlobalID() + " -> " + nei.getGlobalID() + "\n");
 				}
 			}					
@@ -203,26 +75,7 @@ public class ReebGraph extends TopoGraph {
 	}
 
 
-
-	public ReebGraphVertex getByID(int position) {
-		for(int j = 0; j < size(); j++ ){
-			//System.out.println( get(j).id() + " " + x.getPosition() );
-			
-			if( get(j).id() == position ){
-				return ((ReebGraphVertex)get(j));
-			}
-		}
 	
-		return null;
-	}		
-
-	
-	public void printPD() {
-		for( Vertex v : this ){
-			ReebGraphVertex rv = (ReebGraphVertex)v;
-			System.out.println( rv.getGlobalID() + ": [" + rv.getBirth() + ", " + rv.getDeath() + "]");
-		}
-	}
 
 
 
@@ -266,7 +119,6 @@ public class ReebGraph extends TopoGraph {
 		private int gid;
 
 		private ReebGraphVertex topoPartner;
-
 		public ArrayList<ReebGraphVertex> neighbors = new ArrayList<ReebGraphVertex>();
 
 		public ReebGraphVertex( int _id, float _val, int _gid ) {
@@ -287,8 +139,10 @@ public class ReebGraph extends TopoGraph {
 			}
 			return ret;
 		}
+		
 		@Override public float value() { return val; }
-		@Override public int id() { return id; }
+		@Override public int getID() { return id; }
+		public int getGlobalID() { return gid; }
 
 
 		@Override 
@@ -307,8 +161,6 @@ public class ReebGraph extends TopoGraph {
 		}
 
 
-		public int getGlobalID() { return gid; }
-		//public int globalID(){ return gid; }
 		public void addNeighbor(ReebGraphVertex v){
 			neighbors.add(v);
 		}
@@ -316,22 +168,26 @@ public class ReebGraph extends TopoGraph {
 		@Override public TopoTreeNode getPartner() { return topoPartner; }
 		public void setPartner( ReebGraphVertex p ) { topoPartner = p; }
 
-		@Override public int getPosition() { return gid; }
+		
+		public boolean isEssential() {
+			return (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
+					|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
+		}
 
 		@Override public float getBirth() {
-			if( topoPartner == null ) return value();
-			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
-							|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
-			if( essent ) return Math.max( value(), topoPartner.value() ); 
+			if( topoPartner == null ) 
+				return value();
+			if( isEssential() ) 
+				return Math.max( value(), topoPartner.value() ); 
 			return Math.min( value(), topoPartner.value() ); 
 		}
 
 		@Override 
 		 public float getDeath() { 
-			if( topoPartner == null ) return Float.POSITIVE_INFINITY;
-			boolean essent = (getType() == NodeType.MERGE && topoPartner.getType() == NodeType.SPLIT )
-					|| (getType() == NodeType.SPLIT && topoPartner.getType() == NodeType.MERGE );
-			if( essent ) return Math.min( value(), topoPartner.value() );
+			if( topoPartner == null ) 
+				return Float.POSITIVE_INFINITY;
+			if( isEssential() ) 
+				return Math.min( value(), topoPartner.value() );
 			return Math.max( value(), topoPartner.value() ); 
 		}
 

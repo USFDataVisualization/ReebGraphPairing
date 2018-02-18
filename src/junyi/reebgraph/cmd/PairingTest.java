@@ -27,10 +27,6 @@
  */
 package junyi.reebgraph.cmd;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-
 import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraphLoader;
 import junyi.reebgraph.ReebGraphNormalizer;
@@ -40,35 +36,65 @@ import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
 
 
+public class PairingTest {
 
+	public static String [] testSet = new String[] {
+			"test/100_iterations.txt",
+			"test/100_tree_iterations.txt",
+			"test/10_tree_iterations.txt",
+			"test/200_tree_iterations.txt",
+			"test/25_iterations.txt",
+			"test/3_tree_iterations.txt",
+			"test/40_tree_iterations.txt",
+			"test/45_iterations.txt",
+			"test/4torus_simple_ReebGraph 2.txt",
+			"test/4torus_simple_ReebGraph.txt",
+			"test/5_iterations.txt",
+			"test/77_iterations.txt",
+			"test/80_tree_iterations.txt",
+			"test/buddha_10k-2_poission_f_ReebGraph.txt",
+			"test/buddha_10k_f_2_ReebGraph.txt",
+			"test/buddha_10k_f_3_ReebGraph.txt",
+			"test/buddha_10k_f_4_ReebGraph.txt",
+			"test/buddha_10k_f_5_ReebGraph.txt",
+			"test/buddha_10k_poission_f_ReebGraph.txt",
+			"test/david_simple_ReebGraph.txt",
+			"test/figure_eight_simple_ReebGraph.txt",
+			"test/first_graph.txt",
+			"test/first_graph10.txt",
+			"test/first_graph2.txt",
+			"test/first_graph3.txt",
+			"test/first_graph4.txt",
+			"test/first_graph5.txt",
+			"test/first_graph6.txt",
+			"test/first_graph7.txt",
+			"test/first_graph8.txt",
+			"test/first_graph9.txt",
+			"test/first_graph_old.txt",
+			"test/flower_poission_f_ReebGraph.txt",
+			"test/second_graph.txt",
+			"test/topology_f_ReebGraph.txt",
+			"test/topology_simple_ReebGraph.txt",
+			"test/vase_poission_f_ReebGraph.txt"
+	};
+	
+	
+	public static void main( String[] args ) {
 
-public class ReebGraphCLI {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			Properties p = new Properties();
-			System.out.println(new File(".").getAbsolutePath());
-			p.load(new FileInputStream("input.properties"));
-			//String loaderType = p.getProperty("loader");
-			String ip = p.getProperty("inputFile").trim();
-			
-			
-			System.out.println( ip );
-			Timer convTimer, mergeTimer;
-			if( testPerformance( ip, (convTimer=new Timer()), (mergeTimer=new Timer()), false ) ) {
-				System.out.println( "test succeeded: " + ip + " -- conv_time: " + convTimer.getElapsed() + " merge_time: " + mergeTimer.getElapsed() );
+		for( String ip : testSet ) {
+			try {
+				
+				Timer convTimer, mergeTimer;
+				if( testPerformance( ip, (convTimer=new Timer()), (mergeTimer=new Timer()), false ) ) {
+					System.out.println( "test succeeded: " + ip + " -- conv_time: " + convTimer.getElapsed() + "ms, merge_time: " + mergeTimer.getElapsed() + "ms" );
+				}
+				else {
+					System.out.println( "test FAILED: " + ip );
+				}
+	
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			else {
-				System.out.println( "test FAILED: " + ip );
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Invalid input. Check the input.properties file");
-			System.exit(0);
 		}
 	}
 
@@ -84,7 +110,7 @@ public class ReebGraphCLI {
 		if( verbose ) System.out.println("Load time: " + t.end() + "ms");
 		
 		t.start();
-		SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot" );
+		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot" );
 		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
 		
 		t.start();
@@ -92,7 +118,7 @@ public class ReebGraphCLI {
 		if( verbose ) System.out.println("Normalize time: " + t.end() + "ms");
 		
 		t.start();
-		SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot" );
+		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot" );
 		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
 		
 		convTimer.start();

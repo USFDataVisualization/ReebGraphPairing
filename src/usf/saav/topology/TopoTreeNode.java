@@ -33,7 +33,7 @@ public interface TopoTreeNode {
 
 	TopoTreeNode getPartner();
 
-	int getPosition();
+	int getID();
 
 	float getBirth();
 	float getDeath();

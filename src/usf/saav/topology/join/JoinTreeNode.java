@@ -72,7 +72,7 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 
 	
 	public abstract float getValue( );
-	public abstract int   getPosition( );
+	public abstract int   getID( );
 
 	@Override public String toString(){
 		StringBuffer bf = new StringBuffer( );
@@ -82,7 +82,7 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	
 	
 	private void toString( StringBuffer bf, String spaces ){
-		bf.append( spaces + getPosition() + ": " + getValue() + "\n" );
+		bf.append( spaces + getID() + ": " + getValue() + "\n" );
 		if( children != null ){
 			for(JoinTreeNode child : children){ child.toString(bf, "  "+spaces); }
 		}
@@ -94,9 +94,9 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 		
 		while( !queue.isEmpty() ){
 			JoinTreeNode curr = queue.poll();
-			dot_node.append( "\t" + curr.getPosition() + "[label=\"" + curr.getPosition() + " (" + curr.getValue() + ")\"];\n");
+			dot_node.append( "\t" + curr.getID() + "[label=\"" + curr.getID() + " (" + curr.getValue() + ")\"];\n");
 			for( JoinTreeNode n : curr.getChildren() ){
-				dot_edge.append( "\t" + curr.getPosition() + " -> " + n.getPosition() + "\n");
+				dot_edge.append( "\t" + curr.getID() + " -> " + n.getID() + "\n");
 			}
 			queue.addAll( curr.getChildren() );
 		}
@@ -117,9 +117,9 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 		while( !queue.isEmpty() ){
 			Pair<JoinTreeNode,Integer> curr = queue.poll();
 			if( curr.getSecond() < maxdepth ){
-				dot_node.append( "\t" + curr.getFirst().getPosition() + "[label=\"" + curr.getFirst().getPosition() + " (" + curr.getFirst().getValue() + ")\"];\n");
+				dot_node.append( "\t" + curr.getFirst().getID() + "[label=\"" + curr.getFirst().getID() + " (" + curr.getFirst().getValue() + ")\"];\n");
 				for( JoinTreeNode n : curr.getFirst().getChildren() ){
-					dot_edge.append( "\t" + curr.getFirst().getPosition() + " -> " + n.getPosition() + "\n");
+					dot_edge.append( "\t" + curr.getFirst().getID() + " -> " + n.getID() + "\n");
 					queue.add( new Pair<JoinTreeNode,Integer>( n, curr.getSecond()+1 ));
 				}
 			}
@@ -163,8 +163,8 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 			if( o1 instanceof JoinTreeNode && o2 instanceof JoinTreeNode ){
 				if( ((JoinTreeNode)o1).getValue() > ((JoinTreeNode)o2).getValue() ) return  1;
 				if( ((JoinTreeNode)o1).getValue() < ((JoinTreeNode)o2).getValue() ) return -1;
-				if( ((JoinTreeNode)o1).getPosition() < ((JoinTreeNode)o2).getPosition() ) return  1;
-				if( ((JoinTreeNode)o1).getPosition() > ((JoinTreeNode)o2).getPosition() ) return -1;
+				if( ((JoinTreeNode)o1).getID() < ((JoinTreeNode)o2).getID() ) return  1;
+				if( ((JoinTreeNode)o1).getID() > ((JoinTreeNode)o2).getID() ) return -1;
 			}
 			return 0;
 		}	
@@ -176,8 +176,8 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 			if( o1 instanceof JoinTreeNode && o2 instanceof JoinTreeNode ){
 				if( ((JoinTreeNode)o1).getValue() > ((JoinTreeNode)o2).getValue() ) return -1;
 				if( ((JoinTreeNode)o1).getValue() < ((JoinTreeNode)o2).getValue() ) return  1;
-				if( ((JoinTreeNode)o1).getPosition() < ((JoinTreeNode)o2).getPosition() ) return -1;
-				if( ((JoinTreeNode)o1).getPosition() > ((JoinTreeNode)o2).getPosition() ) return  1;
+				if( ((JoinTreeNode)o1).getID() < ((JoinTreeNode)o2).getID() ) return -1;
+				if( ((JoinTreeNode)o1).getID() > ((JoinTreeNode)o2).getID() ) return  1;
 			}
 			return 0;
 		}	

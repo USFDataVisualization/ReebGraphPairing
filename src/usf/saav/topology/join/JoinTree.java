@@ -84,7 +84,7 @@ public class JoinTree implements Runnable {
 		while( tq.size() > 0 ){
 			head = tq.poll();
 			init_mergeWithNeighbors( grid, head, sf, bm, dj );
-			bm.set(head.getPosition());
+			bm.set(head.getID());
 		}
 		
 		operationComplete = true;
@@ -94,7 +94,7 @@ public class JoinTree implements Runnable {
 
 	private void init_mergeWithNeighbors( Node [] grid, Node me, TopoGraph sf, BinaryMask1D bm, DisjointSet1D dj ) {
 		
-		int [] neighbors = sf.get( me.getPosition() ).neighbors();
+		int [] neighbors = sf.get( me.getID() ).neighbors();
 		
 		// set any neighbor sets as children
 		for( int n : neighbors ){
@@ -110,12 +110,12 @@ public class JoinTree implements Runnable {
 		// update the disjoint set with new connection
 		for( int n : neighbors ){
 			if( bm.isSet( n ) ){
-				dj.union( me.getPosition(), n );
+				dj.union( me.getID(), n );
 			}
 		}
 		
 		// update the root for the set
-		grid[ dj.find( me.getPosition() ) ] = me;
+		grid[ dj.find( me.getID() ) ] = me;
 
 	}
 	
@@ -134,7 +134,7 @@ public class JoinTree implements Runnable {
 
 
 		@Override public float getValue( ){ return value; }
-		@Override public int   getPosition( ){ return position; }
+		@Override public int   getID( ){ return position; }
 
 		@Override public NodeType getType() { return NodeType.UNKNOWN; }
 		

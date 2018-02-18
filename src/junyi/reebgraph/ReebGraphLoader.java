@@ -1,11 +1,9 @@
-package junyi.reebgraph.cmd;
+package junyi.reebgraph;
 
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
-
-import junyi.reebgraph.ReebGraph;
 
 
 public class ReebGraphLoader extends ReebGraph {

@@ -46,6 +46,7 @@ public class ConventionalPairing {
 					pairing.getUpFork().setPartner(pairing.getDownFork());
 					pairing.getDownFork().setPartner(pairing.getUpFork());
 				}
+				
 			}
 		}
 		
@@ -57,13 +58,13 @@ public class ConventionalPairing {
 		for(int i = 0; i < jt.size(); i++ ){
 			TopoTreeNode    mtv = jt.getNode(i);
 			TopoTreeNode    mtp = mtv.getPartner();
-			ReebGraphVertex rbv = reebMesh.getByID( mtv.getPosition() );
+			ReebGraphVertex rbv = (ReebGraphVertex)reebMesh.get( mtv.getID() );
 			
 			essential.remove( rbv );
 			if( mtp == null ) 
 				gmin = rbv; 
 			else
-				rbv.setPartner(reebMesh.getByID( mtp.getPosition() ));
+				rbv.setPartner( (ReebGraphVertex)reebMesh.get( mtp.getID() ) );
 		}
 		return gmin;
 		

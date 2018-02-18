@@ -65,11 +65,11 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 			current = current.getChild(0);
 		}
 		if( current.childCount() == 0 ){
-			nodes.add( createTreeNode( current.getPosition(), current.getValue() ) );
+			nodes.add( createTreeNode( current.getID(), current.getValue() ) );
 			return (AugmentedJoinTreeNode)nodes.lastElement();
 		}
 		if( current.childCount() == 2 ){
-			nodes.add( createTreeNode( current.getPosition(), current.getValue(),
+			nodes.add( createTreeNode( current.getID(), current.getValue(),
 							processTree( current.getChild(0) ),
 							processTree( current.getChild(1) ) 
 						) );
@@ -77,11 +77,11 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 		}
 		// Monkey saddle --- should probably do something a little smarter here
 		if( current.childCount() == 3 ){
-			AugmentedJoinTreeNode child = createTreeNode( current.getPosition(), current.getValue(),
+			AugmentedJoinTreeNode child = createTreeNode( current.getID(), current.getValue(),
 														processTree( current.getChild(0) ),
 														processTree( current.getChild(1) ) 
 													);
-			AugmentedJoinTreeNode parent = createTreeNode( current.getPosition(), current.getValue(),
+			AugmentedJoinTreeNode parent = createTreeNode( current.getID(), current.getValue(),
 														child,
 														processTree( current.getChild(2) ) 
 				);
@@ -92,16 +92,16 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 		}
 		// 4-way saddle --- yicks!
 		if( current.childCount() == 4 ){
-			AugmentedJoinTreeNode child1 = createTreeNode( current.getPosition(), current.getValue(),
+			AugmentedJoinTreeNode child1 = createTreeNode( current.getID(), current.getValue(),
 														processTree( current.getChild(0) ),
 														processTree( current.getChild(1) ) 
 													);
-			AugmentedJoinTreeNode child0 = createTreeNode( current.getPosition(), current.getValue(),
+			AugmentedJoinTreeNode child0 = createTreeNode( current.getID(), current.getValue(),
 														child1,
 														processTree( current.getChild(2) ) 
 				);
 
-			AugmentedJoinTreeNode parent = createTreeNode( current.getPosition(), current.getValue(),
+			AugmentedJoinTreeNode parent = createTreeNode( current.getID(), current.getValue(),
 														child0,
 														processTree( current.getChild(3) ) 
 				);
@@ -138,7 +138,7 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 		}
 		
 		
-		@Override public int	getPosition() { return location; }
+		@Override public int	getID() { return location; }
 		@Override public float	getValue() { 	return value;	 }
 
 	}
