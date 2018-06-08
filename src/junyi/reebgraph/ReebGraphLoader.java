@@ -5,6 +5,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
+import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphVertex;
+
 
 public class ReebGraphLoader extends ReebGraph {
 

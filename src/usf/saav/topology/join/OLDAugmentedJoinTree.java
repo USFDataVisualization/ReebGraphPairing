@@ -24,9 +24,11 @@ import java.util.Comparator;
 import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTree;
 import usf.saav.topology.TopoTreeNode;
-import usf.saav.topology.join.JoinTree.Node;
+import usf.saav.topology.join.OLDJoinTree.Node;
+import usf.saav.topology.merge.MergeTreeNode;
 
-public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements TopoTree, Runnable {
+@Deprecated
+public abstract class OLDAugmentedJoinTree extends OLDAugmentedJoinTreeBase implements TopoTree, Runnable {
 	
 	protected AugmentedJoinTreeNode global_extreme;
 	protected TopoGraph cl;
@@ -34,7 +36,7 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 	private Comparator<? super Node> comparator;
 
 	
-	protected AugmentedJoinTree( TopoGraph cl, Comparator<? super Node> comparator ){
+	protected OLDAugmentedJoinTree( TopoGraph cl, Comparator<? super Node> comparator ){
 		this.cl = cl;
 		this.comparator = comparator;
 	}
@@ -42,7 +44,7 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 	@Override
 	public void run() {
 		// Build a join tree.
-		JoinTree jt = new JoinTree( cl, comparator );
+		OLDJoinTree jt = new OLDJoinTree( cl, comparator );
 		jt.run();
 
 		head = processTree( jt.getRoot() );
@@ -59,7 +61,7 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 
 
 	
-	protected AugmentedJoinTreeNode processTree( JoinTreeNode current ){
+	protected AugmentedJoinTreeNode processTree( MergeTreeNode current ){
 		
 		while( current.childCount() == 1 ){
 			current = current.getChild(0);
@@ -119,7 +121,7 @@ public abstract class AugmentedJoinTree extends AugmentedJoinTreeBase implements
 	public AugmentedJoinTreeNode getGlobalExtreme(){ return global_extreme; }
 
 	
-	public abstract class AugmentedJoinTreeNode extends JoinTreeNode implements TopoTreeNode {
+	public abstract class AugmentedJoinTreeNode extends MergeTreeNode implements TopoTreeNode {
 		
 		private int   location;
 		private float value;

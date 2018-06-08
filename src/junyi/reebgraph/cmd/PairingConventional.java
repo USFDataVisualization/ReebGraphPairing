@@ -27,12 +27,12 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraphLoader;
 import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.ReebGraph;
 
 
 
@@ -43,7 +43,7 @@ public class PairingConventional {
 		for( String ip : args ) {
 			try {
 				System.out.println(ip);
-				conventionalPairing( ip, false );
+				conventionalPairing( ip, true );
 				System.out.println();
 			} catch (Exception e) {
 				e.printStackTrace();

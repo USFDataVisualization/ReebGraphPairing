@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoGraph;
+import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 public class ReebGraphNormalizer {
 	

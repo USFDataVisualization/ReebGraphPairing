@@ -19,7 +19,7 @@
  */
 package usf.saav.common.algorithm;
 
-
+@Deprecated
 /**
  * One dimensional Disjoint Set functionality. This is a naive implementation. Expected runtime 
  * for any operation is O( a(n) ). This is effectively O(1). 

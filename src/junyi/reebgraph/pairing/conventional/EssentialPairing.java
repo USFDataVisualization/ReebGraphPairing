@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import junyi.reebgraph.ReebGraph;
-import junyi.reebgraph.ReebGraph.ReebGraphVertex;
+import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 
 public class EssentialPairing {

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import junyi.reebgraph.ReebGraph;
-import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoGraph.Vertex;
 import usf.saav.topology.TopoTreeNode.NodeType;
+import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 
 
@@ -27,9 +27,9 @@ public class MergePairing {
 		
 			switch( v.getType() ) {
 				case LEAF_MAX:	processMax(v);	break;
-				case MERGE:		processMerge(v);	break;
+				case DOWNFORK:		processMerge(v);	break;
 				case LEAF_MIN:	processMin(v);	break;
-				case SPLIT:		processSplit(v);	break;
+				case UPFORK:		processSplit(v);	break;
 				default: throw new Exception();
 			}
 			
@@ -46,7 +46,7 @@ public class MergePairing {
 			if( l.isPaired() ) continue;
 			
 			ReebGraphVertex n = l.vrt;
-			if( l.getType() == NodeType.SPLIT ) {
+			if( l.getType() == NodeType.UPFORK ) {
 				if( maxSaddle == null || n.value() > maxSaddle.value() )
 					maxSaddle = n;
 			}
@@ -134,7 +134,7 @@ public class MergePairing {
 			if( curr.getType() == NodeType.LEAF_MIN ) { 
 				maxLeaf = curr.vrt;
 			}
-			else if( curr.getType() == NodeType.SPLIT && prev != null && curr.vrt == prev.vrt ) {
+			else if( curr.getType() == NodeType.UPFORK && prev != null && curr.vrt == prev.vrt ) {
 				upfork = curr.vrt;
 			}
 			prev = curr;

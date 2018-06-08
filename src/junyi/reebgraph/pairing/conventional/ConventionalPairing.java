@@ -3,14 +3,14 @@ package junyi.reebgraph.pairing.conventional;
 import java.io.IOException;
 import java.util.HashSet;
 
-import junyi.reebgraph.ReebGraph;
-import junyi.reebgraph.ReebGraph.ReebGraphVertex;
 import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.TopoTreeNode.NodeType;
-import usf.saav.topology.join.AugmentedJoinTree;
-import usf.saav.topology.merge.MergeTree;
-import usf.saav.topology.split.SplitTree;
+import usf.saav.topology.merge.AugmentedMergeTree;
+import usf.saav.topology.merge.JoinTree;
+import usf.saav.topology.merge.SplitTree;
+import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 public class ConventionalPairing {
 
@@ -22,7 +22,7 @@ public class ConventionalPairing {
 		HashSet<TopoGraph.Vertex> essential = new HashSet<TopoGraph.Vertex>();
 		essential.addAll( reebMesh );
 
-		MergeTree mt = new MergeTree( reebMesh );
+		JoinTree mt = new JoinTree( reebMesh );
 		mt.run();
 		//SystemXv2.writeDot(mt.toDot(), tmp_directory + "mt.dot", tmp_directory + "mt.pdf" );
 
@@ -39,7 +39,7 @@ public class ConventionalPairing {
 		for( TopoGraph.Vertex s : essential ) {
 			ReebGraphVertex r = (ReebGraphVertex)s;
 
-			if( r.getType() == NodeType.MERGE ) {
+			if( r.getType() == NodeType.DOWNFORK ) {
 				EssentialPairing pairing = new EssentialPairing(reebMesh, r);
 
 				if( pairing.getUpFork() != null && pairing.getDownFork() != null ) {
@@ -53,7 +53,7 @@ public class ConventionalPairing {
 	}
 	
 
-	private ReebGraphVertex JoinTreePairing( AugmentedJoinTree jt, ReebGraph reebMesh, HashSet<TopoGraph.Vertex> essential ) {
+	private ReebGraphVertex JoinTreePairing( AugmentedMergeTree jt, ReebGraph reebMesh, HashSet<TopoGraph.Vertex> essential ) {
 		ReebGraphVertex gmin=null;
 		for(int i = 0; i < jt.size(); i++ ){
 			TopoTreeNode    mtv = jt.getNode(i);

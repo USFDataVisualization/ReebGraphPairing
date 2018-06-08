@@ -27,13 +27,13 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraphLoader;
 import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import junyi.reebgraph.pairing.merge.MergePairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.ReebGraph;
 
 
 public class PairingTest {
@@ -75,7 +75,8 @@ public class PairingTest {
 			"test/second_graph.txt",
 			"test/topology_f_ReebGraph.txt",
 			"test/topology_simple_ReebGraph.txt",
-			"test/vase_poission_f_ReebGraph.txt"
+			"test/vase_poission_f_ReebGraph.txt",
+			"test/elevation_graph.txt"
 	};
 	
 	

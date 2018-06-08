@@ -25,7 +25,7 @@ public interface TopoTreeNode {
 
 
 	public enum NodeType {
-		LEAF_MIN, LEAF_MAX, MERGE, SPLIT, UNKNOWN
+		LEAF_MIN, LEAF_MAX, DOWNFORK, UPFORK, LEAF, SADDLE, NONCRITICAL, UNKNOWN
 	}
 	
 	

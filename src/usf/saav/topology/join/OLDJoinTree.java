@@ -26,10 +26,11 @@ import java.util.Queue;
 import usf.saav.common.algorithm.BinaryMask1D;
 import usf.saav.common.algorithm.DisjointSet1D;
 import usf.saav.topology.TopoGraph;
+import usf.saav.topology.merge.MergeTreeNode;
 
 
-
-public class JoinTree implements Runnable {
+@Deprecated
+public class OLDJoinTree implements Runnable {
  
 	private   Comparator<? super Node> comparator;
 	private   TopoGraph sf;
@@ -37,12 +38,12 @@ public class JoinTree implements Runnable {
 	private   Node head;
 	protected boolean operationComplete = false;
 
-	public JoinTree( TopoGraph sf ) {
+	public OLDJoinTree( TopoGraph sf ) {
 		this.sf = sf;
 		this.comparator = new Node.ComparatorValueAscending();
 	}
 	
-	protected JoinTree( TopoGraph sf, Comparator<? super Node> comparator  ) {
+	protected OLDJoinTree( TopoGraph sf, Comparator<? super Node> comparator  ) {
 		this.sf = sf;
 		this.comparator = comparator;
 	}
@@ -121,7 +122,7 @@ public class JoinTree implements Runnable {
 	
 
 	
-	public class Node extends JoinTreeNode {
+	public class Node extends MergeTreeNode {
 
 		private int   position;
 		private float value;

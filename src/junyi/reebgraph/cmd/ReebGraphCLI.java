@@ -31,13 +31,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraphLoader;
 import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import junyi.reebgraph.pairing.merge.MergePairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.ReebGraph;
 
 
 

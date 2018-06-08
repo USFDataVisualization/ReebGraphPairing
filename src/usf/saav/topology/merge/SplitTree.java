@@ -17,13 +17,11 @@
  *
  *     You may contact the Paul Rosen at <prosen@usf.edu>.
  */
-package usf.saav.topology.split;
+package usf.saav.topology.merge;
 
 import usf.saav.topology.TopoGraph;
-import usf.saav.topology.join.AugmentedJoinTree;
-import usf.saav.topology.join.JoinTreeNode;
 
-public class SplitTree extends AugmentedJoinTree {
+public class SplitTree extends AugmentedMergeTree {
 	
 	/**
 	 * Default Split Tree constructor.
@@ -31,9 +29,10 @@ public class SplitTree extends AugmentedJoinTree {
 	 * @param sf Scalar Field in any dimension to construct contour tree upon.
 	 */
 	public SplitTree( TopoGraph sf ){
-		super(sf, new JoinTreeNode.ComparatorValueDescending() );
+		super(sf, new MergeTreeNode.ComparatorValueDescending() );
 	}
 	 
+	/*
 
 	@Override
 	protected AugmentedJoinTreeNode createTreeNode(int loc, float val) {
@@ -67,7 +66,7 @@ public class SplitTree extends AugmentedJoinTree {
 	
 	
 	
-
+	*/
 
 
 	

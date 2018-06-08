@@ -27,11 +27,11 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraph;
 import junyi.reebgraph.ReebGraphLoader;
 import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.merge.MergePairing;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.ReebGraph;
 
 
 

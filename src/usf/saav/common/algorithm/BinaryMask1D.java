@@ -21,7 +21,7 @@ package usf.saav.common.algorithm;
 
 import java.util.Arrays;
 
-
+@Deprecated
 /**
  * Used for creating a binary (on/off) mask in 1D
  */

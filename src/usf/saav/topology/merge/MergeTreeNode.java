@@ -17,7 +17,7 @@
  *
  *     You may contact the Paul Rosen at <prosen@usf.edu>.
  */
-package usf.saav.topology.join;
+package usf.saav.topology.merge;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -32,24 +32,24 @@ import usf.saav.common.types.Pair;
 import usf.saav.topology.TopoTreeNode;
 
 
-public abstract class JoinTreeNode implements TopoTreeNode {
+public abstract class MergeTreeNode implements TopoTreeNode {
 
-	protected Vector<JoinTreeNode> children = new Vector<JoinTreeNode>( );
-	protected JoinTreeNode parent  = null;
-	protected JoinTreeNode partner = null;
+	protected Vector<MergeTreeNode> children = new Vector<MergeTreeNode>( );
+	protected MergeTreeNode parent  = null;
+	protected MergeTreeNode partner = null;
 
 	
-	public void 				addChild( JoinTreeNode c ){				  children.add(c); 					}
-	public void 				addChildren(Collection<JoinTreeNode> c) { children.addAll(c);				}
-	public JoinTreeNode 		getChild( int idx ){					  return children.get(idx); 		}
-	public List<JoinTreeNode>	getChildren( ){ 						  return children; 					}
+	public void 				addChild( MergeTreeNode c ){				  children.add(c); 					}
+	public void 				addChildren(Collection<MergeTreeNode> c) { children.addAll(c);				}
+	public MergeTreeNode 		getChild( int idx ){					  return children.get(idx); 		}
+	public List<MergeTreeNode>	getChildren( ){ 						  return children; 					}
 	public int					getChildCount( ){ 						  return children.size(); 			}
-	public boolean 				isChild(JoinTreeNode node){				  return children.contains(node);	}
+	public boolean 				isChild(MergeTreeNode node){				  return children.contains(node);	}
 	public int 					childCount(){ 							  return children.size(); 			}
 	public boolean 				hasChildren( ){							  return children.size() != 0; 		}
-	public void 				removeChild(JoinTreeNode node){			  children.remove(node);			}
+	public void 				removeChild(MergeTreeNode node){			  children.remove(node);			}
 
-	public void setPartner( JoinTreeNode jtn ) { partner = jtn; }
+	public void setPartner( MergeTreeNode jtn ) { partner = jtn; }
 	@Override public TopoTreeNode getPartner() { return partner; }
 	
 	@Override public float getBirth() { 
@@ -66,13 +66,21 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	}
 
 	
-	public void			setParent( JoinTreeNode p ){ 	parent = p;				}
-	public JoinTreeNode	getParent( ){					return parent;			}
+	public void			setParent( MergeTreeNode p ){ 	parent = p;				}
+	public MergeTreeNode	getParent( ){					return parent;			}
 	public boolean		hasParent() {					return parent != null;	}
 
 	
 	public abstract float getValue( );
 	public abstract int   getID( );
+	
+	@Override public NodeType getType() {
+		switch( this.childCount() ) {
+			case 0  : return NodeType.LEAF;
+			case 1  : return NodeType.NONCRITICAL;
+			default : return NodeType.SADDLE;
+		}
+	}	
 
 	@Override public String toString(){
 		StringBuffer bf = new StringBuffer( );
@@ -84,18 +92,18 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	private void toString( StringBuffer bf, String spaces ){
 		bf.append( spaces + getID() + ": " + getValue() + "\n" );
 		if( children != null ){
-			for(JoinTreeNode child : children){ child.toString(bf, "  "+spaces); }
+			for(MergeTreeNode child : children){ child.toString(bf, "  "+spaces); }
 		}
 	}
 	
 	public void toDot(StringBuffer dot_node, StringBuffer dot_edge) {
-		Queue<JoinTreeNode> queue = new LinkedList<JoinTreeNode>( );
+		Queue<MergeTreeNode> queue = new LinkedList<MergeTreeNode>( );
 		queue.add(this);
 		
 		while( !queue.isEmpty() ){
-			JoinTreeNode curr = queue.poll();
+			MergeTreeNode curr = queue.poll();
 			dot_node.append( "\t" + curr.getID() + "[label=\"" + curr.getID() + " (" + curr.getValue() + ")\"];\n");
-			for( JoinTreeNode n : curr.getChildren() ){
+			for( MergeTreeNode n : curr.getChildren() ){
 				dot_edge.append( "\t" + curr.getID() + " -> " + n.getID() + "\n");
 			}
 			queue.addAll( curr.getChildren() );
@@ -111,44 +119,44 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	
 
 	public void toDot(StringBuffer dot_node, StringBuffer dot_edge, int maxdepth) {
-		Queue<Pair<JoinTreeNode,Integer>> queue = new LinkedList<Pair<JoinTreeNode,Integer>>( );
-		queue.add( new Pair<JoinTreeNode,Integer>(this,0) );
+		Queue<Pair<MergeTreeNode,Integer>> queue = new LinkedList<Pair<MergeTreeNode,Integer>>( );
+		queue.add( new Pair<MergeTreeNode,Integer>(this,0) );
 		
 		while( !queue.isEmpty() ){
-			Pair<JoinTreeNode,Integer> curr = queue.poll();
+			Pair<MergeTreeNode,Integer> curr = queue.poll();
 			if( curr.getSecond() < maxdepth ){
 				dot_node.append( "\t" + curr.getFirst().getID() + "[label=\"" + curr.getFirst().getID() + " (" + curr.getFirst().getValue() + ")\"];\n");
-				for( JoinTreeNode n : curr.getFirst().getChildren() ){
+				for( MergeTreeNode n : curr.getFirst().getChildren() ){
 					dot_edge.append( "\t" + curr.getFirst().getID() + " -> " + n.getID() + "\n");
-					queue.add( new Pair<JoinTreeNode,Integer>( n, curr.getSecond()+1 ));
+					queue.add( new Pair<MergeTreeNode,Integer>( n, curr.getSecond()+1 ));
 				}
 			}
 		}
 	}
  
 
-	public static List<JoinTreeNode> findLeaves( JoinTreeNode root ) {
-		List<JoinTreeNode>  ret = new Vector<JoinTreeNode>( );
-		Deque<JoinTreeNode> work_stack = new ArrayDeque<JoinTreeNode>();
+	public static List<MergeTreeNode> findLeaves( MergeTreeNode root ) {
+		List<MergeTreeNode>  ret = new Vector<MergeTreeNode>( );
+		Deque<MergeTreeNode> work_stack = new ArrayDeque<MergeTreeNode>();
 		
 		work_stack.push(root);
 		while( !work_stack.isEmpty() ){
-			JoinTreeNode curr = work_stack.pop();
+			MergeTreeNode curr = work_stack.pop();
 			if( !curr.hasChildren() ) ret.add(curr);
-			for( JoinTreeNode child : curr.children )
+			for( MergeTreeNode child : curr.children )
 				work_stack.push( child );
 		}
 		
 		return ret;
 	}
 	
-	public static void findParents( JoinTreeNode root ) {
-		Deque<JoinTreeNode> work_stack = new ArrayDeque<JoinTreeNode>();
+	public static void findParents( MergeTreeNode root ) {
+		Deque<MergeTreeNode> work_stack = new ArrayDeque<MergeTreeNode>();
 		
 		work_stack.push(root);
 		while( !work_stack.isEmpty() ){
-			JoinTreeNode curr = work_stack.pop();
-			for( JoinTreeNode child : curr.children ){
+			MergeTreeNode curr = work_stack.pop();
+			for( MergeTreeNode child : curr.children ){
 				child.setParent( curr );
 				work_stack.push( child );
 			}
@@ -160,11 +168,11 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	public static class ComparatorValueAscending implements Comparator<Object> {
 		@Override
 		public int compare(Object o1, Object o2) {
-			if( o1 instanceof JoinTreeNode && o2 instanceof JoinTreeNode ){
-				if( ((JoinTreeNode)o1).getValue() > ((JoinTreeNode)o2).getValue() ) return  1;
-				if( ((JoinTreeNode)o1).getValue() < ((JoinTreeNode)o2).getValue() ) return -1;
-				if( ((JoinTreeNode)o1).getID() < ((JoinTreeNode)o2).getID() ) return  1;
-				if( ((JoinTreeNode)o1).getID() > ((JoinTreeNode)o2).getID() ) return -1;
+			if( o1 instanceof MergeTreeNode && o2 instanceof MergeTreeNode ){
+				if( ((MergeTreeNode)o1).getValue() > ((MergeTreeNode)o2).getValue() ) return  1;
+				if( ((MergeTreeNode)o1).getValue() < ((MergeTreeNode)o2).getValue() ) return -1;
+				if( ((MergeTreeNode)o1).getID() < ((MergeTreeNode)o2).getID() ) return  1;
+				if( ((MergeTreeNode)o1).getID() > ((MergeTreeNode)o2).getID() ) return -1;
 			}
 			return 0;
 		}	
@@ -173,11 +181,11 @@ public abstract class JoinTreeNode implements TopoTreeNode {
 	public static class ComparatorValueDescending implements Comparator<Object> {
 		@Override
 		public int compare(Object o1, Object o2) {
-			if( o1 instanceof JoinTreeNode && o2 instanceof JoinTreeNode ){
-				if( ((JoinTreeNode)o1).getValue() > ((JoinTreeNode)o2).getValue() ) return -1;
-				if( ((JoinTreeNode)o1).getValue() < ((JoinTreeNode)o2).getValue() ) return  1;
-				if( ((JoinTreeNode)o1).getID() < ((JoinTreeNode)o2).getID() ) return -1;
-				if( ((JoinTreeNode)o1).getID() > ((JoinTreeNode)o2).getID() ) return  1;
+			if( o1 instanceof MergeTreeNode && o2 instanceof MergeTreeNode ){
+				if( ((MergeTreeNode)o1).getValue() > ((MergeTreeNode)o2).getValue() ) return -1;
+				if( ((MergeTreeNode)o1).getValue() < ((MergeTreeNode)o2).getValue() ) return  1;
+				if( ((MergeTreeNode)o1).getID() < ((MergeTreeNode)o2).getID() ) return -1;
+				if( ((MergeTreeNode)o1).getID() > ((MergeTreeNode)o2).getID() ) return  1;
 			}
 			return 0;
 		}	

@@ -5,28 +5,29 @@ import java.util.Vector;
 
 import usf.saav.topology.TopoTree;
 import usf.saav.topology.TopoTreeNode;
+import usf.saav.topology.merge.MergeTreeNode;
 
 
+@Deprecated
+public class OLDAugmentedJoinTreeBase implements TopoTree {
 
-public class AugmentedJoinTreeBase implements TopoTree {
+	public	  MergeTreeNode		   head = null;
 
-	public	  JoinTreeNode		   head = null;
-
-	protected Vector<JoinTreeNode> nodes = new Vector<JoinTreeNode>();
+	protected Vector<MergeTreeNode> nodes = new Vector<MergeTreeNode>();
 	protected float				   simplify = 0.0f;
 	protected float				   max_persistence = 0.0f;
 	
 	
-	protected AugmentedJoinTreeBase( ){ }
+	protected OLDAugmentedJoinTreeBase( ){ }
 	
 
 	protected void calculatePersistence(){
 		
-		Stack<JoinTreeNode> pstack = new Stack<JoinTreeNode>( );
+		Stack<MergeTreeNode> pstack = new Stack<MergeTreeNode>( );
 		pstack.push( this.head );
 		
 		while( !pstack.isEmpty() ){
-			JoinTreeNode curr = pstack.pop();
+			MergeTreeNode curr = pstack.pop();
 			
 			// leaf is only thing in the stack, done
 			if( pstack.isEmpty() && curr.childCount() == 0 ) break;
@@ -34,14 +35,14 @@ public class AugmentedJoinTreeBase implements TopoTree {
 			// saddle point, push children onto stack
 			if( curr.childCount() == 2 ){
 				pstack.push(curr);
-				pstack.push((JoinTreeNode)curr.getChild(0));
-				pstack.push((JoinTreeNode)curr.getChild(1));
+				pstack.push((MergeTreeNode)curr.getChild(0));
+				pstack.push((MergeTreeNode)curr.getChild(1));
 			}
 			
 			// leaf node, 2 options
 			if( curr.childCount() == 0 ) {
-				JoinTreeNode sibling = pstack.pop();
-				JoinTreeNode parent  = pstack.pop();
+				MergeTreeNode sibling = pstack.pop();
+				MergeTreeNode parent  = pstack.pop();
 				
 				// sibling is a saddle, restack.
 				if( sibling.childCount() == 2 ){
