@@ -17,7 +17,7 @@
  *
  *     You may contact the Paul Rosen at <prosen@usf.edu>.
  */
-package usf.saav.common.types;
+package usf.saav.common;
 
 public class Pair<A, B> {
     private A first;

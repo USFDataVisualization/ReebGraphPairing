@@ -7,23 +7,23 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
-import usf.saav.common.algorithm.HashDisjointSet;
+import usf.saav.common.HashDisjointSet;
 import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 
 public class MergeTree implements Runnable {
  
 	protected Comparator<? super JNode> comparator;
-	protected TopoGraph sf;
+	protected TopoGraph<? extends TopoGraph.Vertex> sf;
 	protected MergeTreeNode head;
 	protected boolean operationComplete = false;
 	protected ArrayList<MergeTreeNode> grid = new ArrayList<MergeTreeNode>();
 
-	public MergeTree( TopoGraph sf ) {
+	public MergeTree( TopoGraph<? extends TopoGraph.Vertex> sf ) {
 		this( sf, new JNode.ComparatorValueAscending() );
 	}
 	
-	public MergeTree( TopoGraph sf, Comparator<? super JNode> comparator  ) {
+	public MergeTree( TopoGraph<? extends TopoGraph.Vertex> sf, Comparator<? super JNode> comparator  ) {
 		this.sf = sf;
 		this.comparator = comparator;
 	}

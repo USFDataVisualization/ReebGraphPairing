@@ -21,7 +21,7 @@ package usf.saav.topology;
 
 import java.util.Vector;
 
-public abstract class TopoGraph extends Vector<TopoGraph.Vertex> {
+public abstract class TopoGraph<T extends TopoGraph.Vertex> extends Vector<TopoGraph.Vertex> {
 	private static final long serialVersionUID = 2187532695992737840L;
 
 	public TopoGraph( ){ }

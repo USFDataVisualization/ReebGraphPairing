@@ -1,4 +1,4 @@
-package usf.saav.common.algorithm;
+package usf.saav.common;
 
 import java.util.HashMap;
 

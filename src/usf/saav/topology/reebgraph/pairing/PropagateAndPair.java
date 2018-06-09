@@ -1,4 +1,4 @@
-package junyi.reebgraph.pairing.merge;
+package usf.saav.topology.reebgraph.pairing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,13 +12,18 @@ import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 
 
-public class MergePairing {
+public class PropagateAndPair implements Pairing {
 
-	HashMap<ReebGraphVertex,TreeSet<Label>> inLabels = new HashMap<ReebGraphVertex,TreeSet<Label>>();
-	TreeSet<VEdge> virtEdges = new TreeSet<VEdge>();
+	HashMap<ReebGraphVertex,TreeSet<Label>> inLabels;
+	TreeSet<VEdge> virtEdges;
 	
-	public MergePairing( ReebGraph reebMesh ) throws Exception {
-		
+	public PropagateAndPair( ) { }
+	
+	@Override
+	public void pair(ReebGraph reebMesh) {
+		inLabels = new HashMap<ReebGraphVertex,TreeSet<Label>>();
+		virtEdges = new TreeSet<VEdge>();
+
 		for( Vertex v : reebMesh ) {
 			inLabels.put( (ReebGraphVertex)v, new TreeSet<Label>() );
 		}
@@ -26,17 +31,16 @@ public class MergePairing {
 		for( ReebGraphVertex v : reebMesh.getNodesSortedByValue() ) {
 		
 			switch( v.getType() ) {
-				case LEAF_MAX:	processMax(v);	break;
-				case DOWNFORK:		processMerge(v);	break;
-				case LEAF_MIN:	processMin(v);	break;
-				case UPFORK:		processSplit(v);	break;
-				default: throw new Exception();
+				case LEAF_MAX:	processMax(v);		break;
+				case DOWNFORK:	processMerge(v);	break;
+				case LEAF_MIN:	processMin(v);		break;
+				case UPFORK:	processSplit(v);	break;
+				default: System.err.println("Unknown Critical Point Type");
 			}
 			
-		}
-		
-		
+		}		
 	}
+	
 	
 	private void processMax(ReebGraphVertex v) {
 		
@@ -266,6 +270,7 @@ public class MergePairing {
 					+ " " + n1.getGlobalID() + "(" + n1.value() +")" + " ==> " + gen.getGlobalID();
 		}
 	}
+
 
 	
 }

@@ -23,50 +23,18 @@ import usf.saav.topology.TopoGraph;
 
 public class JoinTree extends AugmentedMergeTree  {
  
-
 	/**
-	 * Default Merge Tree constructor.
+	 * Default Join Tree constructor.
 	 *   
 	 * @param sf Scalar Field in any dimension to construct contour tree upon.
 	 */
-	public JoinTree( TopoGraph sf ){
+	public JoinTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
 		super( sf, new MergeTreeNode.ComparatorValueAscending() );
 	}
 
-	/*
-
-
-	@Override
-	protected AugmentedJoinTreeNode createTreeNode(int loc, float val) {
-		return new MergeTreeNode(loc,val);
+	public JoinTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
+		super( sf, new MergeTreeNode.ComparatorValueAscending() );
+		if( run ) this.run();
 	}
 
-	@Override
-	protected AugmentedJoinTreeNode createTreeNode(int loc, float val, AugmentedJoinTreeNode c0, AugmentedJoinTreeNode c1) {
-		return new MergeTreeNode(loc,val,c0,c1);
-	}
-	
-	
-	
-	public class MergeTreeNode extends AugmentedJoinTreeNode {
-		
-		public MergeTreeNode( int loc, float val ){
-			super(loc,val); 
-		}
-		
-		public MergeTreeNode( int loc, float val, AugmentedJoinTreeNode c0, AugmentedJoinTreeNode c1 ){
-			super(loc,val,c0,c1);
-		}
-		
-		public NodeType getType() {
-			if( this.getChildCount() == 0 ) return NodeType.LEAF_MIN;
-			if( this.getChildCount() >= 2 ) return NodeType.MERGE;
-			return NodeType.UNKNOWN;
-		}
-		
-
-	}
-
-	*/
-	
 }

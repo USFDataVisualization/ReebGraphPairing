@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Vector;
 
-import usf.saav.common.types.Pair;
+import usf.saav.common.Pair;
 import usf.saav.topology.TopoTreeNode;
 
 

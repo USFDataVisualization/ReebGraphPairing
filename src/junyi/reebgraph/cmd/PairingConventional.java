@@ -27,11 +27,10 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraphLoader;
-import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.Conditioner;
 import usf.saav.topology.reebgraph.ReebGraph;
 
 
@@ -59,7 +58,7 @@ public class PairingConventional {
 		if( verbose ) System.out.println("CONVENTIONAL");
 		
 		t.start();
-		ReebGraph rm1 = new ReebGraphLoader(inputfile);
+		ReebGraph rm1 = ReebGraphLoader.load(inputfile);
 		if( verbose ) System.out.println("Load time: " + t.end() + "ms");
 		
 		t.start();
@@ -67,7 +66,7 @@ public class PairingConventional {
 		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
 		
 		t.start();
-		ReebGraphNormalizer rn1 = new ReebGraphNormalizer(rm1, norm_epsilon );
+		Conditioner rn1 = new Conditioner(rm1, norm_epsilon );
 		if( verbose ) System.out.println("Normalize time: " + t.end() + "ms");
 		
 		t.start();

@@ -27,13 +27,12 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraphLoader;
-import junyi.reebgraph.ReebGraphNormalizer;
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
-import junyi.reebgraph.pairing.merge.MergePairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.Conditioner;
 import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
 
 
 public class PairingTest {
@@ -107,7 +106,7 @@ public class PairingTest {
 		if( verbose ) System.out.println("CONVENTIONAL");
 		
 		t.start();
-		ReebGraph rm1 = new ReebGraphLoader(inputfile);
+		ReebGraph rm1 = ReebGraphLoader.load(inputfile);
 		if( verbose ) System.out.println("Load time: " + t.end() + "ms");
 		
 		t.start();
@@ -115,7 +114,7 @@ public class PairingTest {
 		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
 		
 		t.start();
-		ReebGraphNormalizer rn1 = new ReebGraphNormalizer(rm1, norm_epsilon );
+		Conditioner rn1 = new Conditioner(rm1, norm_epsilon );
 		if( verbose ) System.out.println("Normalize time: " + t.end() + "ms");
 		
 		t.start();
@@ -134,11 +133,11 @@ public class PairingTest {
 		if( verbose ) System.out.println();
 		if( verbose ) System.out.println("OUR APPROACH");
 		
-		ReebGraph rm2 = new ReebGraphLoader(inputfile);
-		ReebGraphNormalizer rn2 = new ReebGraphNormalizer( rm2, norm_epsilon );
+		ReebGraph rm2 = ReebGraphLoader.load(inputfile);
+		Conditioner rn2 = new Conditioner( rm2, norm_epsilon );
 
 		mergeTimer.start();
-		new MergePairing( rm2 );
+		new PropagateAndPair( ).pair(rm2);
 		mergeTimer.end();
 		if( verbose ) System.out.println("Our computation time: " + mergeTimer.getElapsed() + "ms");
 		if( verbose ) rn2.printPersistentDiagram();
@@ -146,7 +145,7 @@ public class PairingTest {
 		
 		if( verbose ) System.out.println();
 		if( verbose ) System.out.println("COMPARING GRAPHS");
-		if( !ReebGraphNormalizer.compareDiagrams(rn1, rn2, verbose ) ) {
+		if( !Conditioner.compareDiagrams(rn1, rn2, verbose ) ) {
 			if( verbose ) System.out.println("ERROR: Difference Found in Graph Pairings");
 			return false;
 		}

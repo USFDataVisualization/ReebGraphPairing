@@ -1,4 +1,4 @@
-package junyi.reebgraph;
+package usf.saav.topology.reebgraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,16 +8,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import usf.saav.topology.TopoGraph;
-import usf.saav.topology.reebgraph.ReebGraph;
-import usf.saav.topology.reebgraph.ReebGraphVertex;
 
-public class ReebGraphNormalizer {
+public class Conditioner {
 	
 	ReebGraph rg;
 	HashMap< ReebGraphVertex, ReebGraphVertex > vmap = new HashMap< ReebGraphVertex, ReebGraphVertex >();
 	
 
-	public ReebGraphNormalizer( ReebGraph _rg, float epsilon_percent ) {
+	public Conditioner( ReebGraph _rg, float epsilon_percent ) {
 			rg = _rg;
 			
 			Queue<TopoGraph.Vertex> proc = new LinkedList<TopoGraph.Vertex>();
@@ -224,7 +222,7 @@ public class ReebGraphNormalizer {
 	}
 
 	
-	public static boolean compareDiagrams( ReebGraphNormalizer n0, ReebGraphNormalizer n1, boolean verbose ) {
+	public static boolean compareDiagrams( Conditioner n0, Conditioner n1, boolean verbose ) {
 		
 		ArrayList<pairing> p0 = n0.buildPairings();
 		ArrayList<pairing> p1 = n1.buildPairings();

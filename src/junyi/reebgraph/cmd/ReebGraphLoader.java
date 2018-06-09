@@ -1,4 +1,4 @@
-package junyi.reebgraph;
+package junyi.reebgraph.cmd;
 
 
 import java.io.BufferedReader;
@@ -13,11 +13,13 @@ public class ReebGraphLoader extends ReebGraph {
 
 	private static final long serialVersionUID = 7889260039234787058L;
 
-	String inputReebGraph;
+	
+	public static ReebGraph load(String _inputReebGraph) throws Exception {
 
-	public ReebGraphLoader(String _inputReebGraph) throws Exception {
-
+		String inputReebGraph;
 		inputReebGraph = _inputReebGraph;
+		
+		ReebGraph reeb = new ReebGraph();
 
 		HashMap<Integer, ReebGraphVertex> rvmap = new HashMap<Integer, ReebGraphVertex>();
 		BufferedReader reader;
@@ -38,7 +40,7 @@ public class ReebGraphLoader extends ReebGraph {
 				int    v = Integer.parseInt(r[1].trim());
 				float  fn = Float.parseFloat(r[2].trim());
 				
-				rvmap.put( v, createVertex(fn, v) );
+				rvmap.put( v, reeb.createVertex(fn, v) );
 
 			} 
 			if (r[0].trim().equals("e") == true) {
@@ -63,6 +65,8 @@ public class ReebGraphLoader extends ReebGraph {
 		}
 
 		reader.close();
+		
+		return reeb;
 
 	}
 

@@ -7,7 +7,7 @@ import java.util.Vector;
 import usf.saav.topology.TopoGraph;
 
 
-public class ReebGraph extends TopoGraph {
+public class ReebGraph extends TopoGraph<ReebGraphVertex> {
 
 	private static final long serialVersionUID = 2799501955753168490L;
 

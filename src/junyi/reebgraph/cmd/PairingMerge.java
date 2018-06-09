@@ -27,11 +27,10 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.ReebGraphLoader;
-import junyi.reebgraph.ReebGraphNormalizer;
-import junyi.reebgraph.pairing.merge.MergePairing;
 import usf.saav.common.Timer;
+import usf.saav.topology.reebgraph.Conditioner;
 import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
 
 
 
@@ -58,11 +57,11 @@ public class PairingMerge {
 		if( verbose ) System.out.println();
 		if( verbose ) System.out.println("OUR APPROACH");
 		
-		ReebGraph rm2 = new ReebGraphLoader(inputfile);
-		ReebGraphNormalizer rn2 = new ReebGraphNormalizer( rm2, norm_epsilon );
+		ReebGraph rm2 = ReebGraphLoader.load(inputfile);
+		Conditioner rn2 = new Conditioner( rm2, norm_epsilon );
 
 		t.start();
-		new MergePairing( rm2 );
+		new PropagateAndPair( ).pair(rm2);
 		if( verbose ) System.out.println("Our computation time: " + t.end() + "ms");
 		
 		rn2.printPersistentDiagram();

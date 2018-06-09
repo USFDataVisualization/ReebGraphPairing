@@ -28,46 +28,13 @@ public class SplitTree extends AugmentedMergeTree {
 	 *   
 	 * @param sf Scalar Field in any dimension to construct contour tree upon.
 	 */
-	public SplitTree( TopoGraph sf ){
+	public SplitTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
 		super(sf, new MergeTreeNode.ComparatorValueDescending() );
 	}
-	 
-	/*
-
-	@Override
-	protected AugmentedJoinTreeNode createTreeNode(int loc, float val) {
-		return new SplitTreeNode(loc,val);
-	}
-
-
-
-	@Override
-	protected AugmentedJoinTreeNode createTreeNode(int loc, float val, AugmentedJoinTreeNode c0, AugmentedJoinTreeNode c1) {
-		return new SplitTreeNode(loc,val,c0,c1);
-	}
 	
-	public class SplitTreeNode extends AugmentedJoinTreeNode {
-
-		public SplitTreeNode( int loc, float val ){
-			super(loc,val);
-		}
-		
-		public SplitTreeNode( int loc, float val, AugmentedJoinTreeNode c0, AugmentedJoinTreeNode c1 ){
-			super(loc,val,c0,c1);
-		}
-		
-		public NodeType getType() {
-			if( this.getChildCount() == 0 ) return NodeType.LEAF_MAX;
-			if( this.getChildCount() >= 2 ) return NodeType.SPLIT;
-			return NodeType.UNKNOWN;
-		}
-		
-	}
-	
-	
-	
-	*/
-
-
+	public SplitTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
+		super(sf, new MergeTreeNode.ComparatorValueDescending() );
+		if( run ) this.run();
+	}	
 	
 }
