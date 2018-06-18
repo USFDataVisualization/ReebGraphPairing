@@ -69,6 +69,8 @@ public class MergeTree implements Runnable {
 			return "Digraph{\n" + dot_node + dot_edge + "}"; 
 		}
 	}
+	
+	/*
 
 	public String toDot( int maxdepth ){
 		if( head == null ){ return "Digraph{\n}"; }
@@ -78,7 +80,7 @@ public class MergeTree implements Runnable {
 			head.toDot( dot_node, dot_edge, maxdepth );
 			return "Digraph{\n" + dot_node + dot_edge + "}"; 
 		}
-	}
+	}*/
 
 	
 

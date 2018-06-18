@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Vector;
 
-import usf.saav.common.Pair;
 import usf.saav.topology.TopoTreeNode;
 
 
@@ -117,7 +116,7 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 		*/
 	}
 	
-
+	/*
 	public void toDot(StringBuffer dot_node, StringBuffer dot_edge, int maxdepth) {
 		Queue<Pair<MergeTreeNode,Integer>> queue = new LinkedList<Pair<MergeTreeNode,Integer>>( );
 		queue.add( new Pair<MergeTreeNode,Integer>(this,0) );
@@ -133,6 +132,7 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 			}
 		}
 	}
+	*/
  
 
 	public static List<MergeTreeNode> findLeaves( MergeTreeNode root ) {
