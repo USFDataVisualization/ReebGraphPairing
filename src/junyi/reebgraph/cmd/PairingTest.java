@@ -27,6 +27,10 @@
  */
 package junyi.reebgraph.cmd;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
@@ -74,13 +78,14 @@ public class PairingTest {
 			"test/second_graph.txt",
 			"test/topology_f_ReebGraph.txt",
 			"test/topology_simple_ReebGraph.txt",
-			"test/vase_poission_f_ReebGraph.txt",
-			"test/elevation_graph.txt"
+			"test/vase_poission_f_ReebGraph.txt"
+			//"test/elevation_graph.txt"
 	};
 	
 	
-	public static void main( String[] args ) {
+	public static void main( String[] args ) throws FileNotFoundException {
 
+		System.setOut(new PrintStream(new FileOutputStream("output.txt")));
 		for( String ip : testSet ) {
 			try {
 				
@@ -128,6 +133,7 @@ public class PairingTest {
 		convTimer.end();
 		if( verbose ) System.out.println("Conventional computation time: " + convTimer.getElapsed() + "ms");
 		if( verbose ) rn1.printPersistentDiagram();
+		rn1.printPersistentDiagram();
 		
 		
 		if( verbose ) System.out.println();

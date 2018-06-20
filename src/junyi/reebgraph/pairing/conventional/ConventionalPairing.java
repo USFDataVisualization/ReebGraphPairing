@@ -18,7 +18,9 @@ import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 public class ConventionalPairing {
 
-	public static String tmp_directory = "/Users/prosen/Code/reebgraphsim/tmp/";
+	//public static String tmp_directory = "/Users/prosen/Code/reebgraphsim/tmp/";
+	
+	public static String tmp_directory = "/home/junyi/Code/reebgraphsim/tmp/";
 	
 	
 	public ConventionalPairing( ReebGraph reebMesh ) throws IOException {
