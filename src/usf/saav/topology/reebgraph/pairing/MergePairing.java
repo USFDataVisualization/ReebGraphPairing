@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.HashDisjointSet;
 import usf.saav.common.SystemX;
 import usf.saav.topology.TopoGraph;
@@ -19,7 +18,17 @@ import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 public class MergePairing implements Pairing {
 	
-	public MergePairing( ) { } 
+	private String output_directory = "";
+	private boolean saveTrees = false;
+	
+	public MergePairing( ) {
+		saveTrees = false;
+	}
+	
+	public MergePairing( boolean _saveTrees, String _output_path ) {
+		saveTrees = _saveTrees;
+		output_directory = _output_path;
+	} 
 			
 	public String getName() { return "Merge Pairing"; }
 	
@@ -29,17 +38,21 @@ public class MergePairing implements Pairing {
 		essential.addAll( reebMesh );
 
 		JoinTree mt = new JoinTree( reebMesh, true );
-		try {
-			SystemX.writeStringToFile(mt.toDot(), ConventionalPairing.tmp_directory + "mt.dot" );
-		} catch (IOException e) {
-			e.printStackTrace();
+		if( saveTrees ) {
+			try {
+				SystemX.writeStringToFile(mt.toDot(), output_directory + "mt.dot" );
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
+		
 		SplitTree st = new SplitTree( reebMesh, true );
-		try {
-			SystemX.writeStringToFile(st.toDot(), ConventionalPairing.tmp_directory + "st.dot" );
-		} catch (IOException e) {
-			e.printStackTrace();
+		if( saveTrees ) {
+			try {
+				SystemX.writeStringToFile(st.toDot(), output_directory + "st.dot" );
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		ReebGraphVertex gmin = joinTreePairing( mt, reebMesh, essential );

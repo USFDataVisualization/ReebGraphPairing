@@ -29,12 +29,9 @@ package junyi.reebgraph.cmd;
 
 import java.util.ArrayList;
 
-import usf.saav.common.Timer;
-import usf.saav.common.TimerMillisecond;
-import usf.saav.topology.reebgraph.Conditioner;
+import usf.saav.common.TimerNanosecond;
 import usf.saav.topology.reebgraph.ReebGraph;
-import usf.saav.topology.reebgraph.ReebGraphLoader;
-import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
+import usf.saav.topology.reebgraph.pairing.MergePairing;
 
 
 
@@ -45,32 +42,13 @@ public class MergePairingCLI {
 		for( String ip : args ) {
 			try {
 				System.out.println(ip);
-				conventionalMerge( ip, false );
+				ArrayList<ReebGraph> rg = SingleTestCLI.runAlgo( ip, new MergePairing(), new TimerNanosecond(), false );
+				SingleTestCLI.printPersistentDiagram( rg );
 				System.out.println();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void conventionalMerge( String inputfile, boolean verbose ) throws Exception {
-		
-		float norm_epsilon = 0.01f;
-		Timer t = new TimerMillisecond();
-		
-		if( verbose ) System.out.println();
-		if( verbose ) System.out.println("OUR APPROACH");
-		
-		ArrayList<ReebGraph> rm2 = ReebGraphLoader.load(inputfile,true, false);
-		//Conditioner rn2 = new Conditioner( rm2, norm_epsilon );
-
-		t.start();
-		//new PropagateAndPair( ).pair(rm2);
-		t.end();
-		if( verbose ) System.out.println("Our computation time: " + t.getElapsedMilliseconds() + "ms");
-		
-		//rn2.printPersistentDiagram();
-		
 	}
 }
 

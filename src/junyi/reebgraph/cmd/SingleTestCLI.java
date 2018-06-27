@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Properties;
 
-import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
 import usf.saav.common.TimerMillisecond;
 import usf.saav.common.TimerNanosecond;
+import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.ReebGraphLoader;
 import usf.saav.topology.reebgraph.ReebGraphVertex;
@@ -50,8 +50,6 @@ import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
 public class SingleTestCLI {
 
 	
-	public static float norm_epsilon = 0.01f;
-
 	/**
 	 * @param args
 	 */
@@ -63,27 +61,30 @@ public class SingleTestCLI {
 			String inputFile	 = p.getProperty("inputFile").trim();
 			boolean verbose		 = p.getProperty("verbose").trim().equalsIgnoreCase("true");
 			boolean saveGraphDot = p.getProperty("saveGraphDot").trim().equalsIgnoreCase("true");
+			int repeat 			 = Integer.parseInt(p.getProperty("repeatTest").trim());
+			String outputPath    = p.getProperty("outputPath").trim() + "/";
 			
 			System.out.println( "Input File: " + inputFile );
 			
 			if( saveGraphDot )
-				saveGraph( inputFile, ConventionalPairing.tmp_directory, verbose );
+				saveGraph( inputFile, outputPath, verbose );
 			
 			double mergeTotal = 0, ppTotal = 0;
 			
-			for( int i = 0; i < 1000; i++ ) {
-				Timer mstTimer, mergeTimer, ppTimer;
-				if( testPerformance( inputFile, (mstTimer=new TimerNanosecond()), (mergeTimer=new TimerNanosecond()), (ppTimer=new TimerNanosecond()), verbose ) ) {
-					System.out.println( "test succeeded: " + inputFile + " -- mst_time: " + mstTimer.getElapsedMilliseconds() + " merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
+			for( int i = 0; i < repeat; i++ ) {
+				Timer mergeTimer, ppTimer;
+				if( testPerformance( inputFile, (mergeTimer=new TimerNanosecond()), (ppTimer=new TimerNanosecond()), verbose ) ) {
+					System.out.println( "test succeeded: " + inputFile + " -- merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
 				}
 				else {
 					System.out.println( "test FAILED: " + inputFile );
 				}
 				mergeTotal += mergeTimer.getElapsedMilliseconds();
 				ppTotal    += ppTimer.getElapsedMilliseconds();
+				verbose = false;
 			}
 			
-			System.out.println( "Average -- Merge: " + (mergeTotal/1000) + ", P&P: " + (ppTotal/1000) );
+			System.out.println( "Average -- Merge: " + (mergeTotal/repeat) + ", P&P: " + (ppTotal/repeat) );
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Invalid input. Check the input.properties file");
@@ -106,7 +107,7 @@ public class SingleTestCLI {
 		if( verbose ) System.out.println("  Save time: " + t.getElapsedMilliseconds() + "ms");		
 	}
 	
-	public static ArrayList<ReebGraph> testAlgo( String inputfile, Pairing pairing, Timer timer, boolean verbose ) throws Exception {
+	public static ArrayList<ReebGraph> runAlgo( String inputfile, Pairing pairing, Timer timer, boolean verbose ) throws Exception {
 		Timer t = new TimerMillisecond();
 
 		if( verbose ) System.out.println( );
@@ -123,6 +124,8 @@ public class SingleTestCLI {
 			pairing.pair(ccRG);
 		}
 		timer.end();
+
+		if( verbose ) System.out.println(" Total Loops: " + countLoops( rm1 ) );
 		if( verbose ) System.out.println(" " + pairing.getName() + " computation time: " + timer.getElapsedMilliseconds() + "ms\n");
 		if( verbose ) System.out.println(" PERSISTENCE DIAGRAM");
 		if( verbose ) printPersistentDiagram(rm1);
@@ -130,26 +133,15 @@ public class SingleTestCLI {
 		return rm1;
 	}
 	
-	public static boolean testPerformance( String inputfile, Timer convTimer, Timer mergeTimer, Timer ppTimer, boolean verbose ) throws Exception {
+	public static boolean testPerformance( String inputfile, Timer mergeTimer, Timer ppTimer, boolean verbose ) throws Exception {
 
-		//ArrayList<ReebGraph> rn1 = testAlgo( inputfile, new ConventionalPairing(), convTimer, verbose );
-		ArrayList<ReebGraph> rn2 = testAlgo( inputfile, new MergePairing(), mergeTimer, verbose );
-		ArrayList<ReebGraph> rn3 = testAlgo( inputfile, new PropagateAndPair(), ppTimer, verbose );
-		/*
-		if( verbose ) System.out.println("\nCOMPARING GRAPHS (MST/Merge)");
-		if( !compareDiagrams( rn1, rn2, verbose ) ) {
-			if( verbose ) System.out.println("ERROR: Difference Found in Graph Pairings (mst/merge)");
-			return false;
-		}
-		if( verbose ) System.out.println("\nCOMPARING GRAPHS (MST/P&P)");
-		if( !compareDiagrams( rn1, rn3, verbose ) ) {
-			if( verbose ) System.out.println("ERROR: Difference Found in Graph Pairings (mst/p&p)");
-			return false;
-		}
-		*/
-		if( verbose ) System.out.println("\nCOMPARING GRAPHS (Merge/P&P)");
-		if( !compareDiagrams( rn2, rn3, verbose ) ) {
-			if( verbose ) System.out.println("ERROR: Difference Found in Graph Pairings (merge/p&p)");
+		ArrayList<ReebGraph> rgMP = runAlgo( inputfile, new MergePairing(), mergeTimer, verbose );
+		ArrayList<ReebGraph> rgPP = runAlgo( inputfile, new PropagateAndPair(), ppTimer, verbose );
+		
+
+		if( verbose ) System.out.println("\nCOMPARING GRAPHS");
+		if( !compareDiagrams( rgMP, rgPP, verbose ) ) {
+			if( verbose ) System.out.println("ERROR: Difference Found in pairings");
 			return false;
 		}
 		if( verbose ) System.out.println();
@@ -158,6 +150,20 @@ public class SingleTestCLI {
 	}
 	
 
+
+	private static int countLoops(ArrayList<ReebGraph> rg0) {
+		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
+		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
+		int ret = 0;
+		for( ReebGraphVertex v : verts0 ) {
+			if( v.isEssential() && v.getType()==NodeType.DOWNFORK ) {
+				System.out.println("   " + v + " " + v.getPartner() );
+				ret++;
+			}
+		}
+		
+		return ret;
+	}
 
 	public static void printPersistentDiagram(ArrayList<ReebGraph> rg0) {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();

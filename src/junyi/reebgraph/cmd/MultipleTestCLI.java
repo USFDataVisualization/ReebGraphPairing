@@ -28,7 +28,8 @@
 package junyi.reebgraph.cmd;
 
 import usf.saav.common.Timer;
-import usf.saav.common.TimerMillisecond;
+import usf.saav.common.TimerAverage;
+import usf.saav.common.TimerNanosecond;
 
 
 public class MultipleTestCLI {
@@ -80,13 +81,16 @@ public class MultipleTestCLI {
 		for( String ip : testSet ) {
 			try {
 				
-				Timer mstTimer, mergeTimer, ppTimer;
-				if( SingleTestCLI.testPerformance( ip, (mstTimer=new TimerMillisecond()), (mergeTimer=new TimerMillisecond()), (ppTimer=new TimerMillisecond()), false ) ) {
-					System.out.println( "test succeeded: " + ip + " -- mst_time: " + mstTimer.getElapsedMilliseconds() + " merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
+				Timer mergeTimer = new TimerAverage( new TimerNanosecond() );
+				Timer ppTimer = new TimerAverage( new TimerNanosecond() );
+				int i = 0;
+				for( ; i < 1000; i++ ) {
+					if( !SingleTestCLI.testPerformance( ip, mergeTimer, ppTimer, false ) ) {
+						System.out.println( "test FAILED: " + ip );
+						break;
+					}
 				}
-				else {
-					System.out.println( "test FAILED: " + ip );
-				}
+				if( i == 1000 ) System.out.println( "test succeeded: " + ip + " -- merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
 	
 			} catch (Exception e) {
 				e.printStackTrace();
