@@ -1,10 +1,13 @@
 package usf.saav.topology.reebgraph.pairing;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
+import junyi.reebgraph.pairing.conventional.ConventionalPairing;
 import usf.saav.common.HashDisjointSet;
+import usf.saav.common.SystemX;
 import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.TopoTreeNode.NodeType;
@@ -18,22 +21,33 @@ public class MergePairing implements Pairing {
 	
 	public MergePairing( ) { } 
 			
+	public String getName() { return "Merge Pairing"; }
+	
 	public void pair(ReebGraph reebMesh) {
 		
 		HashSet<TopoGraph.Vertex> essential = new HashSet<TopoGraph.Vertex>();
 		essential.addAll( reebMesh );
 
 		JoinTree mt = new JoinTree( reebMesh, true );
-		//SystemXv2.writeDot(mt.toDot(), tmp_directory + "mt.dot", tmp_directory + "mt.pdf" );
+		try {
+			SystemX.writeStringToFile(mt.toDot(), ConventionalPairing.tmp_directory + "mt.dot" );
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		SplitTree st = new SplitTree( reebMesh, true );
-		//SystemXv2.writeDot(st.toDot(), tmp_directory + "st.dot", tmp_directory + "st.pdf" );
+		try {
+			SystemX.writeStringToFile(st.toDot(), ConventionalPairing.tmp_directory + "st.dot" );
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		ReebGraphVertex gmin = joinTreePairing( mt, reebMesh, essential );
 		ReebGraphVertex gmax = joinTreePairing( st, reebMesh, essential );
 		
 		gmin.setPartner(gmax);
 		gmax.setPartner(gmin);
+		
 		
 		for( TopoGraph.Vertex _v : reebMesh ) {
 			ReebGraphVertex rv = (ReebGraphVertex)_v;
@@ -43,7 +57,7 @@ public class MergePairing implements Pairing {
 				res.setPartner(rv);
 			}
 		}
-
+		
 	}
 	
 

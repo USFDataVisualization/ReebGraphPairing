@@ -27,22 +27,25 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.pairing.conventional.ConventionalPairing;
-import usf.saav.common.SystemX;
+import java.util.ArrayList;
+
 import usf.saav.common.Timer;
+import usf.saav.common.TimerMillisecond;
 import usf.saav.topology.reebgraph.Conditioner;
 import usf.saav.topology.reebgraph.ReebGraph;
+import usf.saav.topology.reebgraph.ReebGraphLoader;
+import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
 
 
 
-public class PairingConventional {
+public class MergePairingCLI {
 
 	public static void main(String[] args) {
 		
 		for( String ip : args ) {
 			try {
 				System.out.println(ip);
-				conventionalPairing( ip, true );
+				conventionalMerge( ip, false );
 				System.out.println();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -50,35 +53,23 @@ public class PairingConventional {
 		}
 	}
 
-	public static void conventionalPairing( String inputfile, boolean verbose ) throws Exception {
+	public static void conventionalMerge( String inputfile, boolean verbose ) throws Exception {
 		
 		float norm_epsilon = 0.01f;
-		Timer t = new Timer();
+		Timer t = new TimerMillisecond();
 		
-		if( verbose ) System.out.println("CONVENTIONAL");
+		if( verbose ) System.out.println();
+		if( verbose ) System.out.println("OUR APPROACH");
 		
+		ArrayList<ReebGraph> rm2 = ReebGraphLoader.load(inputfile,true, false);
+		//Conditioner rn2 = new Conditioner( rm2, norm_epsilon );
+
 		t.start();
-		ReebGraph rm1 = ReebGraphLoader.load(inputfile);
-		if( verbose ) System.out.println("Load time: " + t.end() + "ms");
+		//new PropagateAndPair( ).pair(rm2);
+		t.end();
+		if( verbose ) System.out.println("Our computation time: " + t.getElapsedMilliseconds() + "ms");
 		
-		t.start();
-		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot" );
-		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
-		
-		t.start();
-		Conditioner rn1 = new Conditioner(rm1, norm_epsilon );
-		if( verbose ) System.out.println("Normalize time: " + t.end() + "ms");
-		
-		t.start();
-		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot" );
-		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
-		
-		t.start();
-		for( ReebGraph rg : rm1.extractConnectedComponents() ) {
-			new ConventionalPairing( rg );
-		}
-		if( verbose ) System.out.println("Conventional computation time: " + t.getElapsed() + "ms");
-		rn1.printPersistentDiagram();
+		//rn2.printPersistentDiagram();
 		
 	}
 }

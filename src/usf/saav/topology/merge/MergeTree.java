@@ -123,8 +123,9 @@ public class MergeTree implements Runnable {
 				}
 			}
 			head = me;
-			
 		}
+		
+		//System.out.println();
 		
 		correctMonkeySaddles();
 		setParents( );

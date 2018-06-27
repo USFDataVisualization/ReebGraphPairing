@@ -19,6 +19,8 @@ public class PropagateAndPair implements Pairing {
 	
 	public PropagateAndPair( ) { }
 	
+	public String getName() { return "Pair and Propagate"; }
+	
 	@Override
 	public void pair(ReebGraph reebMesh) {
 		inLabels = new HashMap<ReebGraphVertex,TreeSet<Label>>();

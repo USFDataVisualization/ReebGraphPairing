@@ -1,8 +1,8 @@
 package usf.saav.topology.reebgraph;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Vector;
 
 import usf.saav.topology.TopoGraph;
 
@@ -11,23 +11,33 @@ public class ReebGraph extends TopoGraph<ReebGraphVertex> {
 
 	private static final long serialVersionUID = 2799501955753168490L;
 
-	public ReebGraphVertex createVertex( float val, int gid ){ 
-		add( new ReebGraphVertex( size(), val, gid ) );
-		return (ReebGraphVertex)lastElement();
+
+	public ReebGraph() { }
+	
+	public ReebGraph(Collection<ReebGraphVertex> verts) {
+		this.addAll(verts);
+		this.resetInternalIDs();
+		this.resetInternalValues();
 	}
 
-	
 	public void resetInternalIDs() {
 		int i = 0;
-		for( Vertex v : this ) {
+		for( TopoGraph.Vertex v : this ) {
 			((ReebGraphVertex)v).setID(i++);
 		}		
 	}
 	
-	public Vector<ReebGraphVertex> getNodesSortedByValue() {
-		Vector<ReebGraphVertex> sortedNodes = new Vector<ReebGraphVertex>();
+	public void resetInternalValues() {
+		ArrayList<ReebGraphVertex> sorted = getNodesSortedByValue();
+		for(int i = 0; i < sorted.size(); i++) {
+			sorted.get(i).setValue(i);
+		}
+	}
+	
+	public ArrayList<ReebGraphVertex> getNodesSortedByValue() {
 		
-		for( Vertex v : this ) {
+		ArrayList<ReebGraphVertex> sortedNodes = new ArrayList<ReebGraphVertex>();
+		for( TopoGraph.Vertex v : this ) {
 			sortedNodes.add((ReebGraphVertex)v);
 		}
 		
@@ -41,17 +51,6 @@ public class ReebGraph extends TopoGraph<ReebGraphVertex> {
 		return sortedNodes;
 	}
 	
-	public int getMaxGlobalID() {
-		int curMax = ((ReebGraphVertex)get(0)).getGlobalID();
-		for( Vertex v : this ) {
-			curMax = Math.max(curMax, ((ReebGraphVertex)v).getGlobalID() );
-		}
-		return curMax;
-	}
-
-
-
-
 
 	public String toDot() {
 		StringBuffer dot_node = new StringBuffer( );
@@ -59,57 +58,18 @@ public class ReebGraph extends TopoGraph<ReebGraphVertex> {
 		for(int i = 0; i < size(); i++){
 			ReebGraphVertex curr = (ReebGraphVertex)get(i);
 
-			dot_node.append( "\t" + curr.getGlobalID() + "[label=\"" + curr.toString() + "\"];\n");
+			dot_node.append( "\t" + curr.getID() + "[label=\"" + curr.toString() + "\"];\n");
 
 			for( int n : curr.neighbors() ){
 				for( int j = 0; j < size(); j++){
 					ReebGraphVertex nei = (ReebGraphVertex)get(j);
 					if( nei.getID() == n && nei.value() < curr.value() )
-						dot_edge.append( "\t" + curr.getGlobalID() + " -> " + nei.getGlobalID() + "\n");
+						dot_edge.append( "\t" + curr.getID() + " -> " + nei.getID() + "\n");
 				}
 			}					
 		}
 		return "Digraph{\n" + dot_node + dot_edge + "}"; 
 	}
-
-
-	
-
-
-
-	public Vector<ReebGraph> extractConnectedComponents( ){
-		
-		HashSet<ReebGraphVertex> visited = new HashSet<ReebGraphVertex>();
-		
-		Vector<ReebGraph> ret = new Vector<ReebGraph>();
-		for( Vertex v : this ) {
-			ReebGraphVertex rv = (ReebGraphVertex)v;
-			if( !visited.contains(rv) ){
-				ret.add( findConnectedComponent(rv, visited) );
-			}
-		}
-				
-		return ret;
-	}
-
-	private static ReebGraph findConnectedComponent( ReebGraphVertex vertex, HashSet<ReebGraphVertex> visited ) {
-		ReebGraph newGraph = new ReebGraph();
-		dfs( newGraph, vertex, visited );
-		newGraph.resetInternalIDs();
-		return newGraph;
-	}
-
-	private static void dfs( ReebGraph newGraph, ReebGraphVertex curVertex, HashSet<ReebGraphVertex> visited ) {
-		visited.add(curVertex);
-		newGraph.add(curVertex);
-		for( ReebGraphVertex n : curVertex.neighbors) {
-			if( visited.contains(n) ) continue;
-			dfs(newGraph, n, visited);
-		}
-	}	
-	
-	
-
 
 }		
 

@@ -27,15 +27,11 @@
  */
 package junyi.reebgraph.cmd;
 
-import junyi.reebgraph.pairing.conventional.ConventionalPairing;
-import usf.saav.common.SystemX;
 import usf.saav.common.Timer;
-import usf.saav.topology.reebgraph.Conditioner;
-import usf.saav.topology.reebgraph.ReebGraph;
-import usf.saav.topology.reebgraph.pairing.PropagateAndPair;
+import usf.saav.common.TimerMillisecond;
 
 
-public class PairingTest {
+public class MultipleTestCLI {
 
 	public static String [] testSet = new String[] {
 			"test/100_iterations.txt",
@@ -84,9 +80,9 @@ public class PairingTest {
 		for( String ip : testSet ) {
 			try {
 				
-				Timer convTimer, mergeTimer;
-				if( testPerformance( ip, (convTimer=new Timer()), (mergeTimer=new Timer()), false ) ) {
-					System.out.println( "test succeeded: " + ip + " -- conv_time: " + convTimer.getElapsed() + "ms, merge_time: " + mergeTimer.getElapsed() + "ms" );
+				Timer mstTimer, mergeTimer, ppTimer;
+				if( SingleTestCLI.testPerformance( ip, (mstTimer=new TimerMillisecond()), (mergeTimer=new TimerMillisecond()), (ppTimer=new TimerMillisecond()), false ) ) {
+					System.out.println( "test succeeded: " + ip + " -- mst_time: " + mstTimer.getElapsedMilliseconds() + " merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
 				}
 				else {
 					System.out.println( "test FAILED: " + ip );
@@ -98,59 +94,6 @@ public class PairingTest {
 		}
 	}
 
-
-	public static boolean testPerformance( String inputfile, Timer convTimer, Timer mergeTimer, boolean verbose ) throws Exception {
-		float norm_epsilon = 0.01f;
-		Timer t = new Timer();
-		
-		if( verbose ) System.out.println("CONVENTIONAL");
-		
-		t.start();
-		ReebGraph rm1 = ReebGraphLoader.load(inputfile);
-		if( verbose ) System.out.println("Load time: " + t.end() + "ms");
-		
-		t.start();
-		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph.dot" );
-		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
-		
-		t.start();
-		Conditioner rn1 = new Conditioner(rm1, norm_epsilon );
-		if( verbose ) System.out.println("Normalize time: " + t.end() + "ms");
-		
-		t.start();
-		if( verbose ) SystemX.writeStringToFile(rm1.toDot(), ConventionalPairing.tmp_directory + "graph_norm.dot" );
-		if( verbose ) System.out.println("Save time: " + t.end() + "ms");
-		
-		convTimer.start();
-		for( ReebGraph rg : rm1.extractConnectedComponents() ) {
-			new ConventionalPairing( rg );
-		}
-		convTimer.end();
-		if( verbose ) System.out.println("Conventional computation time: " + convTimer.getElapsed() + "ms");
-		if( verbose ) rn1.printPersistentDiagram();
-		
-		
-		if( verbose ) System.out.println();
-		if( verbose ) System.out.println("OUR APPROACH");
-		
-		ReebGraph rm2 = ReebGraphLoader.load(inputfile);
-		Conditioner rn2 = new Conditioner( rm2, norm_epsilon );
-
-		mergeTimer.start();
-		new PropagateAndPair( ).pair(rm2);
-		mergeTimer.end();
-		if( verbose ) System.out.println("Our computation time: " + mergeTimer.getElapsed() + "ms");
-		if( verbose ) rn2.printPersistentDiagram();
-		
-		
-		if( verbose ) System.out.println();
-		if( verbose ) System.out.println("COMPARING GRAPHS");
-		if( !Conditioner.compareDiagrams(rn1, rn2, verbose ) ) {
-			if( verbose ) System.out.println("ERROR: Difference Found in Graph Pairings");
-			return false;
-		}
-		return true;
-	}
 }
 
 

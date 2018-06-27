@@ -7,36 +7,39 @@ import usf.saav.topology.TopoTreeNode;
 
 public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
 	private float val;
-	private int id;
+	private int idx;
 	private int gid;
-
+	private float realVal;
+	
 	private ReebGraphVertex topoPartner;
 	public ArrayList<ReebGraphVertex> neighbors = new ArrayList<ReebGraphVertex>();
 
-	public ReebGraphVertex( int _id, float _val, int _gid ) {
+	public ReebGraphVertex( float _val, float _realVal, int _gid ) {
 		val = _val;
-		id = _id;
+		//id = _id;
 		gid = _gid;
+		realVal = _realVal;
 	}
 
 	public String toString(){
-		return getGlobalID() + "/" + id + " (" + value() + ")";
+		return getGlobalID() + "/" + idx + " (" + getRealValue() + "/" + value() + ")";
 	}
 
 	@Override
 	public int[] neighbors() {
 		int [] ret = new int[neighbors.size()];
 		for(int i = 0; i < neighbors.size(); i++){
-			ret[i] = neighbors.get(i).id;
+			ret[i] = neighbors.get(i).idx;
 		}
 		return ret;
 	}
 	
 	@Override public float value() { return val; }
-	@Override public int getID() { return id; }
-	public void setID(int i) { id = i; }
+	@Override public int getID() { return idx; }
+	public void setID(int i) { idx = i; }
 	public int getGlobalID() { return gid; }
-
+	public float getRealValue() { return realVal; }
+	public void setValue(float v) { val = v; }
 
 	@Override 
 	public NodeType getType() {
@@ -56,6 +59,11 @@ public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
 
 	public void addNeighbor(ReebGraphVertex v){
 		neighbors.add(v);
+	}
+	
+	public static void setNeighbors(ReebGraphVertex v0, ReebGraphVertex v1) {
+		v0.addNeighbor(v1);
+		v1.addNeighbor(v0);
 	}
 
 	@Override public TopoTreeNode getPartner() { return topoPartner; }

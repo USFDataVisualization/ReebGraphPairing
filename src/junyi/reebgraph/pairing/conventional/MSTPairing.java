@@ -1,124 +1,117 @@
 package junyi.reebgraph.pairing.conventional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
-import junyi.reebgraph.pairing.conventional.ConventionalPairing.EssentialSaddleGraph;
-import junyi.reebgraph.pairing.conventional.ConventionalPairing.EssentialSaddleGraphVertex;
-import usf.saav.topology.TopoGraph;
+
+import usf.saav.common.SystemX;
 import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.reebgraph.ReebGraphVertex;
 
 public class MSTPairing {
+	
+	public MSTPairing( ReebGraphVertex downFork ) {
 
-	public MSTPairing( EssentialSaddleGraph g ) {
-		
-		int cnt = 0;
-		for( TopoGraph.Vertex _v : g ) {
-			EssentialSaddleGraphVertex v = (EssentialSaddleGraphVertex)_v;
-			if( v.reebV.getType() == NodeType.DOWNFORK ) {
-				//System.out.println(v);
-				//System.out.println();
-				buildMST( v );
-				if( cnt >= 1 ) break;
-				cnt++;
-				
-			}		
-		}
-	}
-
-	private void buildMST(EssentialSaddleGraphVertex v) {
-		HashSet<EssentialSaddleGraphVertex> visited = new HashSet<EssentialSaddleGraphVertex>();
-		PriorityQueue<TestEdge> testEdges = new PriorityQueue<TestEdge>( new Comparator<TestEdge>() {
-			@Override public int compare(TestEdge o1, TestEdge o2) {
-				if( o1.lowV.value() > o2.lowV.value() ) return -1;
+		HashSet<ReebGraphVertex> visited = new HashSet<ReebGraphVertex>();
+		PriorityQueue<MSTEdge> edgeQueue = new PriorityQueue<MSTEdge>( new Comparator<MSTEdge>() {
+			@Override public int compare(MSTEdge o1, MSTEdge o2) {
+				if( o1.dst.value() > o2.dst.value() ) return -1;
 				return 1;
 			}
 		} );
-		HashMap<EssentialSaddleGraphVertex,MSTNode> nodeMap = new HashMap<EssentialSaddleGraphVertex,MSTNode>();
-		//System.out.println(createNeighbor( v, visited, new HashSet<EssentialSaddleGraphVertex>(), testEdges, nodeMap ));
-		createNeighbor( v, v, visited, new HashSet<EssentialSaddleGraphVertex>(), testEdges, nodeMap );
 		
-		//System.out.println("Test Edges");
-		for( TestEdge t : testEdges ) {
-			HashSet<EssentialSaddleGraphVertex> p0 = nodeMap.get(t.lowV).path;
-			HashSet<EssentialSaddleGraphVertex> p1 = nodeMap.get(t.highV).path;
+		
+		ReebGraphVertex curV = downFork;
+		visited.add(curV);
+		for( ReebGraphVertex _n : curV.neighbors ) {
+			if( _n.value() < downFork.value() ){
+				edgeQueue.add( new MSTEdge(curV,_n) );
+			}
+		}
+		
+		ReebGraphVertex bestMatch = null;
+		ArrayList<MSTEdge> mst = new ArrayList<MSTEdge>();
+		ArrayList<MSTEdge> close = new ArrayList<MSTEdge>();
+		
+		while( !edgeQueue.isEmpty() ) {
+			MSTEdge curr = edgeQueue.poll();
+			curV = curr.dst;
+			if( !visited.contains( curV ) ) {
+				mst.add(curr);
+			}
+			else if( curr.isDownEdge() && curr.dst.getType() == NodeType.UPFORK && curr.dst.getPartner()==null ){
+				System.out.println( curr.src + " -> " +  curr.dst );
+				close.add(curr);
+				if( bestMatch == null || curr.dst.value() > bestMatch.value() )
+					bestMatch = curr.dst;
+			}
 			
-			System.out.println( t.lowV + " <=> " + t.highV );
-			System.out.println( "   " + nodeMap.get(t.lowV).path.toString() );
-			System.out.println( "   " + nodeMap.get(t.highV).path.toString() );
-			//System.out.println( countSetOverlap( p0, p1 ) );
-			if( countSetOverlap( p0, p1 ) == 1 ) {
-				System.out.println( v + ", " + t.lowV );
-				break;
+			if( visited.contains( curV ) ) continue;
+			
+			visited.add(curV);
+			
+			for( ReebGraphVertex _n : curV.neighbors ) {
+				if( _n.value() > downFork.value() ) continue;
+				if( _n == curr.src ) continue;
+				edgeQueue.add( new MSTEdge(curV, _n) );
 			}
+			
 		}
-	}
-	
-	
-	
-	private int countSetOverlap(HashSet<EssentialSaddleGraphVertex> p0, HashSet<EssentialSaddleGraphVertex> p1) {
-		int ret = 0;
-		for( EssentialSaddleGraphVertex v : p0 ) {
-			if( p1.contains(v) ) ret++;
-		}
-		return ret;
-	}
-
-	private MSTNode createNeighbor(EssentialSaddleGraphVertex root, EssentialSaddleGraphVertex v, HashSet<EssentialSaddleGraphVertex> visited, HashSet<EssentialSaddleGraphVertex> path, PriorityQueue<TestEdge> testEdges, HashMap<EssentialSaddleGraphVertex,MSTNode> nodeMap ) {
 		
-		MSTNode m = new MSTNode(v);
-		m.path.addAll(path);
-		visited.add(v);
-		nodeMap.put( v, m );
 		
-		for( ReebGraphVertex _n : v.neighbors ) {
-			EssentialSaddleGraphVertex n = (EssentialSaddleGraphVertex)_n;
-			if( n.value() > root.value() ) continue;
-			if( !visited.contains(n) ) {
-				m.neighbors.add( createNeighbor( root, (EssentialSaddleGraphVertex)n, visited, m.path, testEdges, nodeMap) );
-			}
-			else {
-				testEdges.add( new TestEdge(n,v) );
-			}
+		try {
+			SystemX.writeStringToFile(toDot(mst,close), ConventionalPairing.tmp_directory + "mst.dot" );
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return m;
-	}
+		
+		
 
-	class TestEdge{
-		EssentialSaddleGraphVertex lowV,highV;
-		public TestEdge(EssentialSaddleGraphVertex _n, EssentialSaddleGraphVertex _v) {
-			if( _n.value() < _v.value() ) {
-				lowV = _n; highV = _v;
-			}
-			else {
-				lowV = _v; highV = _n;
-			}
+		
+		//System.out.println( "* " + v + ", " + bestMatch );
+		if( bestMatch != null ) {
+			downFork.setPartner(bestMatch);
+			bestMatch.setPartner(downFork);
+			//downFork.setPartner(bestMatch);
+			//bestMatch.setPartner(downFork);
 		}
+	}	
+	
+	public String toDot( ArrayList<MSTEdge> mst, ArrayList<MSTEdge> close ) {
+		StringBuffer dot_node = new StringBuffer( );
+		StringBuffer dot_edge = new StringBuffer( );
+		HashSet<ReebGraphVertex> verts = new HashSet<ReebGraphVertex>();
+		
+		for( MSTEdge m : mst ){
+			dot_edge.append( "\t" + m.src.getID() + " -> " + m.dst.getID() + " [color = black];\n");
+			verts.add(m.src);
+			verts.add(m.dst);
+		}
+		for( MSTEdge m : close ){
+			dot_edge.append( "\t" + m.src.getID() + " -> " + m.dst.getID() + " [color = red];\n");
+			verts.add(m.src);
+			verts.add(m.dst);
+		}
+		
+		for( ReebGraphVertex v : verts ) {
+			dot_node.append( "\t" + v.getID() + "[label=\"" + v.toString() + "\"];\n");
+		}
+		return "Digraph{\n" + dot_node + dot_edge + "}"; 
+	}	
+
+
+	class MSTEdge {
+		ReebGraphVertex src,dst;
+		public MSTEdge(ReebGraphVertex _src, ReebGraphVertex _dst) {
+			src = _src;
+			dst = _dst;
+		}
+		public boolean isUpEdge() { return src.value() < dst.value(); }
+		public boolean isDownEdge() { return src.value() > dst.value(); }
 	}
 	
-	class MSTNode {
-		EssentialSaddleGraphVertex v;
-		HashSet<EssentialSaddleGraphVertex> path = new HashSet<EssentialSaddleGraphVertex>(); 
-		ArrayList<MSTNode> neighbors = new ArrayList<MSTNode>();
-		public MSTNode(EssentialSaddleGraphVertex _v) {
-			v = _v;
-			path.add(v);
-		}
-		public String toString() {
-			StringBuffer sb = new StringBuffer();
-			toString(sb,"");
-			return sb.toString();
-		}
-		private void toString(StringBuffer sb, String spaces) {
-			sb.append(spaces);
-			sb.append(v);
-			sb.append("\n");
-			for( MSTNode n : neighbors ) {
-				n.toString(sb, spaces+"  ");
-			}
-		}
-	}
+	
 }

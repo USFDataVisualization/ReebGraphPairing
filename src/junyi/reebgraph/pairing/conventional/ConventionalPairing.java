@@ -1,10 +1,7 @@
 package junyi.reebgraph.pairing.conventional;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import usf.saav.common.SystemX;
 import usf.saav.topology.TopoGraph;
@@ -15,22 +12,35 @@ import usf.saav.topology.merge.JoinTree;
 import usf.saav.topology.merge.SplitTree;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.ReebGraphVertex;
+import usf.saav.topology.reebgraph.pairing.Pairing;
 
-public class ConventionalPairing {
+public class ConventionalPairing implements Pairing {
 
 	public static String tmp_directory = "/Users/prosen/Code/reebgraphsim/tmp/";
 	
 	
-	public ConventionalPairing( ReebGraph reebMesh ) throws IOException {
+	public ConventionalPairing( ) { }
+	
+	public String getName() { return "MST Pairing"; }
+	
+	public void pair( ReebGraph reebMesh ) {
 		
 		HashSet<TopoGraph.Vertex> essential = new HashSet<TopoGraph.Vertex>();
 		essential.addAll( reebMesh );
 
 		JoinTree mt = new JoinTree( reebMesh, true );
-		//SystemXv2.writeDot(mt.toDot(), tmp_directory + "mt.dot", tmp_directory + "mt.pdf" );
+		try {
+			SystemX.writeStringToFile(mt.toDot(), tmp_directory + "mt.dot" );
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		SplitTree st = new SplitTree( reebMesh, true );
-		//SystemXv2.writeDot(st.toDot(), tmp_directory + "st.dot", tmp_directory + "st.pdf" );
+		try {
+			SystemX.writeStringToFile(st.toDot(), tmp_directory + "st.dot" );
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		ReebGraphVertex gmin = JoinTreePairing( mt, reebMesh, essential );
 		ReebGraphVertex gmax = JoinTreePairing( st, reebMesh, essential );
@@ -38,11 +48,66 @@ public class ConventionalPairing {
 		gmin.setPartner(gmax);
 		gmax.setPartner(gmin);
 		
-		EssentialSaddleGraph esg = buildEssentialSaddleGraph( reebMesh );
-		SystemX.writeStringToFile( esg.toDot(), tmp_directory + "es_graph.dot" );
-		//new MSTPairing(esg);
+		for( ReebGraphVertex v : reebMesh ) {
+			if( v.getType() == NodeType.DOWNFORK && v.getPartner()==null ) {
+				if( v.neighbors.get(0) == v.neighbors.get(1) || v.neighbors.get(0) == v.neighbors.get(2) ) {
+					v.setPartner( v.neighbors.get(0) );
+					v.neighbors.get(0).setPartner( v );
+				}
+				else if( v.neighbors.get(1) == v.neighbors.get(2)  ) {
+					v.setPartner( v.neighbors.get(1) );
+					v.neighbors.get(1).setPartner( v );
+				}
+				else {
+					//System.out.println( v );
+					//if( v.getGlobalID()==87 )
+						new MSTPairing(v);
+				}
+			}
+		}
 		
+		/*
+		EssentialSaddleGraph esg = new EssentialSaddleGraph(reebMesh);
+		try {
+			SystemX.writeStringToFile( esg.toDot(), tmp_directory + "es_graph.dot" );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//new MSTPairing(esg);
+		//int cnt = 0;
+		//for( TopoGraph.Vertex _v : esg ) {
+		for( TopoGraph.Vertex _v : esg ) {
+			//EssentialSaddleGraphVertex v = (EssentialSaddleGraphVertex)_v;
+			EssentialSaddleGraphVertex v = (EssentialSaddleGraphVertex)_v;
+			//if( v.getGlobalID() != 59 ) continue;
+			//if( v.reebV.getType() == NodeType.DOWNFORK ) {
+			if( v.getType() == NodeType.DOWNFORK ) {
+				
+				if( v.neighbors.get(0) == v.neighbors.get(1) || v.neighbors.get(0) == v.neighbors.get(2) ) {
+					v.reebV.setPartner( ((EssentialSaddleGraphVertex)v.neighbors.get(0)).reebV );
+					((EssentialSaddleGraphVertex)v.neighbors.get(0)).reebV.setPartner( v.reebV );
+					continue;
+				}
+				if( v.neighbors.get(1) == v.neighbors.get(2)  ) {
+					v.reebV.setPartner( ((EssentialSaddleGraphVertex)v.neighbors.get(1)).reebV );
+					((EssentialSaddleGraphVertex)v.neighbors.get(1)).reebV.setPartner( v.reebV );
+					continue;
+				}
+				 
+				
+				//System.out.println(v);
+				//System.out.println();
+				new MSTPairing( v );
+				//if( cnt >= 1 ) break;
+				//cnt++;
+				
+			}		
+		}
+		System.out.println();
+		*/
 
+		/*
 		for( TopoGraph.Vertex s : essential ) {
 			ReebGraphVertex r = (ReebGraphVertex)s;
 
@@ -56,16 +121,19 @@ public class ConventionalPairing {
 				
 			}
 		}
+		*/
 		
 	}
 	
-
+	/*
 	private EssentialSaddleGraph buildEssentialSaddleGraph( ReebGraph reeb ) {
 		
 		return new EssentialSaddleGraph(reeb);
 		
 	}
-
+	 */
+	/*
+	
 	class EssentialSaddleGraph extends ReebGraph {
 		private static final long serialVersionUID = -6195836137369945447L;
 		
@@ -147,11 +215,11 @@ public class ConventionalPairing {
 	class EssentialSaddleGraphVertex extends ReebGraphVertex {
 		ReebGraphVertex reebV;
 		public EssentialSaddleGraphVertex(int _id, ReebGraphVertex from) {
-			super(_id, from.value(), from.getGlobalID());
+			super( from.value(), from.getRealValue(), from.getGlobalID());
 			reebV = from;
 		}
 	}
-
+	*/
 
 
 	private ReebGraphVertex JoinTreePairing( AugmentedMergeTree jt, ReebGraph reebMesh, HashSet<TopoGraph.Vertex> essential ) {
