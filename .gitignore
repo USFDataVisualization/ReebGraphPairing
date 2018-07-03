@@ -2,3 +2,10 @@
 bin/
 tmp/
 .DS_Store
+drawFluid/data/
+drawFluid/images/
+drawPD/images/
+drawPD/data/
+drawPD/filelist.txt
+fluid/
+list.txt

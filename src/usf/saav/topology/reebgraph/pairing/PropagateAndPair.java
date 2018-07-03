@@ -106,6 +106,7 @@ public class PropagateAndPair implements Pairing {
 		// Forward old virtual edges
 		while( !virtEdges.isEmpty() && virtEdges.first().n0 == v ) {
 			VEdge e = virtEdges.pollFirst();
+			if( e.gen.getPartner() != null ) continue; 
 			virtEdges.add( new VEdge(e.gen,n0,e.n1) );
 			virtEdges.add( new VEdge(e.gen,n1,e.n1) );
 		}
@@ -161,6 +162,8 @@ public class PropagateAndPair implements Pairing {
 		ArrayList<VEdge> activeEdges = new ArrayList<VEdge>();
 		while( !virtEdges.isEmpty() && virtEdges.first().n0 == v ) {
 			VEdge e = virtEdges.pollFirst();
+			
+			if( e.gen.getPartner() != null ) continue; 
 			
 			// both ends of the virtual edge are the current node, skip
 			if( e.n1 == v ) continue;

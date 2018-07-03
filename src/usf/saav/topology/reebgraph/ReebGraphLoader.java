@@ -3,8 +3,10 @@ package usf.saav.topology.reebgraph;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,14 +17,13 @@ public class ReebGraphLoader extends ReebGraph {
 
 	private static final long serialVersionUID = 7889260039234787058L;
 
-
-	public static ArrayList<ReebGraph> load(String inputReebGraph, boolean splitConnComps, boolean condition ) throws Exception {
+	public static ArrayList<ReebGraph> load(String inputReebGraph,  boolean splitConnComps, boolean condition, boolean showWarnings ) throws Exception {
 
 		HashMap<Integer, ReebGraphVertex> rvmap = new HashMap<Integer, ReebGraphVertex>();
 		BufferedReader reader = new BufferedReader(new FileReader(inputReebGraph));
 		ReebGraph tmpRG = new ReebGraph();
 		String s;
-
+		
 		while( (s = reader.readLine()) != null) {
 			String[] r = s.split("\\s");
 			if( r.length == 0 ) continue;
@@ -30,7 +31,7 @@ public class ReebGraphLoader extends ReebGraph {
 
 				if(r.length != 3) {
 					reader.close();
-					throw new Exception("Invalid edge input");
+					throw new Exception("ERROR: Invalid vertex input");
 				}
 
 				int    v  = Integer.parseInt(r[1].trim());
@@ -39,13 +40,13 @@ public class ReebGraphLoader extends ReebGraph {
 				ReebGraphVertex newR = new ReebGraphVertex( fn, fn, v );
 				tmpRG.add( newR );
 				rvmap.put( v, newR );
-
+				
 			} 
 			if (r[0].trim().equals("e") == true) {
 
 				if(r.length != 3) {
 					reader.close();
-					throw new Exception("Invalid edge input");
+					throw new Exception("ERROR: Invalid edge input");
 				}
 
 				ReebGraphVertex v1 = rvmap.get(Integer.parseInt(r[1]));
@@ -53,7 +54,12 @@ public class ReebGraphLoader extends ReebGraph {
 
 				if( v1 == null || v2 == null ) {
 					reader.close();
-					throw new Exception("WARNING: Edge not found " + r[1] + " " + r[2]);
+					throw new Exception("ERROR: Edge not found " + r[1] + " " + r[2]);
+				}
+				
+				if( v1 == v2 ) {
+					if( showWarnings ) System.err.println("WARNING: Self referenced edge (ignored) " + v1 + " " + v2 );
+					continue;
 				}
 
 				v1.addNeighbor(v2);
@@ -62,7 +68,7 @@ public class ReebGraphLoader extends ReebGraph {
 		}
 
 		reader.close();
-
+		
 		tmpRG.resetInternalIDs();
 		tmpRG.resetInternalValues();
 		
@@ -101,12 +107,21 @@ public class ReebGraphLoader extends ReebGraph {
 
 
 	private static void dfs( ArrayList<ReebGraphVertex> newGraph, ReebGraphVertex curVertex, HashSet<ReebGraphVertex> visited ) {
-		visited.add(curVertex);
-		newGraph.add(curVertex);
-		for( ReebGraphVertex n : curVertex.neighbors) {
-			if( visited.contains(n) ) continue;
-			dfs(newGraph, n, visited);
+		//Stack<ReebGraphVertex> proc = new ArrayList<ReebGraphVertex>();
+		Deque<ReebGraphVertex> proc = new ArrayDeque<ReebGraphVertex>();
+		proc.add(curVertex);
+		while(!proc.isEmpty()) {
+			//ReebGraphVertex tos = proc.poll();
+			ReebGraphVertex tos = proc.pop();
+			if( visited.contains(tos) ) continue;
+			visited.add(tos);
+			newGraph.add(tos);
+			for( ReebGraphVertex n : tos.neighbors) {
+				//if( !visited.contains(n) ) proc.add(n);
+				if( !visited.contains(n) ) proc.push(n);
+			}
 		}
+		
 	}
 
 	private static ReebGraph condition( Collection<ReebGraphVertex> verts, float epsilon_percent  ) {

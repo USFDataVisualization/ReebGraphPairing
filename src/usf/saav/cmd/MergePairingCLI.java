@@ -42,8 +42,8 @@ public class MergePairingCLI {
 		for( String ip : args ) {
 			try {
 				System.out.println(ip);
-				ArrayList<ReebGraph> rg = SingleTestCLI.runAlgo( ip, new MergePairing(), new TimerNanosecond(), false );
-				SingleTestCLI.printPersistentDiagram( rg );
+				ArrayList<ReebGraph> rg = TestResults.runAlgo( ip, new MergePairing(), new TimerNanosecond(), false );
+				TestResults.printPersistentDiagram( rg );
 				System.out.println();
 			} catch (Exception e) {
 				e.printStackTrace();

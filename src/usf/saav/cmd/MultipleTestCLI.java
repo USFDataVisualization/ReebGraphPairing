@@ -27,52 +27,68 @@
  */
 package usf.saav.cmd;
 
-import usf.saav.common.Timer;
-import usf.saav.common.TimerAverage;
-import usf.saav.common.TimerNanosecond;
-
 
 public class MultipleTestCLI {
 
 	public static String [] testSet = new String[] {
-			"test/100_iterations.txt",
-			"test/100_tree_iterations.txt",
-			"test/10_tree_iterations.txt",
-			"test/200_tree_iterations.txt",
-			"test/25_iterations.txt",
-			"test/3_tree_iterations.txt",
-			"test/40_tree_iterations.txt",
-			"test/45_iterations.txt",
-			"test/4torus_simple_ReebGraph 2.txt",
-			"test/4torus_simple_ReebGraph.txt",
-			"test/5_iterations.txt",
-			"test/77_iterations.txt",
-			"test/80_tree_iterations.txt",
-			"test/buddha_10k-2_poission_f_ReebGraph.txt",
-			"test/buddha_10k_f_2_ReebGraph.txt",
-			"test/buddha_10k_f_3_ReebGraph.txt",
-			"test/buddha_10k_f_4_ReebGraph.txt",
-			"test/buddha_10k_f_5_ReebGraph.txt",
-			"test/buddha_10k_poission_f_ReebGraph.txt",
-			"test/david_simple_ReebGraph.txt",
-			"test/figure_eight_simple_ReebGraph.txt",
-			"test/first_graph.txt",
-			"test/first_graph10.txt",
-			"test/first_graph2.txt",
-			"test/first_graph3.txt",
-			"test/first_graph4.txt",
-			"test/first_graph5.txt",
-			"test/first_graph6.txt",
-			"test/first_graph7.txt",
-			"test/first_graph8.txt",
-			"test/first_graph9.txt",
-			"test/first_graph_old.txt",
-			"test/flower_poission_f_ReebGraph.txt",
-			"test/second_graph.txt",
-			"test/topology_f_ReebGraph.txt",
-			"test/topology_simple_ReebGraph.txt",
-			"test/vase_poission_f_ReebGraph.txt",
-			"test/elevation_graph.txt"
+			"1000_graph_iterations.txt", 
+			"1000_tree_iterations.txt", 
+			"100_iterations.txt", 
+			"100_tree_iterations.txt", 
+			"10_tree_iterations.txt", 
+			"2000_graph_iterations.txt", 
+			"2000_tree_iterations.txt", 
+			"200_tree_iterations.txt", 
+			"25_iterations.txt", 
+			"3000_graph_iterations.txt", 
+			"3000_tree_iterations.txt", 
+			"3_tree_iterations.txt", 
+			"40_tree_iterations.txt", 
+			"45_iterations.txt", 
+			"4torus_nv10k_reebgraph_vals.txt", 
+			"4torus_simple_ReebGraph 2.txt", 
+			"4torus_simple_ReebGraph.txt", 
+			"5000_graph_iterations.txt", 
+			"5000_tree_iterations.txt", 
+			"500_graph_iterations.txt", 
+			"500_tree_iterations.txt", 
+			"5_iterations.txt", 
+			"77_iterations.txt", 
+			"80_tree_iterations.txt", 
+			"buddha_10k-2_poission_f_ReebGraph.txt", 
+			"buddha_10k_f_2_ReebGraph.txt", 
+			"buddha_10k_f_3_ReebGraph.txt", 
+			"buddha_10k_f_4_ReebGraph.txt", 
+			"buddha_10k_f_5_ReebGraph.txt", 
+			"buddha_10k_poission_f_ReebGraph.txt", 
+			"buddha_10k_reebgraph_vals.txt", 
+			"david_reebgraph_vals.txt", 
+			"david_simple_ReebGraph.txt", 
+			"eight_reebgraph_vals.txt", 
+			"elevation_graph.txt", 
+			"female_reebgraph_vals.txt", 
+			"figure_eight_simple_ReebGraph.txt", 
+			"first_graph.txt", 
+			"first_graph10.txt", 
+			"first_graph2.txt", 
+			"first_graph3.txt", 
+			"first_graph4.txt", 
+			"first_graph5.txt", 
+			"first_graph6.txt", 
+			"first_graph7.txt", 
+			"first_graph8.txt", 
+			"first_graph9.txt", 
+			"first_graph_old.txt",
+			"running_example.txt", 
+			"flower_poission_f_ReebGraph.txt", 
+			"flower_reebgraph_vals.txt", 
+			"flower_reebgraph.txt", 
+			"greek_reebgraph_vals.txt", 
+			"second_graph.txt", 
+			"topology_f_ReebGraph.txt", 
+			"topology_reebgraph_vals.txt", 
+			"topology_simple_ReebGraph.txt", 
+			"vase_poission_f_ReebGraph.txt"
 	};
 	
 	
@@ -80,17 +96,41 @@ public class MultipleTestCLI {
 
 		for( String ip : testSet ) {
 			try {
+				int testCount = 10;
 				
-				Timer mergeTimer = new TimerAverage( new TimerNanosecond() );
-				Timer ppTimer = new TimerAverage( new TimerNanosecond() );
+				double mergeTimer = 0;
+				double ppTimer    = 0;
 				int i = 0;
-				for( ; i < 1000; i++ ) {
-					if( !SingleTestCLI.testPerformance( ip, mergeTimer, ppTimer, false ) ) {
+				TestResults result = null;
+				for( ; i < testCount; i++ ) {
+					result = TestResults.testPerformance( "test/"+ip, false );
+					if( result == null ) {
 						System.out.println( "test FAILED: " + ip );
 						break;
 					}
+					if( result.ppTimer.getElapsedMilliseconds() < 50 ) testCount = 100;
+					if( result.ppTimer.getElapsedMilliseconds() < 1 ) testCount = 1000;
+					mergeTimer += result.mergeTimer.getElapsedMilliseconds();
+					ppTimer += result.ppTimer.getElapsedMilliseconds();
 				}
-				if( i == 1000 ) System.out.println( "test succeeded: " + ip + " -- merge_time: " + mergeTimer.getElapsedMilliseconds() + " pp_timer: " + ppTimer.getElapsedMilliseconds() );
+				if( i == testCount ) {
+					
+					TestResults.savePersistentDiagram( result.rgMP, "pd/" + ip );
+					System.out.print( ip.split("\\.")[0].replace("_", "\\_") + " & & & " );
+					System.out.print( result.initial_verts + " & " );
+					System.out.print( result.conditioned_verts + " & ");
+					System.out.print( result.loops + " & " );
+					if( (mergeTimer/testCount) > 0.1 )
+						System.out.printf("%.2f & ", (mergeTimer/testCount) );
+					else
+						System.out.printf("%.2e & ", (mergeTimer/testCount) );
+					if( (ppTimer/testCount) > 0.1 )
+						System.out.printf("%.2f \\\\ ", (ppTimer/testCount) );
+					else
+						System.out.printf("%.2e \\\\ ", (ppTimer/testCount) );
+					System.out.println("\n\\hline");
+					//System.out.println( "test succeeded: " + ip + " -- init_nodes: " + result.initial_verts + " cond_nodes: " + result.conditioned_verts + " loops: " + result.loops + " tests: " + testCount + " merge_time: " + (mergeTimer/testCount) + " pp_timer: " + (ppTimer/testCount) );
+				}
 	
 			} catch (Exception e) {
 				e.printStackTrace();
