@@ -3,6 +3,7 @@ package usf.saav.topology.reebgraph;
 import java.util.ArrayList;
 
 import usf.saav.topology.TopoGraph;
+import usf.saav.topology.TopoGraph.Vertex;
 import usf.saav.topology.TopoTreeNode;
 
 public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
@@ -26,12 +27,8 @@ public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
 	}
 
 	@Override
-	public int[] neighbors() {
-		int [] ret = new int[neighbors.size()];
-		for(int i = 0; i < neighbors.size(); i++){
-			ret[i] = neighbors.get(i).idx;
-		}
-		return ret;
+	public Vertex [] neighbors() {
+		return neighbors.toArray( new Vertex[neighbors.size()] );
 	}
 	
 	@Override public float value() { return val; }

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Vector;
 
+import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 
 
@@ -36,6 +37,12 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 	protected Vector<MergeTreeNode> children = new Vector<MergeTreeNode>( );
 	protected MergeTreeNode parent  = null;
 	protected MergeTreeNode partner = null;
+	
+	public TopoGraph.Vertex creator = null; 
+	
+	protected MergeTreeNode(TopoGraph.Vertex _creator) {
+		this.creator = _creator;
+	}
 
 	
 	public void 				addChild( MergeTreeNode c ){				  children.add(c); 					}
@@ -65,9 +72,9 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 	}
 
 	
-	public void			setParent( MergeTreeNode p ){ 	parent = p;				}
+	public void				setParent( MergeTreeNode p ){ 	parent = p;				}
 	public MergeTreeNode	getParent( ){					return parent;			}
-	public boolean		hasParent() {					return parent != null;	}
+	public boolean			hasParent() {					return parent != null;	}
 
 	
 	public abstract float getValue( );

@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import usf.saav.common.HashDisjointSet;
 import usf.saav.topology.TopoGraph;
+import usf.saav.topology.TopoGraph.Vertex;
 import usf.saav.topology.TopoTreeNode;
 
 public class MergeTree implements Runnable {
@@ -98,7 +99,7 @@ public class MergeTree implements Runnable {
 		// Order the points for adding to the tree.
 		Queue< JNode > tq = new PriorityQueue< JNode >( size, comparator );
 		for(int i = 0; i < size; i++ ){
-			grid.add( new JNode( sf.get(i).value(), i ) );
+			grid.add( new JNode( sf.get(i).value(), i, sf.get(i) ) );
 			tq.add( (JNode)grid.get(i) );
 		}
 
@@ -110,8 +111,8 @@ public class MergeTree implements Runnable {
 			JNode me = tq.poll();
 
 			// set any neighbor sets as children
-			for( int _n : sf.get( me.getID() ).neighbors() ){
-				JNode n = (JNode)grid.get(_n);
+			for( Vertex _n : sf.get( me.getID() ).neighbors() ){
+				JNode n = (JNode)grid.get(_n.getID());
 				if( comparator.compare( n, me ) < 0 ) {
 					//Node r0 = djs.find( me );
 					JNode r1 = djs.find( n );
@@ -145,7 +146,7 @@ public class MergeTree implements Runnable {
 			if( curr.childCount() > 2 ) {
 				//System.out.println("Monkey Saddle " + curr.getPosition());
 				//System.out.println( curr );
-				JNode newNode = new JNode( curr.getValue(), curr.getID() );
+				JNode newNode = new JNode( curr.getValue(), curr.getID(), curr.creator );
 				while( curr.childCount() > 1 ) {
 					MergeTreeNode n = curr.getChild(1);
 					curr.removeChild( n );
@@ -236,7 +237,8 @@ public class MergeTree implements Runnable {
 		private int   position;
 		private float value;
 
-		public JNode( float value, int position ) {
+		public JNode( float value, int position, TopoGraph.Vertex creator ) {
+			super(creator);
 			this.position = position;
 			this.value 	  = value;
 		}

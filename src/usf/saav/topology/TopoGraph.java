@@ -27,9 +27,9 @@ public abstract class TopoGraph<T extends TopoGraph.Vertex> extends Vector<T> {
 	public TopoGraph( ){ }
 
 	public interface Vertex {
-		float  value();
-		int    getID();
-		int [] neighbors();
+		float     value();
+		int       getID();
+		Vertex [] neighbors();
 	}
 	
 }

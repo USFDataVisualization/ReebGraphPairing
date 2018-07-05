@@ -60,10 +60,10 @@ public class ReebGraph extends TopoGraph<ReebGraphVertex> {
 
 			dot_node.append( "\t" + curr.getID() + "[label=\"" + curr.toString() + "\"];\n");
 
-			for( int n : curr.neighbors() ){
+			for( Vertex n : curr.neighbors() ){
 				for( int j = 0; j < size(); j++){
 					ReebGraphVertex nei = (ReebGraphVertex)get(j);
-					if( nei.getID() == n && nei.value() < curr.value() )
+					if( nei == n && nei.value() < curr.value() )
 						dot_edge.append( "\t" + curr.getID() + " -> " + nei.getID() + "\n");
 				}
 			}					

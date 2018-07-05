@@ -13,7 +13,13 @@ public class AugmentedMergeTree extends MergeTree {
 		super(_jt.sf,_jt.comparator);
 		this.jt = _jt;
 	}
-	
+
+	public AugmentedMergeTree( MergeTree _jt, boolean run ) {
+		super(_jt.sf,_jt.comparator);
+		this.jt = _jt;
+		if( run ) this.run();
+	}
+
 	public AugmentedMergeTree( TopoGraph<? extends TopoGraph.Vertex> sf ) {
 		super(sf);
 		jt = new MergeTree(sf,this.comparator);
@@ -47,10 +53,10 @@ public class AugmentedMergeTree extends MergeTree {
 			current = current.getChild(0);
 		}
 		if( current.childCount() == 0 ){
-			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue() );
+			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current.creator );
 		}
 		if( current.childCount() == 2 ){
-			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(),
+			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current.creator,
 							processTree( current.getChild(0) ),
 							processTree( current.getChild(1) )  );
 		}
@@ -70,12 +76,14 @@ public class AugmentedMergeTree extends MergeTree {
 		private float value;
 		
 		
-		protected AugmentedMergeTreeNode( int loc, float val ){
+		protected AugmentedMergeTreeNode( int loc, float val, TopoGraph.Vertex creator ){
+			super(creator);
 			this.location = loc;
 			this.value = val;
 		}
 		
-		protected AugmentedMergeTreeNode( int loc, float val, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
+		protected AugmentedMergeTreeNode( int loc, float val, TopoGraph.Vertex creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
+			super(creator);
 			this.location = loc;
 			this.value = val;
 			this.addChild(c0);
