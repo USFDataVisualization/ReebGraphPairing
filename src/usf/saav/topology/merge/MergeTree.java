@@ -10,9 +10,9 @@ import java.util.Stack;
 import usf.saav.common.HashDisjointSet;
 import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoGraph.Vertex;
-import usf.saav.topology.TopoTreeNode;
+import usf.saav.topology.TopoTree;
 
-public class MergeTree implements Runnable {
+public class MergeTree implements TopoTree<MergeTreeNode>, Runnable {
  
 	protected Comparator<? super JNode> comparator;
 	protected TopoGraph<? extends TopoGraph.Vertex> sf;
@@ -56,9 +56,37 @@ public class MergeTree implements Runnable {
 		return grid.get(i).getPersistence();
 	}
 
-	public TopoTreeNode getNode(int i) {
+	public MergeTreeNode getNode(int i) {
 		return grid.get(i);
 	}	
+	
+	@Override
+	public void setPersistentSimplification(float threshold) {
+		// TODO Auto-generated method stub
+		// FIX LATER
+	}
+
+	@Override
+	public float getPersistentSimplification() {
+		// TODO Auto-generated method stub
+		// FIX LATER
+		return 0;
+	}
+
+	@Override
+	public boolean isActive(int i) {
+		// TODO Auto-generated method stub
+		// FIX LATER
+		return true;
+	}
+
+	@Override
+	public float getMaxPersistence() {
+		// TODO Auto-generated method stub
+		// FIX LATER
+		return 0;
+	}
+	
 	
 
 	public String toDot( ){
@@ -248,6 +276,9 @@ public class MergeTree implements Runnable {
 
 
 	}
+
+
+
 
 	
 	

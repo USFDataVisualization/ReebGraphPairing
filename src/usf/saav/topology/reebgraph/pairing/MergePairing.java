@@ -11,8 +11,8 @@ import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 import usf.saav.topology.TopoTreeNode.NodeType;
 import usf.saav.topology.merge.AugmentedMergeTree;
-import usf.saav.topology.merge.JoinTree;
-import usf.saav.topology.merge.SplitTree;
+import usf.saav.topology.merge.AugmentedJoinTree;
+import usf.saav.topology.merge.AugmentedSplitTree;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.ReebGraphVertex;
 
@@ -37,7 +37,7 @@ public class MergePairing implements Pairing {
 		HashSet<TopoGraph.Vertex> essential = new HashSet<TopoGraph.Vertex>();
 		essential.addAll( reebMesh );
 
-		JoinTree mt = new JoinTree( reebMesh, true );
+		AugmentedJoinTree mt = new AugmentedJoinTree( reebMesh, true );
 		if( saveTrees ) {
 			try {
 				SystemX.writeStringToFile(mt.toDot(), output_directory + "mt.dot" );
@@ -46,7 +46,7 @@ public class MergePairing implements Pairing {
 			}
 		}
 		
-		SplitTree st = new SplitTree( reebMesh, true );
+		AugmentedSplitTree st = new AugmentedSplitTree( reebMesh, true );
 		if( saveTrees ) {
 			try {
 				SystemX.writeStringToFile(st.toDot(), output_directory + "st.dot" );

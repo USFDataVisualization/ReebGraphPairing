@@ -17,23 +17,24 @@
  *
  *     You may contact the Paul Rosen at <prosen@usf.edu>.
  */
-package usf.saav.topology;
+package usf.saav.topology.merge;
 
-public interface TopoTree<T extends TopoTreeNode> {
+import usf.saav.topology.TopoGraph;
+
+public class AugmentedSplitTree extends AugmentedMergeTree {
 	
-	void  setPersistentSimplification( float threshold );
-	float getPersistentSimplification( );
+	/**
+	 * Default Split Tree constructor.
+	 *   
+	 * @param sf Scalar Field in any dimension to construct contour tree upon.
+	 */
+	public AugmentedSplitTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
+		super(sf, new MergeTreeNode.ComparatorValueDescending() );
+	}
 	
-	boolean isActive(int i);
-	
-	int size();
-	
-	float getBirth(int i);
-	float getDeath(int i);
-	float getPersistence(int i);
-	
-	T getNode( int i );
-	
-	float getMaxPersistence();
+	public AugmentedSplitTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
+		super(sf, new MergeTreeNode.ComparatorValueDescending() );
+		if( run ) this.run();
+	}	
 	
 }

@@ -77,8 +77,8 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 	public boolean			hasParent() {					return parent != null;	}
 
 	
-	public abstract float getValue( );
-	public abstract int   getID( );
+	//public abstract float getValue( );
+	//public abstract int   getID( );
 	
 	@Override public NodeType getType() {
 		switch( this.childCount() ) {

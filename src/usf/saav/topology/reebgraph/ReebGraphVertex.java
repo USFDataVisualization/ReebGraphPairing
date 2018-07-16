@@ -91,6 +91,11 @@ public class ReebGraphVertex implements TopoGraph.Vertex, TopoTreeNode {
 
 	@Override public float getPersistence() { return getDeath()-getBirth(); }
 
+	@Override
+	public float getValue() {
+		return val;
+	}
+
 
 
 

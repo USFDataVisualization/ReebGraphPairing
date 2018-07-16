@@ -38,7 +38,7 @@ public interface TopoTreeNode {
 	float getBirth();
 	float getDeath();
 	float getPersistence();
-
+	float getValue();
 	
 	
 	public static class ComparePersistenceAscending implements Comparator<TopoTreeNode> {

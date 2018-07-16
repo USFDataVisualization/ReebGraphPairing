@@ -17,23 +17,24 @@
  *
  *     You may contact the Paul Rosen at <prosen@usf.edu>.
  */
-package usf.saav.topology;
+package usf.saav.topology.merge;
 
-public interface TopoTree<T extends TopoTreeNode> {
-	
-	void  setPersistentSimplification( float threshold );
-	float getPersistentSimplification( );
-	
-	boolean isActive(int i);
-	
-	int size();
-	
-	float getBirth(int i);
-	float getDeath(int i);
-	float getPersistence(int i);
-	
-	T getNode( int i );
-	
-	float getMaxPersistence();
-	
+import usf.saav.topology.TopoGraph;
+
+public class AugmentedJoinTree extends AugmentedMergeTree  {
+ 
+	/**
+	 * Default Join Tree constructor.
+	 *   
+	 * @param sf Scalar Field in any dimension to construct contour tree upon.
+	 */
+	public AugmentedJoinTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
+		super( sf, new MergeTreeNode.ComparatorValueAscending() );
+	}
+
+	public AugmentedJoinTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
+		super( sf, new MergeTreeNode.ComparatorValueAscending() );
+		if( run ) this.run();
+	}
+
 }
