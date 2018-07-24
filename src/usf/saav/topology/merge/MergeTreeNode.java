@@ -38,9 +38,9 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 	protected MergeTreeNode parent  = null;
 	protected MergeTreeNode partner = null;
 	
-	public TopoGraph.Vertex creator = null; 
+	public Object creator = null; 
 	
-	protected MergeTreeNode(TopoGraph.Vertex _creator) {
+	protected MergeTreeNode(Object _creator) {
 		this.creator = _creator;
 	}
 

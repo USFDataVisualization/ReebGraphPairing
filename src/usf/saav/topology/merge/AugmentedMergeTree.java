@@ -53,10 +53,10 @@ public class AugmentedMergeTree extends MergeTree {
 			current = current.getChild(0);
 		}
 		if( current.childCount() == 0 ){
-			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current.creator );
+			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current );
 		}
 		if( current.childCount() == 2 ){
-			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current.creator,
+			ret = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current,
 							processTree( current.getChild(0) ),
 							processTree( current.getChild(1) )  );
 		}
@@ -76,13 +76,13 @@ public class AugmentedMergeTree extends MergeTree {
 		private float value;
 		
 		
-		protected AugmentedMergeTreeNode( int loc, float val, TopoGraph.Vertex creator ){
+		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator ){
 			super(creator);
 			this.location = loc;
 			this.value = val;
 		}
 		
-		protected AugmentedMergeTreeNode( int loc, float val, TopoGraph.Vertex creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
+		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
 			super(creator);
 			this.location = loc;
 			this.value = val;

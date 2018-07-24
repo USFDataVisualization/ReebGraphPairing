@@ -265,7 +265,7 @@ public class MergeTree implements TopoTree<MergeTreeNode>, Runnable {
 		private int   position;
 		private float value;
 
-		public JNode( float value, int position, TopoGraph.Vertex creator ) {
+		public JNode( float value, int position, Object creator ) {
 			super(creator);
 			this.position = position;
 			this.value 	  = value;
