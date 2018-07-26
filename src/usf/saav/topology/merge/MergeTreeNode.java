@@ -56,7 +56,7 @@ public abstract class MergeTreeNode implements TopoTreeNode {
 	public void 				removeChild(MergeTreeNode node){			  children.remove(node);			}
 
 	public void setPartner( MergeTreeNode jtn ) { partner = jtn; }
-	@Override public TopoTreeNode getPartner() { return partner; }
+	@Override public MergeTreeNode getPartner() { return partner; }
 	
 	@Override public float getBirth() { 
 		if( partner == null ) return getValue();
