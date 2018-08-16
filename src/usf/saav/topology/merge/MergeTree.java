@@ -59,6 +59,11 @@ public class MergeTree implements TopoTree<MergeTreeNode>, Runnable {
 	public MergeTreeNode getNode(int i) {
 		return grid.get(i);
 	}	
+
+	public ArrayList<MergeTreeNode> getAll() {
+		return grid;
+	}	
+	
 	
 	@Override
 	public void setPersistentSimplification(float threshold) {
