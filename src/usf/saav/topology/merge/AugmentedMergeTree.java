@@ -51,18 +51,26 @@ public class AugmentedMergeTree extends MergeTree {
 	
 	protected AugmentedMergeTreeNode processTree( MergeTreeNode current ){
 		
-		/*
+		
 		Queue<MergeTreeNode> procQueue = new LinkedList<MergeTreeNode>();
-		HashMap<MergeTreeNode,AugmentedMergeTreeNode> childMap = new HashMap<MergeTreeNode,AugmentedMergeTreeNode>();
+		HashMap<MergeTreeNode,AugmentedMergeTreeNode> M2AMap = new HashMap<MergeTreeNode,AugmentedMergeTreeNode>();
 		
 		
-		procQueue.add(_current);
+		procQueue.add(current);
 		
-		AugmentedMergeTreeNode _head = null;
+		AugmentedMergeTreeNode _head = new AugmentedMergeTreeNode( current.getID(), current.getValue(), current);
+		
+		AugmentedMergeTreeNode parent=_head;
 
 		while( !procQueue.isEmpty() ) {
 			MergeTreeNode top = procQueue.peek();
+					
+			if(top.hasParent() && top.parent.childCount()==2) 
+			  {top=top.parent;		
+			   parent= M2AMap.get(top);//new AugmentedMergeTreeNode( top.getID(), top.getValue(), top);
+			 }
 			MergeTreeNode cur = procQueue.poll();
+			
 			while( cur.childCount() == 1 ){
 				cur = cur.getChild(0);
 			}
@@ -71,33 +79,39 @@ public class AugmentedMergeTree extends MergeTree {
 				AugmentedMergeTreeNode ret = null;
 				ret = new AugmentedMergeTreeNode( cur.getID(), cur.getValue(), cur );
 				grid.add( ret );
-				if( childMap.containsKey(top) )
-					childMap.get( top ).addChild( ret );
+				//( childMap.containsKey(top) )
+				//	childMap.get( top ).addChild( ret );
+				parent.addChild(ret);
+				     
 			}
 
 			if( cur.childCount() == 2 ){
+				
+				
 				AugmentedMergeTreeNode ret = null;
+				
 				ret = new AugmentedMergeTreeNode( cur.getID(), cur.getValue(), cur );
+				M2AMap.put(cur, ret);
 				grid.add( ret );
-				if( head == null ) {
-					_head = ret;
-				}
-				if( childMap.containsKey(top) )
-					childMap.get( top ).addChild( ret );
+				parent.addChild(ret);
+				//if( childMap.containsKey(top) )
+				//	childMap.get( top ).addChild( ret );
 				
-				childMap.put( cur.getChild(0), ret );
-				childMap.put( cur.getChild(1), ret );
+				//childMap.put( cur.getChild(0), ret );
+				//childMap.put( cur.getChild(1), ret );
 				
-				procQueue.add(cur.getChild(0));
+			    procQueue.add(cur.getChild(0));
 				procQueue.add(cur.getChild(1));
+				//parent=ret;
+				
 			}			
 			
 		}
 
 		return _head;
-		*/
 		
 		
+	/*	
 		
 		AugmentedMergeTreeNode ret = null;
 		while( current.childCount() == 1 ){
@@ -114,7 +128,8 @@ public class AugmentedMergeTree extends MergeTree {
 			grid.add( ret );
 		}
 		
-		return ret;
+		return ret;*/
+		
 		
 	}
 	
