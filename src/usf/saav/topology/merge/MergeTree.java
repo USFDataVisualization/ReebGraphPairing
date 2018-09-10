@@ -20,6 +20,9 @@ public class MergeTree implements TopoTree<MergeTreeNode>, Runnable {
 	protected boolean operationComplete = false;
 	protected ArrayList<MergeTreeNode> grid = new ArrayList<MergeTreeNode>();
 
+	protected MergeTree( ) { }
+
+	
 	public MergeTree( TopoGraph<? extends TopoGraph.Vertex> sf ) {
 		this( sf, new JNode.ComparatorValueAscending() );
 	}

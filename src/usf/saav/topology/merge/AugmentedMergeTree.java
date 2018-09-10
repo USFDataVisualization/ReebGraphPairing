@@ -12,6 +12,8 @@ public class AugmentedMergeTree extends MergeTree {
 
 	protected MergeTree jt;
 	
+	protected AugmentedMergeTree( ) { }
+	
 	public AugmentedMergeTree( MergeTree _jt ) {
 		super(_jt.sf,_jt.comparator);
 		this.jt = _jt;
