@@ -21,6 +21,7 @@ package usf.saav.topology.merge;
 
 import usf.saav.common.jocl.joclDevice;
 import usf.saav.scalarfield.ScalarField2D;
+import usf.saav.topology.TopoGraph;
 
 public class PJoinTree extends PAugmentedMergeTree {
 
@@ -33,6 +34,13 @@ public class PJoinTree extends PAugmentedMergeTree {
 		calculate(_sf,true);
 		//calculatePersistence();
 	}
+	
+	@Override
+	public void calculate( TopoGraph<?> _sf ){
+		calculate(_sf,true);
+		//calculatePersistence();
+	}
+
 
 	@Override
 	protected PAugmentedMergeTreeNode createTreeNode(int sf_node) {

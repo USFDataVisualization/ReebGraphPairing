@@ -39,6 +39,7 @@ import usf.saav.common.jocl.joclKernel;
 import usf.saav.common.jocl.joclMemory;
 import usf.saav.common.jocl.joclResourceLoader;
 import usf.saav.scalarfield.ScalarField2D;
+import usf.saav.topology.TopoGraph;
 import usf.saav.topology.TopoTreeNode;
 
 public abstract class PAugmentedMergeTree  extends AugmentedMergeTree {
@@ -316,8 +317,9 @@ public abstract class PAugmentedMergeTree  extends AugmentedMergeTree {
 		ps.println( total );
 	}
 
-	
-	public abstract void calculate( ScalarField2D _sf );
+  public abstract void calculate( ScalarField2D _sf );
+  
+  public abstract void calculate( TopoGraph<?> _sf );
 	
 	protected void calculate( ScalarField2D _sf, boolean invert ){
 
@@ -341,6 +343,209 @@ public abstract class PAugmentedMergeTree  extends AugmentedMergeTree {
 		}
 		
 		sf = _sf;
+
+		EventTimer.Default complete_time = new EventTimer.Default("start_to_finish");
+		events.add(complete_time);
+		complete_time.start();
+		
+		try {
+			
+			float [] data = new float[sf.getSize()];
+			float minV =  Float.MAX_VALUE;
+			float maxV = -Float.MAX_VALUE;
+			if( invert ){
+				for(int i = 0; i < data.length; i++){
+					data[i] = -sf.getValue(i);
+					minV = Math.min(minV, data[i]);
+					maxV = Math.max(maxV, data[i]);
+				}
+			}
+			else{
+				for(int i = 0; i < data.length; i++){
+					data[i] = sf.getValue(i);
+					minV = Math.min(minV, data[i]);
+					maxV = Math.max(maxV, data[i]);
+				}
+			}
+			joclEvent event_field_write   = d_field.enqueueWriteBuffer(false, data);
+			events.add(event_field_write);
+			
+			joclEvent event_djs_write     = d_djs.enqueueFillBuffer( new byte[]{0} );
+			events.add(event_djs_write);
+			
+			joclEvent event_cps_write     = d_cps.enqueueFillBuffer( new byte[]{0} );
+			events.add(event_cps_write);
+
+			joclEvent event_scratch_write = d_scratch.enqueueFillBuffer( new byte[]{0} );
+			events.add(event_scratch_write);
+
+			
+
+			ByteBuffer histogram = ByteBuffer.allocate(4*(1+2+histogramBinN*2));
+			histogram.order( ByteOrder.LITTLE_ENDIAN );
+			histogram.putInt( histogramBinN );
+			histogram.putFloat( minV );
+			histogram.putFloat( maxV );
+			for(int i = 0; i < histogramBinN; i++ ){
+				histogram.putInt( 0 );
+				histogram.putInt( 0 );
+			}
+			joclEvent event_histogram_write = d_histogram.enqueueWriteBuffer( false, histogram );
+			events.add(event_histogram_write);
+
+			
+			int arg = 0;
+			
+			/*
+			arg = 0;
+			kernel_djs_init.setKernelArg( arg++, sf.getWidth() ); 
+			kernel_djs_init.setKernelArg( arg++, sf.getHeight() );
+			kernel_djs_init.setKernelArg( arg++, d_field );
+			kernel_djs_init.setKernelArg( arg++, d_djs );
+			joclEvent event_init_djs = kernel_djs_init.enqueueNDRangeKernel( new long[]{sf.getWidth(),sf.getHeight()}, event_histogram_write.event, event_field_write.event, event_djs_write.event );
+			events.add(event_init_djs);
+			
+			
+			arg = 0;
+			kernel_djs_simplify.setKernelArg( arg++, sf.getWidth() );
+			kernel_djs_simplify.setKernelArg( arg++, sf.getHeight() );
+			kernel_djs_simplify.setKernelArg( arg++, d_djs );
+			joclEvent event_simplify_djs = kernel_djs_simplify.enqueueNDRangeKernel( new long[]{sf.getWidth(),sf.getHeight()}, event_init_djs.event );
+			events.add(event_simplify_djs);
+			 */
+
+			kernel_djs.setKernelArg( 0, sf.getWidth() ); 
+			kernel_djs.setKernelArg( 1, sf.getHeight() );
+			kernel_djs.setKernelArg( 2, d_field );
+			kernel_djs.setKernelArg( 3, d_djs );
+			kernel_djs.setKernelArg( 4, (int)1 );
+			joclEvent event_init_djs = kernel_djs.enqueueNDRangeKernel( new long[]{sf.getWidth(),sf.getHeight()}, event_histogram_write.event, event_field_write.event, event_djs_write.event );
+			events.add(event_init_djs);
+
+			kernel_djs.setKernelArg( 4, (int)2 );
+			joclEvent event_simplify_djs = kernel_djs.enqueueNDRangeKernel( new long[]{sf.getWidth(),sf.getHeight()}, event_init_djs.event );
+			events.add(event_simplify_djs);
+
+			arg = 0;
+			kernel_cps_extract.setKernelArg( arg++, sf.getWidth() );
+			kernel_cps_extract.setKernelArg( arg++, sf.getHeight() );
+			kernel_cps_extract.setKernelArg( arg++, d_field );
+			kernel_cps_extract.setKernelArg( arg++, d_djs );
+			kernel_cps_extract.setKernelArg( arg++, d_cps );
+			kernel_cps_extract.setKernelArg( arg++, d_histogram );
+			joclEvent event_extract_cps = kernel_cps_extract.enqueueNDRangeKernel( new long[]{sf.getWidth(),sf.getHeight()}, event_cps_write.event, event_simplify_djs.event );
+			events.add(event_extract_cps);
+			
+			
+						arg = 0;
+			kernel_cps_bin.setKernelArg( arg++, d_cps );
+			kernel_cps_bin.setKernelArg( arg++, d_histogram );
+			joclEvent event_cps_bucket = kernel_cps_bin.enqueueNDRangeKernel( new long[]{sf.getWidth()*sf.getHeight()}, event_extract_cps.event );
+			events.add(event_cps_bucket);
+
+			
+			arg = 0;
+			kernel_cps_bin_sort.setKernelArg( arg++, d_cps );
+			kernel_cps_bin_sort.setKernelArg( arg++, d_histogram );
+			joclEvent event_cps_bucket_sort = kernel_cps_bin_sort.enqueueNDRangeKernel( new long[]{device.getMaxWorkGroupSize()*histogramBinN}, new long[]{device.getMaxWorkGroupSize()}, event_cps_bucket.event );
+			events.add(event_cps_bucket_sort);
+
+
+
+			ByteBuffer tmp_cpsN = ByteBuffer.allocate( 4 );
+			tmp_cpsN.order( ByteOrder.LITTLE_ENDIAN );
+			joclEvent event_cpsN_read = d_cps.enqueueReadBuffer(true, tmp_cpsN, event_cps_bucket_sort.event );
+			events.add(event_cpsN_read);
+
+			int hpointer = tmp_cpsN.getInt();
+			int cpsN = (hpointer-1)/CPSTransfer.size();
+
+			System.out.println( "CPS=" + cpsN );
+			kernel_cps_propagate.setKernelArg( 0, d_cps );
+			kernel_cps_propagate.setKernelArg( 1, d_djs );
+			kernel_cps_propagate.setKernelArg( 3, d_scratch );
+			kernel_cps_propagate.setKernelArg( 4, (int)0 );
+			
+			long wgs = device.getMaxWorkGroupSize();
+			long cpsWork = (cpsN+wgs-1) - ( (cpsN+wgs-1)%wgs ); 
+			joclEvent lastEvent = event_cpsN_read;
+			
+
+			joclEvent event_cps_propagate_clear_djs = d_djs.enqueueFillBuffer( Integer.MAX_VALUE, lastEvent.event );
+			events.add(event_cps_propagate_clear_djs);
+			lastEvent = event_cps_propagate_clear_djs;
+
+			joclEvent event_cps_propagate_clear_scratch = d_scratch.enqueueFillBuffer( new int[]{0,Integer.MAX_VALUE}, lastEvent.event  );
+			events.add(event_cps_propagate_clear_scratch);
+			lastEvent = event_cps_propagate_clear_scratch;
+
+			int [] res = {0,0};
+			int cpsOffset = 0;
+			int phase;
+			EventTimer.CombinedEvents prop_event = new EventTimer.CombinedEvents( "event_cps_propagate" );
+			events.add(prop_event);
+			for( phase = 1; phase <= 40; phase++ ){
+				kernel_cps_propagate.setKernelArg( 2, phase );
+				kernel_cps_propagate.setKernelArg( 4, cpsOffset );
+
+				joclEvent event_cps_propagate_phase_X = kernel_cps_propagate.enqueueNDRangeKernel( new long[]{cpsWork-cpsOffset}, lastEvent.event );
+				prop_event.add(event_cps_propagate_phase_X);
+				lastEvent = event_cps_propagate_phase_X;
+				
+				if( phase > 1 ){
+					d_scratch.enqueueReadBuffer(true, (phase-1)*8, res, lastEvent.event );
+					cpsOffset = (int) (res[1]-(res[1]%wgs));
+					System.out.println( "Phase:" + (phase-1) + " {modified:" + res[0] + ", minimium:" + res[1] + "} Offset:" + cpsOffset + " Work Remaining:" + (cpsWork-cpsOffset) );
+					if( res[1] > cpsN ) break;
+				}
+			}
+			
+			
+			
+			//ByteBuffer tmp_cps = ByteBuffer.allocate( (int) d_cps.size() );
+			ByteBuffer tmp_cps = ByteBuffer.allocate( hpointer*4 );
+			tmp_cps.order( ByteOrder.LITTLE_ENDIAN );
+			joclEvent event_cps_read = d_cps.enqueueReadBuffer(true, tmp_cps, lastEvent.event );
+			events.add(event_cps_read);
+			
+			EventTimer.Default proc_cps = new EventTimer.Default("processCPS");
+			proc_cps.start();
+			//processCPS( tmp_cps );
+			fastProcessCPS( tmp_cps );
+			proc_cps.stop();
+			events.add(proc_cps);
+			
+		} catch (joclException e) {
+			e.printStackTrace();
+		}
+		
+		complete_time.stop();
+		operationComplete = true;
+		
+	}
+
+	protected void calculate( TopoGraph<?> _sf, boolean invert ){
+
+		events.clear();
+		
+		if( sf != null && sf.getSize() < _sf.size() ){
+			d_field.release();
+			d_djs.release();
+			d_cps.release();
+			d_scratch.release();
+			d_histogram.release();
+			sf = null;
+		}
+		
+		if( sf == null ){
+			d_field     = device.createBuffer( "field",     CL_MEM_READ_ONLY,  4*_sf.size() );
+			d_djs       = device.createBuffer( "djs",       CL_MEM_READ_WRITE, Math.max(4*_sf.size(), 4*(1+2048+2048*4) ) );
+			d_cps       = device.createBuffer( "cps",       CL_MEM_READ_WRITE, 4*_sf.size()*CPSTransfer.size() );
+			d_scratch   = device.createBuffer( "scratch",   CL_MEM_READ_WRITE, 4*_sf.size() );
+			d_histogram = device.createBuffer( "histogram", CL_MEM_READ_WRITE, 4* (1 + 2 + histogramBinN + histogramBinN) ); // 1 for bin count, 2 for min/max, N for bins, N for bin offsets
+		}
+		
+		sf = (ScalarField2D) _sf;
 
 		EventTimer.Default complete_time = new EventTimer.Default("start_to_finish");
 		events.add(complete_time);
@@ -712,6 +917,8 @@ public abstract class PAugmentedMergeTree  extends AugmentedMergeTree {
 		}
 		
 	}
+
+	
 	
 
 }
