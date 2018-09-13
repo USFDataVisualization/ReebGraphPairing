@@ -8,30 +8,34 @@ import java.util.Queue;
 import usf.saav.topology.TopoGraph;
 
 
-public class AugmentedMergeTree extends MergeTree {
+public class AugmentedMergeTree extends AbstractAugmentedMergeTree implements Runnable {
 
 	protected MergeTree jt;
+	protected boolean operationComplete = false;
 	
 	protected AugmentedMergeTree( ) { }
 	
 	public AugmentedMergeTree( MergeTree _jt ) {
-		super(_jt.sf,_jt.comparator);
+		//super(_jt.sf,_jt.comparator);
 		this.jt = _jt;
 	}
 
 	public AugmentedMergeTree( MergeTree _jt, boolean run ) {
-		super(_jt.sf,_jt.comparator);
+		//super(_jt.sf,_jt.comparator);
 		this.jt = _jt;
 		if( run ) this.run();
 	}
 
+	/*
 	public AugmentedMergeTree( TopoGraph<? extends TopoGraph.Vertex> sf ) {
-		super(sf);
+		//super(sf);
 		jt = new MergeTree(sf,this.comparator);
 	}
+	*/
+	
 	
 	public AugmentedMergeTree( TopoGraph<? extends TopoGraph.Vertex> sf, Comparator<? super JNode> comparator  ) {
-		super(sf,comparator);
+		//super(sf,comparator);
 		jt = new MergeTree(sf,comparator);
 	}
 	
@@ -135,37 +139,6 @@ public class AugmentedMergeTree extends MergeTree {
 		
 	}
 	
-	
-
-	protected class AugmentedMergeTreeNode extends MergeTreeNode {
-		
-		private int   location;
-		private float value;
-		
-		
-		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator ){
-			super(creator);
-			this.location = loc;
-			this.value = val;
-		}
-		
-		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
-			super(creator);
-			this.location = loc;
-			this.value = val;
-			this.addChild(c0);
-			this.addChild(c1);
-		}
-		
-		
-		@Override public int	getID() { return location; }
-		@Override public float	getValue() { 	return value;	 }
-
-
-	}
-
-
-
 	
 	
 	

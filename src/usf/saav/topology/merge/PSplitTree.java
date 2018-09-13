@@ -33,7 +33,7 @@ public class PSplitTree extends PAugmentedMergeTree {
 		calculate(_sf,false);
 		//calculatePersistence();
 	}
-
+	
 
 	@Override
 	protected PAugmentedMergeTreeNode createTreeNode(int sf_node) {
@@ -60,5 +60,6 @@ public class PSplitTree extends PAugmentedMergeTree {
 		}
 
 	}
+
 
 }

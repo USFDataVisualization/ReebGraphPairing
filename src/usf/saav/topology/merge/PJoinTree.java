@@ -35,12 +35,6 @@ public class PJoinTree extends PAugmentedMergeTree {
 		//calculatePersistence();
 	}
 	
-	@Override
-	public void calculate( TopoGraph<?> _sf ){
-		calculate(_sf,true);
-		//calculatePersistence();
-	}
-
 
 	@Override
 	protected PAugmentedMergeTreeNode createTreeNode(int sf_node) {
