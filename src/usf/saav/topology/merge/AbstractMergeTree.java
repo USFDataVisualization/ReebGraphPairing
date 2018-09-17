@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import usf.saav.topology.TopoTree;
 
-public abstract class AbstractMergeTree implements TopoTree<MergeTreeNode> {
+public abstract class AbstractMergeTree implements TopoTree<AbstractMergeTreeNode> {
 
 	
-	protected MergeTreeNode head = null;
-	protected ArrayList<MergeTreeNode> grid = new ArrayList<MergeTreeNode>();
+	protected AbstractMergeTreeNode head = null;
+	protected ArrayList<AbstractMergeTreeNode> grid = new ArrayList<AbstractMergeTreeNode>();
 	
 
-	public MergeTreeNode getRoot( ){
+	public AbstractMergeTreeNode getRoot( ){
 		return head;
 	}
 		
@@ -36,19 +36,19 @@ public abstract class AbstractMergeTree implements TopoTree<MergeTreeNode> {
 		return grid.get(i).getPersistence();
 	}
 
-	public MergeTreeNode getNode(int i) {
+	public AbstractMergeTreeNode getNode(int i) {
 		return grid.get(i);
 	}	
 
-	public ArrayList<MergeTreeNode> getAll() {
+	public ArrayList<AbstractMergeTreeNode> getAll() {
 		return grid;
 	}	
 	
 
 	
 	protected void setParents( ) {
-		for( MergeTreeNode curr : grid ) {
-			for( MergeTreeNode child : curr.getChildren() ) {
+		for( AbstractMergeTreeNode curr : grid ) {
+			for( AbstractMergeTreeNode child : curr.getChildren() ) {
 				child.setParent( curr );
 			}
 		}		
@@ -114,7 +114,7 @@ public abstract class AbstractMergeTree implements TopoTree<MergeTreeNode> {
 	
 	
 
-	public class JNode extends MergeTreeNode {
+	public class JNode extends AbstractMergeTreeNode {
 
 		private int   position;
 		private float value;

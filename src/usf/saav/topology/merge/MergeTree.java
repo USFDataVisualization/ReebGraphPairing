@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.Vector;
 
 import usf.saav.common.HashDisjointSet;
 import usf.saav.topology.TopoGraph;
@@ -82,21 +83,34 @@ public class MergeTree extends AbstractMergeTree implements  Runnable {
 	
 	
 	protected void correctMonkeySaddles( ) {
-		Queue<MergeTreeNode> proc = new LinkedList<MergeTreeNode>();
+		Queue<AbstractMergeTreeNode> proc = new LinkedList<AbstractMergeTreeNode>();
 		
 		proc.add(head);
 		while( !proc.isEmpty() ) {
-			MergeTreeNode curr = proc.poll();
+			AbstractMergeTreeNode curr = proc.poll();
 			if( curr.childCount() > 2 ) {
 				//System.out.println("Monkey Saddle " + curr.getPosition());
 				//System.out.println( curr );
+				Vector<AbstractMergeTreeNode> oldChildren = curr.children;
+				curr.children = new Vector<AbstractMergeTreeNode>();
+				
 				JNode newNode = new JNode( curr.getValue(), curr.getID(), curr.creator );
+				
+				curr.children.add( oldChildren.get(0) );
+				curr.children.add( newNode );
+				
+				for(int i = 1; i < oldChildren.size(); i++ ) {
+					newNode.addChild( oldChildren.get(i) );
+				}
+				
+				/*
 				while( curr.childCount() > 1 ) {
-					MergeTreeNode n = curr.getChild(1);
+					AbstractMergeTreeNode n = curr.getChild(1);
 					curr.removeChild( n );
 					newNode.addChild( n );
 				}
 				curr.addChild(newNode);
+				*/
 				grid.add(newNode);
 				//System.out.println( curr );
 			}

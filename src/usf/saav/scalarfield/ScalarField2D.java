@@ -31,11 +31,43 @@ import java.util.Vector;
 
 public interface ScalarField2D extends ScalarFieldND {
 
+	
+	
+
 	public int getWidth();
 	public int getHeight();
 	
 	public float     getValue( int x, int y );
 	public double [] getCoordinate( int x, int y );
+	
+	
+
+	public class Padded extends ScalarField2D.Default {
+		int w,h;
+		ScalarField2D base;
+		
+		public Padded(  ScalarField2D _base, int padX, int padY ) {
+			base = _base;
+			w = _base.getWidth()+padX-1;
+			h = _base.getHeight()+padY-1;
+			w -= (w%padX);
+			h -= (h%padY);
+			System.out.println( _base.getWidth() + " " + _base.getHeight() + " == " + w + " " + h );
+		}
+
+		@Override public int getWidth() { return w; }
+		@Override public int getHeight() { return h; }
+
+		@Override
+		public float getValue(int x, int y) { 
+			if( x < base.getWidth() && y < base.getHeight() ) 
+				return base.getValue(x, y);
+			return 0;
+		}
+
+
+	}
+
 	
 
 	public abstract class Default extends ScalarFieldND.Default implements ScalarField2D {

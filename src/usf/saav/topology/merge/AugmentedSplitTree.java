@@ -29,11 +29,11 @@ public class AugmentedSplitTree extends AugmentedMergeTree {
 	 * @param sf Scalar Field in any dimension to construct contour tree upon.
 	 */
 	public AugmentedSplitTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
-		super(sf, new MergeTreeNode.ComparatorValueDescending() );
+		super(sf, new AbstractMergeTreeNode.ComparatorValueDescending() );
 	}
 	
 	public AugmentedSplitTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
-		super(sf, new MergeTreeNode.ComparatorValueDescending() );
+		super(sf, new AbstractMergeTreeNode.ComparatorValueDescending() );
 		if( run ) this.run();
 	}	
 	

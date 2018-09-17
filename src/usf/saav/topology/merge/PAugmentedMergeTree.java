@@ -322,7 +322,9 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
   public abstract void calculate( ScalarField2D _sf ) ;
   
 
-	protected void calculate( ScalarField2D _sf, boolean invert ){
+	protected void calculate( ScalarField2D __sf, boolean invert ){
+		
+		ScalarField2D _sf = new ScalarField2D.Padded( __sf, 16, 16 );
 
 		events.clear();
 		
@@ -573,6 +575,7 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 		
 		int hpointer = tmp_cps.getInt();
 		int cpsN     = (hpointer-1)/CPSTransfer.size();
+		System.out.println( "CPS: " + cpsN );
 		for(int i = 0; i < cpsN; i++ ){
 			currCP.loadNext( tmp_cps );
 
@@ -682,7 +685,7 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 	
 	protected abstract PAugmentedMergeTreeNode createTreeNode( int sf_node );
 	
-	public abstract class PAugmentedMergeTreeNode extends MergeTreeNode implements TopoTreeNode {
+	public abstract class PAugmentedMergeTreeNode extends AbstractMergeTreeNode implements TopoTreeNode {
 		
 		int idx;
 		
@@ -700,13 +703,13 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 		@Override public float   getValue(){ return sf.getValue(idx); }
 		//@Override public int     getPosition(){ return idx; }
 		
-		@Override public void addChild( MergeTreeNode c ){
+		@Override public void addChild( AbstractMergeTreeNode c ){
 			if( this.children.size() < 2 ){
 				super.addChild(c);
 			}
 			else{
 				// this code makes splits up multiway saddle cases
-				MergeTreeNode c1 = children.get(1);
+				AbstractMergeTreeNode c1 = children.get(1);
 				children.remove(1);
 				PAugmentedMergeTreeNode newc1 = createTreeNode( idx );
 				children.add(newc1);

@@ -10,16 +10,21 @@ public abstract class AbstractAugmentedMergeTree extends AbstractMergeTree {
 	protected void calculatePersistence(){
 		//print_info_message( "Finding Persistence");
 		
-		Stack<MergeTreeNode> pstack = new Stack<MergeTreeNode>( );
+		Stack<AbstractMergeTreeNode> pstack = new Stack<AbstractMergeTreeNode>( );
 		//pstack.push( getNextCritical(this.head) );
 		pstack.push( this.head );
 		
 		while( !pstack.isEmpty() ){
-			MergeTreeNode curr = pstack.pop();
-			//System.out.println(curr.getPosition() + " " + curr.getChildCount());
+			AbstractMergeTreeNode curr = pstack.pop();
+			//System.out.println(curr.getID() + " " + curr.getChildCount());
 			
 			// leaf is only thing in the stack, done
 			if( pstack.isEmpty() && curr.childCount() == 0 ) break;			
+			
+			// 1 child, just push onto stack
+			if( curr.childCount() == 1 ) {
+				pstack.push( curr.getChild(0) );
+			}			
 			
 			// saddle point, push children onto stack
 			if( curr.childCount() == 2 ){
@@ -32,8 +37,8 @@ public abstract class AbstractAugmentedMergeTree extends AbstractMergeTree {
 
 			// leaf node, 2 options
 			if( curr.childCount() == 0 && pstack.size() >= 2 ) {
-				MergeTreeNode sibling = pstack.pop();
-				MergeTreeNode parent  = pstack.pop();
+				AbstractMergeTreeNode sibling = pstack.pop();
+				AbstractMergeTreeNode parent  = pstack.pop();
 				
 				// sibling is a saddle, restack.
 				if( sibling.childCount() == 2 ){
@@ -66,19 +71,19 @@ public abstract class AbstractAugmentedMergeTree extends AbstractMergeTree {
 		
 	
 	
-	protected class AugmentedMergeTreeNode extends MergeTreeNode {
+	protected class AugmentedMergeTreeNode extends AbstractMergeTreeNode {
 		
 		private int   location;
 		private float value;
 		
 		
-		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator ){
+		protected AugmentedMergeTreeNode( int loc, float val, AbstractMergeTreeNode creator ){
 			super(creator);
 			this.location = loc;
 			this.value = val;
 		}
 		
-		protected AugmentedMergeTreeNode( int loc, float val, MergeTreeNode creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
+		protected AugmentedMergeTreeNode( int loc, float val, AbstractMergeTreeNode creator, AugmentedMergeTreeNode c0, AugmentedMergeTreeNode c1 ){
 			super(creator);
 			this.location = loc;
 			this.value = val;

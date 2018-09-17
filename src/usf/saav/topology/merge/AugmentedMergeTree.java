@@ -55,11 +55,11 @@ public class AugmentedMergeTree extends AbstractAugmentedMergeTree implements Ru
 		
 	}
 	
-	protected AugmentedMergeTreeNode processTree( MergeTreeNode current ){
+	protected AugmentedMergeTreeNode processTree( AbstractMergeTreeNode current ){
 		
 		
-		Queue<MergeTreeNode> procQueue = new LinkedList<MergeTreeNode>();
-		HashMap<MergeTreeNode,AugmentedMergeTreeNode> M2AMap = new HashMap<MergeTreeNode,AugmentedMergeTreeNode>();
+		Queue<AbstractMergeTreeNode> procQueue = new LinkedList<AbstractMergeTreeNode>();
+		HashMap<AbstractMergeTreeNode,AugmentedMergeTreeNode> M2AMap = new HashMap<AbstractMergeTreeNode,AugmentedMergeTreeNode>();
 		
 		
 		procQueue.add(current);
@@ -69,13 +69,13 @@ public class AugmentedMergeTree extends AbstractAugmentedMergeTree implements Ru
 		AugmentedMergeTreeNode parent=_head;
 
 		while( !procQueue.isEmpty() ) {
-			MergeTreeNode top = procQueue.peek();
+			AbstractMergeTreeNode top = procQueue.peek();
 					
 			if(top.hasParent() && top.parent.childCount()==2) 
 			  {top=top.parent;		
 			   parent= M2AMap.get(top);//new AugmentedMergeTreeNode( top.getID(), top.getValue(), top);
 			 }
-			MergeTreeNode cur = procQueue.poll();
+			AbstractMergeTreeNode cur = procQueue.poll();
 			
 			while( cur.childCount() == 1 ){
 				cur = cur.getChild(0);

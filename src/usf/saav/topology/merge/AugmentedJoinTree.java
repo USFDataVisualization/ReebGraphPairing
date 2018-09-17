@@ -29,11 +29,11 @@ public class AugmentedJoinTree extends AugmentedMergeTree  {
 	 * @param sf Scalar Field in any dimension to construct contour tree upon.
 	 */
 	public AugmentedJoinTree( TopoGraph<? extends TopoGraph.Vertex> sf ){
-		super( sf, new MergeTreeNode.ComparatorValueAscending() );
+		super( sf, new AbstractMergeTreeNode.ComparatorValueAscending() );
 	}
 
 	public AugmentedJoinTree( TopoGraph<? extends TopoGraph.Vertex> sf, boolean run ){
-		super( sf, new MergeTreeNode.ComparatorValueAscending() );
+		super( sf, new AbstractMergeTreeNode.ComparatorValueAscending() );
 		if( run ) this.run();
 	}
 

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Random;
 import java.util.Vector;
 
 public class SystemX {
@@ -45,5 +46,24 @@ public class SystemX {
 		return SystemX.readFileContents( new BufferedReader(new InputStreamReader(input) ) );
 	}
 		
+	
+	private final static Random random = new Random();
+
+	public static char MakeRandomCharacter( ){
+		int i = random.nextInt(25);
+		if( i < 26 ) return (char) ('a'+i);
+		if( i < 36 ) return (char) ('0'+i-26);
+		//return '_';
+		System.out.println(i);;
+		return 'a';
+	}
+
+	public static String MakeRandomString(int length) {
+		String ret = "";
+		for( int i = 0; i < length; i++ ){
+			ret += MakeRandomCharacter( );
+		}
+		return ret;
+	}	
 
 }
