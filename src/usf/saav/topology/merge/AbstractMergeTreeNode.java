@@ -225,7 +225,18 @@ public abstract class AbstractMergeTreeNode implements TopoTreeNode {
 		}	
 	}
 
-	
+	public static class ComparatorPersistence implements Comparator<Object> {
+		@Override
+		public int compare(Object o1, Object o2) {
+			if( o1 instanceof AbstractMergeTreeNode && o2 instanceof AbstractMergeTreeNode ){
+				if( ((AbstractMergeTreeNode)o1).getPersistence() > ((AbstractMergeTreeNode)o2).getPersistence() ) return  1;
+				if( ((AbstractMergeTreeNode)o1).getPersistence() < ((AbstractMergeTreeNode)o2).getPersistence() ) return -1;
+				if( ((AbstractMergeTreeNode)o1).getID() < ((AbstractMergeTreeNode)o2).getID() ) return  1;
+				if( ((AbstractMergeTreeNode)o1).getID() > ((AbstractMergeTreeNode)o2).getID() ) return -1;
+			}
+			return 0;
+		}	
+	}
 	
 	
 }
