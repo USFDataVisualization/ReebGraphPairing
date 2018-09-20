@@ -1,5 +1,7 @@
 package usf.saav.topology.merge;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import usf.saav.topology.TopoTree;
@@ -14,6 +16,18 @@ public abstract class AbstractMergeTree implements TopoTree<AbstractMergeTreeNod
 	public AbstractMergeTreeNode getRoot( ){
 		return head;
 	}
+	
+
+	public void savetoDot(String filename ) {
+		try {
+			PrintWriter pw = new PrintWriter( filename );
+			pw.println( this.toDot() );
+			pw.close();   
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+		
 		
 	public String toString( ){
 		if( head == null ){ return "<empty>"; }

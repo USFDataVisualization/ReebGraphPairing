@@ -1,10 +1,11 @@
 package usf.saav.topology.merge;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Stack;
 import java.util.Vector;
 
 import usf.saav.common.HashDisjointSet;

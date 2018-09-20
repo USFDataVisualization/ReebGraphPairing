@@ -523,6 +523,9 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 		}
 		
 		complete_time.stop();
+		
+		calculatePersistence();
+		
 		operationComplete = true;
 		
 	}
@@ -588,10 +591,11 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 				PAugmentedMergeTreeNode currPJTN = createTreeNode( currCP.id );
 				grid.add(currPJTN);
 				total++;
-				//System.out.println( currCP.id );
+				System.out.print( currCP.id + " -- " );
 				
 				for(int j = 0; j < currCP.ref; j++){
 					PAugmentedMergeTreeNode chldPJTN = cp_map.get( currCP.setID[j] );
+					System.out.print( currCP.setID[j] + ", " );
 					if( chldPJTN == null ){
 						chldPJTN = createTreeNode( currCP.setID[j] );
 						grid.add(chldPJTN);
@@ -601,6 +605,7 @@ public abstract class PAugmentedMergeTree  extends AbstractAugmentedMergeTree {
 					
 					cp_map.put( currCP.setID[j], currPJTN );
 				}
+				System.out.println();
 				this.head = currPJTN;
 			}
 		}

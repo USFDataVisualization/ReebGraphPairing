@@ -136,6 +136,12 @@ public abstract class AbstractMergeTreeNode implements TopoTreeNode {
 		while( !queue.isEmpty() ){
 			AbstractMergeTreeNode curr = queue.poll();
 			dot_node.append( "\t" + curr.getUniqueID() + "[label=\"" + curr.getID() + " (" + curr.getValue() + ")\"];\n");
+
+			AbstractMergeTreeNode part = curr.getPartner();
+			if( part != null ) {
+				dot_edge.append( "\t" + curr.getUniqueID() + " -> " + part.getUniqueID() + " [color=\"red\"]\n");
+			}		
+					
 			for( AbstractMergeTreeNode n : curr.getChildren() ){
 				dot_edge.append( "\t" + curr.getUniqueID() + " -> " + n.getUniqueID() + "\n");
 			}
