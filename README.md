@@ -17,12 +17,17 @@ Make sure you have a relatviely recent version of Java installed.
 From the command line, go to ReebGraphPairing/build
 
 #### For the Merge Pairing Approach
-> java -jar ReebGraphPairingMP.jar <file1> <file2> ... <fileN>
+> java -jar ReebGraphPairingMP.jar &lt;file1&gt; &lt;file2&gt; ... &lt;fileN&gt;
 
 #### For the Pair and Propagate Approach
-> java -jar ReebGraphPairingPPP.jar <file1> <file2> ... <fileN>
+> java -jar ReebGraphPairingPPP.jar &lt;file1&gt; &lt;file2&gt; ... &lt;fileN&gt;
 
 Both should provide the identical results, though Pair and Propagate should be faster in general.
+
+
+### Example Input
+
+Example input Reeb Graphs are provided in the test directory.
 
 
 ### For questions
