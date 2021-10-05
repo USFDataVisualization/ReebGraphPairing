@@ -25,9 +25,14 @@ From the command line, go to ReebGraphPairing/build
 Both should provide the identical results, though Pair and Propagate should be faster in general.
 
 
-### Example Input
+### Input Format
 
 Example input Reeb Graphs are provided in the test directory.
+
+
+### Output Format
+
+Output should be compatible with CSV format.
 
 
 ### For questions
