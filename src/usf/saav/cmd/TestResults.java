@@ -95,6 +95,33 @@ public class TestResults {
 		}				
 	}
 	
+	public static void printPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
+		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
+		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
+		
+		verts0.sort( new Comparator<ReebGraphVertex>() {
+			@Override
+			public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
+				if( o1.getBirth() < o2.getBirth() ) return -1;
+				if( o1.getBirth() > o2.getBirth() ) return  1;
+				if( o1.getDeath() < o2.getDeath() ) return -1;
+				if( o1.getDeath() > o2.getDeath() ) return  1;
+				return 0;
+			}
+		});
+		
+		System.out.println("birth_value,death_value,birth_index,death_index");	
+		for( ReebGraphVertex v : verts0 ) {
+			ReebGraphVertex p = (ReebGraphVertex)v.getPartner();
+			if( p == null ) {
+				System.out.println("" + v.getRealValue() + ",INF," + v.getGlobalID() + ",-1" );				
+			}
+			else {
+				if( v.value() > p.value() ) continue;
+				System.out.println("" + v.getRealValue() + "," + p.getRealValue() + "," + v.getGlobalID() + "," + p.getGlobalID() );
+			}
+		}				
+	}	
 	
 	public static boolean compareDiagrams( ArrayList<ReebGraph> rg0, ArrayList<ReebGraph> rg1, boolean verbose ) {
 		
